@@ -38,7 +38,12 @@ public class Service implements Serializable {
         this.status = status;
     }
 
+    @Override
     public String toString() {
-        return "name: " + name + " activation date: " + activationDate.toString() + " status: " + status;
+        return "Service{" +
+                "name='" + name + '\'' +
+                ", activationDate=" + activationDate +
+                ", status=" + status +
+                '}';
     }
 }

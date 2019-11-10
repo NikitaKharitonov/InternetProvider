@@ -17,9 +17,11 @@ public class Television extends Service {
     public void setNumberOfChannels(int numberOfChannels) {
         this.numberOfChannels = numberOfChannels;
     }
-
+    
     @Override
     public String toString() {
-        return super.toString() + " number of channels: " + numberOfChannels;
+        return "Television{" +
+                "numberOfChannels=" + numberOfChannels +
+                '}';
     }
 }

@@ -1,4 +1,5 @@
 # InternetProvider
-Netcracker laboratory work #1
-
-Теперь вносите изменения в свою отдельную директорию: view, control, model.
+Netcracker Laboratory Work #1
+TODO:
+  implement the model, view and controller
+  draw the UML diagram

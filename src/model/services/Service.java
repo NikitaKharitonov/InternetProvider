@@ -3,7 +3,7 @@ package model.services;
 import java.io.Serializable;
 import java.util.Date;
 
-abstract class Service implements Serializable {
+public abstract class Service implements Serializable {
     private String name;
     private Date activationDate;
     private int status;

@@ -1,8 +1,6 @@
 package model;
 
-import model.services.Internet;
-import model.services.Phone;
-import model.services.Television;
+import model.services.*;
 
 public class User {
     private String name;

@@ -40,7 +40,7 @@ public class Internet extends Service {
 
     @Override
     public String toString() {
-        return "Internet{" +
+        return super.toString() + ": Internet{" +
                 "speed=" + speed +
                 ", antivirus=" + antivirus +
                 ", connectionType=" + connectionType +

@@ -30,7 +30,7 @@ public class Phone extends Service {
 
     @Override
     public String toString() {
-        return "Phone{" +
+        return super.toString() + ": Phone{" +
                 "callsMinCount=" + callsMinCount +
                 ", smsCount=" + smsCount +
                 '}';

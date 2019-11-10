@@ -1,14 +1,15 @@
-package model;
+package model.services;
 
-public class Phone {
+import java.util.Date;
+
+public class Phone extends Service {
     private int callsMinCount;
     private int smsCount;
-    private String name;
 
-    public Phone(int callsMinCount, int smsCount, String name) {
+    public Phone(String name, Date activationDate, int status, int callsMinCount, int smsCount) {
+        super(name, activationDate, status);
         this.callsMinCount = callsMinCount;
         this.smsCount = smsCount;
-        this.name = name;
     }
 
     public int getCallsMinCount() {
@@ -25,13 +26,5 @@ public class Phone {
 
     public void setSmsCount(int smsCount) {
         this.smsCount = smsCount;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 }

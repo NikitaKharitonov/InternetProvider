@@ -1,16 +1,40 @@
 package model;
 
+import model.services.Internet;
+import model.services.Phone;
+import model.services.Service;
+import model.services.Television;
+
 public class User {
+    private String name;
+    private String phoneNumber;
+    private String emailAddress;
     private Internet internet;
     private Phone phone;
     private Television television;
-    private long id;
 
-    public User(long id, Internet internet, Phone phone, Television television) {
-        this.id = id;
-        this.internet = internet;
-        this.phone = phone;
-        this.television = television;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 
     public Internet getInternet() {
@@ -36,7 +60,4 @@ public class User {
     public void setTelevision(Television television) {
         this.television = television;
     }
-
-
-
 }

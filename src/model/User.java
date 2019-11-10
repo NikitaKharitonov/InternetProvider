@@ -2,7 +2,6 @@ package model;
 
 import model.services.Internet;
 import model.services.Phone;
-import model.services.Service;
 import model.services.Television;
 
 public class User {

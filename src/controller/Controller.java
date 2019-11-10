@@ -1,20 +1,17 @@
 package controller;
 
 import model.Model;
+import util.Procedure;
 import view.View;
-
-import java.util.function.Consumer;
 
 public class Controller {
 
     private Model model;
     private View view;
 
-    private class Handler implements Consumer{
+    private class Handler implements Procedure {
         @Override
-        public void accept(Object o) {
-            //Обработка запроса
-            String type = view.getCommandType();
+        public void execute() {
 
         }
     }

@@ -27,4 +27,9 @@ public class Phone extends Service {
     public void setSmsCount(int smsCount) {
         this.smsCount = smsCount;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + " number of call minutes: " + callsMinCount + " number of sms: " + smsCount;
+    }
 }

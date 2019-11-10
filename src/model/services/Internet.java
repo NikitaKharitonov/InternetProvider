@@ -37,4 +37,9 @@ public class Internet extends Service {
     public void setConnectionType(int connectionType) {
         this.connectionType = connectionType;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + " speed: " + speed + " antivirus: " + antivirus + " connection type: " + connectionType;
+    }
 }

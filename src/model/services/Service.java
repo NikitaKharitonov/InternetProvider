@@ -37,4 +37,8 @@ public class Service implements Serializable {
     public void setStatus(int status) {
         this.status = status;
     }
+
+    public String toString() {
+        return "name: " + name + " activation date: " + activationDate.toString() + " status: " + status;
+    }
 }

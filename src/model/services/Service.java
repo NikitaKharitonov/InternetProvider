@@ -8,7 +8,7 @@ public abstract class Service implements Serializable {
     private Date activationDate;
     private int status;
 
-    Service(String name, Date activationDate, int status) {
+    Service(String name, Date activationDate, Integer status) {
         this.name = name;
         this.status = status;
         this.activationDate = activationDate;
@@ -34,7 +34,7 @@ public abstract class Service implements Serializable {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 

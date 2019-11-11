@@ -1,5 +1,7 @@
 package model.services;
 
+import util.Annotations.MethodParameter;
+
 import java.util.Date;
 
 public class Internet extends Service {
@@ -7,7 +9,20 @@ public class Internet extends Service {
     private boolean antivirus;
     private int connectionType;
 
-    public Internet(String name, Date activationDate, int status, int speed, boolean antivirus, int connectionType) {
+    public Internet(
+            @MethodParameter(name = "name", type = String.class)
+            String name,
+            @MethodParameter(name = "activationDate", type = Date.class)
+            Date activationDate,
+            @MethodParameter(name = "status", type = Integer.class)
+            Integer status,
+            @MethodParameter(name = "speed", type = Integer.class)
+            Integer speed,
+            @MethodParameter(name = "antivirus", type = Boolean.class)
+            Boolean antivirus,
+            @MethodParameter(name = "connectionType", type = Integer.class)
+            Integer connectionType ) {
+
         super(name, activationDate, status);
         this.speed = speed;
         this.antivirus = antivirus;
@@ -18,7 +33,7 @@ public class Internet extends Service {
         return speed;
     }
 
-    public void setSpeed(int speed) {
+    public void setSpeed(Integer speed) {
         this.speed = speed;
     }
 
@@ -26,7 +41,7 @@ public class Internet extends Service {
         return antivirus;
     }
 
-    public void setAntivirus(boolean antivirus) {
+    public void setAntivirus(Boolean antivirus) {
         this.antivirus = antivirus;
     }
 
@@ -34,7 +49,7 @@ public class Internet extends Service {
         return connectionType;
     }
 
-    public void setConnectionType(int connectionType) {
+    public void setConnectionType(Integer connectionType) {
         this.connectionType = connectionType;
     }
 

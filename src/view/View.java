@@ -18,6 +18,7 @@ public class View {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         while (!(newRequest = reader.readLine()).equals("exit")) {
             request = newRequest.split(" ");
+            handler.execute();
         }
     }
 
@@ -36,8 +37,8 @@ public class View {
     //FIXME Надо исправить
     // - Должен возвращать String
     // - Возможен вариант "get Internet" в этом случае ложится с ошибкой
-    public Integer getSubject() {
-        return Integer.parseInt(request[2]);
+    public String getSubject() {
+        return request[2];
     }
 
     public Map<String, String> getParameters() {

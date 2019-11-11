@@ -33,6 +33,9 @@ public class View {
         return request[1];
     }
 
+    //FIXME Надо исправить
+    // - Должен возвращать String
+    // - Возможен вариант "get Internet" в этом случае ложится с ошибкой
     public Integer getSubject() {
         return Integer.parseInt(request[2]);
     }

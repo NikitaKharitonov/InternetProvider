@@ -14,20 +14,20 @@ public class Model {
     private ArrayList<Phone> phones;
     private ArrayList<Television> televisions;
 
-    private final String usersDataPath = "model/storage/users";
-    private final String internetsDataPath = "model/storage/internets";
-    private final String phonesDataPath = "model/storage/phones";
-    private final String televisionsDataPath = "model/storage/televisions";
+    private final String usersDataPath = "data/users";
+    private final String internetsDataPath = "data/internets";
+    private final String phonesDataPath = "data/phones";
+    private final String televisionsDataPath = "data/televisions";
 
     public Model(ArrayList<User> users) {
         this.users = users;
     }
 
     public Model() throws IOException, ClassNotFoundException {
-        ObjectInputStream usersData = new ObjectInputStream(new FileInputStream(usersDataPath));
-        ObjectInputStream internetsData = new ObjectInputStream(new FileInputStream(internetsDataPath));
-        ObjectInputStream phonesData = new ObjectInputStream(new FileInputStream(phonesDataPath));
-        ObjectInputStream televisionsData = new ObjectInputStream(new FileInputStream(televisionsDataPath));
+        ObjectInputStream usersData = new ObjectInputStream(new FileInputStream(System.getProperty("user.dir") + usersDataPath));
+        ObjectInputStream internetsData = new ObjectInputStream(new FileInputStream(System.getProperty("user.dir") + internetsDataPath));
+        ObjectInputStream phonesData = new ObjectInputStream(new FileInputStream(System.getProperty("user.dir") + phonesDataPath));
+        ObjectInputStream televisionsData = new ObjectInputStream(new FileInputStream(System.getProperty("user.dir") + televisionsDataPath));
         users = (ArrayList<User>) usersData.readObject();
         internets = (ArrayList<Internet>) internetsData.readObject();
         phones = (ArrayList<Phone>) phonesData.readObject();

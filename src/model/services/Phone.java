@@ -25,6 +25,12 @@ public class Phone extends Service {
         this.smsCount = smsCount;
     }
 
+    public Phone(Phone phone) {
+        super(phone);
+        this.smsCount = phone.smsCount;
+        this.callsMinCount = phone.callsMinCount;
+    }
+
     public int getCallsMinCount() {
         return callsMinCount;
     }

@@ -14,6 +14,12 @@ public abstract class Service implements Serializable {
         this.activationDate = activationDate;
     }
 
+    Service(Service service) {
+        this.name = service.name;
+        this.status = service.status;
+        this.activationDate = service.activationDate;
+    }
+
     public String getName() {
         return name;
     }

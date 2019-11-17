@@ -21,6 +21,11 @@ public class Television extends Service {
         this.numberOfChannels = numberOfChannels;
     }
 
+    public Television(Television television) {
+        super(television);
+        this.numberOfChannels = television.numberOfChannels;
+    }
+
     public int getNumberOfChannels() {
         return numberOfChannels;
     }

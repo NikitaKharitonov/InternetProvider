@@ -29,6 +29,13 @@ public class Internet extends Service {
         this.connectionType = connectionType;
     }
 
+    public Internet(Internet internet) {
+        super(internet);
+        this.speed = internet.speed;
+        this.antivirus = internet.antivirus;
+        this.connectionType = internet.connectionType;
+    }
+
     public int getSpeed() {
         return speed;
     }

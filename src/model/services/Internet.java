@@ -68,4 +68,15 @@ public class Internet extends Service {
                 ", connectionType=" + connectionType +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!super.equals(obj))
+            return false;
+        if (!(obj instanceof Internet))
+            return false;
+        return this.connectionType == ((Internet) obj).connectionType
+                && this.antivirus == ((Internet) obj).antivirus
+                && this.speed == ((Internet) obj).speed;
+    }
 }

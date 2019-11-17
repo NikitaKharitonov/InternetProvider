@@ -52,4 +52,15 @@ public abstract class Service implements Serializable {
                 ", status=" + status +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null)
+            return false;
+        if (!(obj instanceof Service))
+            return false;
+        return this.status == ((Service) obj).status
+                && this.activationDate == ((Service) obj).activationDate
+                && this.name == ((Service) obj).name;
+    }
 }

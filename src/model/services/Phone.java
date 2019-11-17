@@ -54,4 +54,14 @@ public class Phone extends Service {
                 ", smsCount=" + smsCount +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!super.equals(obj))
+            return false;
+        if (!(obj instanceof Phone))
+            return false;
+        return this.callsMinCount == ((Phone) obj).callsMinCount
+                && this.smsCount == ((Phone) obj).smsCount;
+    }
 }

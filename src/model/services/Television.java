@@ -40,4 +40,13 @@ public class Television extends Service {
                 "numberOfChannels=" + numberOfChannels +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!super.equals(obj))
+            return false;
+        if (!(obj instanceof Television))
+            return false;
+        return this.numberOfChannels == ((Television) obj).numberOfChannels;
+    }
 }

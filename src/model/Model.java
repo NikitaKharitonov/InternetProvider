@@ -76,5 +76,21 @@ public class Model {
     public void addTelevision(Television television) {
         televisions.add(television);
     }
+
+    public int getUserCount() {
+        return users.size();
+    }
+
+    public int getInternetCount() {
+        return internets.size();
+    }
+
+    public int getPhoneCount() {
+        return phones.size();
+    }
+
+    public int getTelevisionCount() {
+        return televisions.size();
+    }
 }
 

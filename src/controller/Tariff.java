@@ -24,8 +24,9 @@ public class Tariff {
      * @param service
      *          Service object wich will be aggregated
      * */
-    Tariff(Service service) {
+    Tariff(Service service, int id) {
         this.service = service;
+        this.id = id;
         this.isEdited = false;
     }
     /**

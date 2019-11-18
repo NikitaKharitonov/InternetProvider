@@ -79,4 +79,10 @@ public class Internet extends Service {
                 && this.antivirus == ((Internet) obj).antivirus
                 && this.speed == ((Internet) obj).speed;
     }
+
+    @Override
+    public Object clone(){
+        //deep copying
+        return new Internet(this);
+    }
 }

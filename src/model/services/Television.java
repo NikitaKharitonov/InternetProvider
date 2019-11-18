@@ -49,4 +49,10 @@ public class Television extends Service {
             return false;
         return this.numberOfChannels == ((Television) obj).numberOfChannels;
     }
+
+    @Override
+    public Object clone(){
+        //deep copying
+        return new Television(this);
+    }
 }

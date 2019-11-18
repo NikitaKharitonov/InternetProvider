@@ -3,7 +3,7 @@ package model.services;
 import java.io.Serializable;
 import java.util.Date;
 
-public abstract class Service implements Serializable {
+public abstract class Service implements Serializable, Cloneable {
     private String name;
     private Date activationDate;
     private int status;
@@ -61,6 +61,11 @@ public abstract class Service implements Serializable {
             return false;
         return this.status == ((Service) obj).status
                 && this.activationDate == ((Service) obj).activationDate
-                && this.name == ((Service) obj).name;
+                && this.name.equals(((Service) obj).name);
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

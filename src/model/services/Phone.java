@@ -64,4 +64,10 @@ public class Phone extends Service {
         return this.callsMinCount == ((Phone) obj).callsMinCount
                 && this.smsCount == ((Phone) obj).smsCount;
     }
+
+    @Override
+    public Object clone(){
+        //deep copying
+        return new Phone(this);
+    }
 }

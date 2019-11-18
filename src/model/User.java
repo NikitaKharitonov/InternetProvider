@@ -2,13 +2,25 @@ package model;
 
 import model.services.*;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable, Cloneable{
     private String name;
     private String phoneNumber;
     private String emailAddress;
     private Internet internet;
     private Phone phone;
     private Television television;
+
+    public User(){}
+    private User(User user){
+        this.name = user.name;
+        this.phoneNumber = user.phoneNumber;
+        this.emailAddress = user.emailAddress;
+        this.internet = (Internet) user.internet.clone();
+        this.television = (Television) user.television.clone();
+        this.phone = (Phone) user.phone.clone();
+    }
 
     public String getName() {
         return name;
@@ -56,5 +68,11 @@ public class User {
 
     public void setTelevision(Television television) {
         this.television = television;
+    }
+
+    @Override
+    public Object clone(){
+        //deep copy
+        return new User(this);
     }
 }

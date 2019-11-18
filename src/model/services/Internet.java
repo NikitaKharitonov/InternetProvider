@@ -5,9 +5,11 @@ import util.Annotations.MethodParameter;
 import java.util.Date;
 
 public class Internet extends Service {
+    enum ConnectionType{ADSL, Dial_up, ISDN, Cable, Fiber}
+
     private int speed;
     private boolean antivirus;
-    private int connectionType;
+    private ConnectionType connectionType;
 
     public Internet(
             @MethodParameter(name = "name", type = String.class)
@@ -20,8 +22,8 @@ public class Internet extends Service {
             Integer speed,
             @MethodParameter(name = "antivirus", type = Boolean.class)
             Boolean antivirus,
-            @MethodParameter(name = "connectionType", type = Integer.class)
-            Integer connectionType ) {
+            @MethodParameter(name = "connectionType", type = ConnectionType.class)
+            ConnectionType connectionType ) {
 
         super(name, activationDate, status);
         this.speed = speed;
@@ -52,11 +54,11 @@ public class Internet extends Service {
         this.antivirus = antivirus;
     }
 
-    public int getConnectionType() {
+    public ConnectionType getConnectionType() {
         return connectionType;
     }
 
-    public void setConnectionType(Integer connectionType) {
+    public void setConnectionType(ConnectionType connectionType) {
         this.connectionType = connectionType;
     }
 

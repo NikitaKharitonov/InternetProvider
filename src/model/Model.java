@@ -53,6 +53,10 @@ public class Model {
         users.add(user);
     }
 
+    public void deleteUserById(int id) {
+        users.remove(id);
+    }
+
     public Internet getInternetById(int id) {
         return internets.get(id);
     }
@@ -60,6 +64,8 @@ public class Model {
     public void addInternet(Internet internet) {
         internets.add(internet);
     }
+
+    public void deleteInternetById(int id) {internets.remove(id);}
 
     public Phone getPhoneById(int id) {
         return phones.get(id);
@@ -69,6 +75,8 @@ public class Model {
         phones.add(phone);
     }
 
+    public void deletePhoneById(int id) {phones.remove(id);}
+
     public Television getTelevisionById(int id) {
         return televisions.get(id);
     }
@@ -76,6 +84,8 @@ public class Model {
     public void addTelevision(Television television) {
         televisions.add(television);
     }
+
+    public void deleteTelevisionById(int id) {televisions.remove(id);}
 
     public int getUserCount() {
         return users.size();

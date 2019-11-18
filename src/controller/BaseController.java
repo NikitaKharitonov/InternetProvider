@@ -150,6 +150,11 @@ public class BaseController implements Controller{
             throw new FailedOperation("Incorrect ID");
         }
         // model.deleteUser(userID)
+        try {
+            model.save();
+        } catch (IOException e) {
+            throw new FailedOperation("Failed to add new user. Troubles with DB");
+        }
         return null;
     }
     /**
@@ -192,6 +197,12 @@ public class BaseController implements Controller{
 
         setObjectField(user, getServiceType(newService), newService);
 
+        try {
+            model.save();
+        } catch (IOException e) {
+            throw new FailedOperation("Failed to add new user. Troubles with DB");
+        }
+
         return tariff;
     }
     /**
@@ -215,6 +226,12 @@ public class BaseController implements Controller{
         Service oldService = (Service) getObjectField(user, serviceName);
         setObjectField(user, serviceName, null);
 
+        try {
+            model.save();
+        } catch (IOException e) {
+            throw new FailedOperation("Failed to add new user. Troubles with DB");
+        }
+
         return new Tariff(oldService, -1);
     }
     /**
@@ -228,6 +245,13 @@ public class BaseController implements Controller{
     @Override
     public Tariff createTariff(Service service) throws FailedOperation{
         //TODO make up realization
+
+        try {
+            model.save();
+        } catch (IOException e) {
+            throw new FailedOperation("Failed to add new user. Troubles with DB");
+        }
+
         return new Tariff(service, 0);
     }
     /**
@@ -323,6 +347,12 @@ public class BaseController implements Controller{
             return tariff;
         }
 
+        try {
+            model.save();
+        } catch (IOException e) {
+            throw new FailedOperation("Failed to add new user. Troubles with DB");
+        }
+
         return tariff;
     }
     /**
@@ -338,6 +368,11 @@ public class BaseController implements Controller{
     @Override
     public Tariff deleteTariff(String serviceName, int tariffID) throws FailedOperation{
         //TODO make up realization
+        try {
+            model.save();
+        } catch (IOException e) {
+            throw new FailedOperation("Failed to add new user. Troubles with DB");
+        }
         return null;
     }
 /**

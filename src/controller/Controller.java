@@ -27,7 +27,7 @@ public interface Controller {
      *          If some troubles were happened
      * @return Created Service object
      * */
-    Tariff   createTariff(Service service) throws FailedOperation;
+    Tariff    createTariff(Service service) throws FailedOperation;
     /**
      * Search user by his id
      * @param userID
@@ -61,7 +61,7 @@ public interface Controller {
      *          If some troubles were happened
      * @return Array of created Tariffs
      * */
-    Tariff[] getAllTariffs(String serviceName) throws FailedOperation;
+    Tariff[]  getAllTariffs(String serviceName) throws FailedOperation;
     /**
      * Set {@code tariff} to user by his id
      * @param userID
@@ -72,7 +72,7 @@ public interface Controller {
      *          If some troubles were happened
      * @return tariff wich was set up to user
      * */
-    Tariff   setTariffToUser(int userID, Tariff tariff) throws FailedOperation;
+    Tariff    setTariffToUser(int userID, Tariff tariff) throws FailedOperation;
     /**
      * Change user data (E.g. name or email address)
      * @param userID
@@ -94,7 +94,7 @@ public interface Controller {
      *          If some troubles were happened
      * @return tariff wich was changed
      * */
-    Tariff   changeTariff(int tariffID, Tariff tariff) throws FailedOperation;
+    Tariff    changeTariff(int tariffID, Tariff tariff) throws FailedOperation;
     /**
      * Disable {@code serviceName} for user with such id
      * @param userID
@@ -105,7 +105,7 @@ public interface Controller {
      *          If some troubles were happened
      * @return tariff wich was disabled for user
      * */
-    Tariff   removeTariffFromUser(int userID, String serviceName) throws FailedOperation;
+    Tariff    removeTariffFromUser(int userID, String serviceName) throws FailedOperation;
     /**
      * Delete user
      * @param userID
@@ -123,5 +123,5 @@ public interface Controller {
      *          Tariff id
      * @return Tariff wich was deleted
      * */
-    Tariff   deleteTariff(String serviceName, int tariffID) throws FailedOperation;
+    Tariff    deleteTariff(String serviceName, int tariffID) throws FailedOperation;
 }

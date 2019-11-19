@@ -6,6 +6,7 @@ import controller.Tariff;
 import model.User;
 import model.services.Internet;
 import model.services.Phone;
+import model.services.Service;
 import model.services.Television;
 
 import java.io.BufferedReader;
@@ -28,7 +29,7 @@ public class ConsoleView implements View {
     }
 
     @Override
-    public void run() throws IOException, FailedOperation, CloneNotSupportedException {
+    public void run() throws IOException {
         isRunning = true;
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         while (isRunning) {
@@ -41,7 +42,14 @@ public class ConsoleView implements View {
             }
             final Optional<Command> optCommand = Command.parseCommand(line);
             if (optCommand.isPresent()) {
-                processCommand(optCommand.get(), line);
+                try {
+                    processCommand(optCommand.get(), line);
+                }
+                catch (FailedOperation e){
+                    System.out.println(e.getMessage());
+                } catch (CloneNotSupportedException e){
+                    System.out.println("Some unexpected behavior");
+                }
             } else {
                 System.out.println("The given command is not a valid. Try again please.");
             }
@@ -217,7 +225,7 @@ public class ConsoleView implements View {
                 } else {
                     connectionType = oldInternet.getConnectionType();
                 }
-                // Service newInternet = new Internet(name, date, 1, speed, antivirus, connectionType);
+                //Service newInternet = new Internet(name, date, 1, speed, antivirus, connectionType);
                 // Изменение тарифа
                 break;
             case CHANGE_PHONE:

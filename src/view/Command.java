@@ -6,7 +6,8 @@ import java.util.regex.Pattern;
 
 public enum Command {
     GET_TARIFF("^get (Internet|Television|Phone) id=([0-9]+)$"),
-    GET_USER("^get User id=([0-9]+)$"), //--------
+    GET_USER("^get User id=([0-9]+)$"),
+    GET_USER_SERVICE("^get User id=([0-9]+) service=(Internet|Television|Phone)$"),
     GET_TARIFFS("^get (Internets|Televisions|Phones)$"),
     GET_SERVICES("^get Services$"),
 

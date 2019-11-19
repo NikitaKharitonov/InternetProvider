@@ -63,6 +63,19 @@ public class ConsoleView implements View {
                 System.out.println("\temail: " + user.getEmailAddress());
                 System.out.println(")");
                 break;
+            case GET_USER_SERVICE:
+                p = Pattern.compile(Command.GET_USER_SERVICE.getRegex());
+                m = p.matcher(line);
+                m.find();
+                user = controller.getUser(Integer.parseInt(m.group(1)));
+                if (m.group(2).equals("Internet")) {
+                    System.out.println(user.getInternet().toString());
+                } else if (m.group(2).equals("Phone")) {
+                    System.out.println(user.getPhone().toString());
+                } else {
+                    System.out.println(user.getPhone().toString());
+                }
+                break;
             case GET_SERVICES:
                 p = Pattern.compile(Command.GET_SERVICES.getRegex());
                 m = p.matcher(line);

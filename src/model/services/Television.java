@@ -5,6 +5,8 @@ import util.Annotations.MethodParameter;
 import java.util.Date;
 
 public class Television extends Service {
+
+    private int id;
     private int numberOfChannels;
 
     public Television(
@@ -32,6 +34,16 @@ public class Television extends Service {
 
     public void setNumberOfChannels(Integer numberOfChannels) {
         this.numberOfChannels = numberOfChannels;
+    }
+
+    @Override
+    public String getType() {
+        return "Television";
+    }
+
+    @Override
+    public int getId() {
+        return id;
     }
 
     @Override

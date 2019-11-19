@@ -44,6 +44,9 @@ public abstract class Service implements Serializable, Cloneable {
         this.status = status;
     }
 
+    abstract public String getType();
+    abstract public int getId();
+
     @Override
     public String toString() {
         return "Service{" +

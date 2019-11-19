@@ -14,10 +14,10 @@ public class Model {
     private ArrayList<Phone> phones;
     private ArrayList<Television> televisions;
 
-    private final String usersDataPath = "data/users";
-    private final String internetsDataPath = "data/internets";
-    private final String phonesDataPath = "data/phones";
-    private final String televisionsDataPath = "data/televisions";
+    private final String usersDataPath = "/data/users";
+    private final String internetsDataPath = "/data/internets";
+    private final String phonesDataPath = "/data/phones";
+    private final String televisionsDataPath = "/data/televisions";
 
     public Model(ArrayList<User> users) {
         this.users = users;
@@ -35,10 +35,10 @@ public class Model {
     }
 
     public void save() throws IOException {
-        ObjectOutputStream usersData = new ObjectOutputStream(new FileOutputStream(usersDataPath));
-        ObjectOutputStream internetsData = new ObjectOutputStream(new FileOutputStream(internetsDataPath));
-        ObjectOutputStream phonesData = new ObjectOutputStream(new FileOutputStream(phonesDataPath));
-        ObjectOutputStream televisionsData = new ObjectOutputStream(new FileOutputStream(televisionsDataPath));
+        ObjectOutputStream usersData = new ObjectOutputStream(new FileOutputStream(System.getProperty("user.dir") +usersDataPath));
+        ObjectOutputStream internetsData = new ObjectOutputStream(new FileOutputStream(System.getProperty("user.dir") +internetsDataPath));
+        ObjectOutputStream phonesData = new ObjectOutputStream(new FileOutputStream(System.getProperty("user.dir") + phonesDataPath));
+        ObjectOutputStream televisionsData = new ObjectOutputStream(new FileOutputStream(System.getProperty("user.dir") + televisionsDataPath));
         usersData.writeObject(users);
         internetsData.writeObject(internets);
         phonesData.writeObject(phones);
@@ -101,6 +101,19 @@ public class Model {
 
     public int getTelevisionCount() {
         return televisions.size();
+    }
+
+    public void setUserById(int id, User user){
+        users.set(id, user);
+    }
+    public void setInternetById(int id, Internet internet){
+        internets.set(id, internet);
+    }
+    public void setTelevisionById(int id, Television television){
+        televisions.set(id, television);
+    }
+    public void setPhoneById(int id, Phone phone){
+        phones.set(id, phone);
     }
 }
 

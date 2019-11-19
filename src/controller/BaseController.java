@@ -8,588 +8,260 @@ import model.services.Service;
 import model.services.Television;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-/**
- * Class BaseController
- * @author anteii
- * @version 0.1
- * */
-public class BaseController implements Controller{
 
-    private static final String USER_NAME_STIRNG_PATTERN = ".*";
-    private static final String EMAIL_ADDRESS_STIRNG_PATTERN = ".*";
-    private static final String PHONE_NUMBER_STIRNG_PATTERN = ".*";
-    private static final String[] SERVICES_NAME = { "Internet", "Phone", "Television" };
+public class BaseController implements Controller {
+
     private Model model;
-    /**
-     * Public constructor
-     * @param model
-     *          Model object
-     * */
-    public BaseController(Model model) {
+    private static final String[] SERVICES_NAME = { "Internet", "Phone", "Television" };
+
+    public BaseController(Model model){
         this.model = model;
     }
 
-    /**
-     * Creates new user with such parameters {@code params} and instantly add him to storage
-     * @param params
-     *          Map with declared keys "name", "emailAddress", "phoneNumber"
-     * @throws FailedOperation
-     *          If some troubles were happened
-     * @return clone of created object
-     * */
     @Override
-    public User createUser(Map<String, Object> params) throws FailedOperation {
+    public void createUser(User user) throws FailedOperation {
+        model.addUser(user);
+        try{
+            model.save();
+        }
+        catch (IOException ex){
+            throw new FailedOperation("Some issues with model were happened");
+        }
+    }
 
-        User user = new User();
-
-        String name, email, phoneNumber;
+    @Override
+    public void createService(Service service) throws FailedOperation {
+        switch (service.getType()){
+            case "Internet":
+                model.addInternet((Internet)service);
+                break;
+            case "Television":
+                model.addTelevision((Television)service);
+                break;
+            case "Phone":
+                model.addPhone((Phone)service);
+                break;
+            default:
+                throw new FailedOperation("Unsupported service : " + service.getType());
+        }
 
         try{
-            name = (String) params.get("name");
-            email = (String) params.get("email");
-            phoneNumber = (String) params.get("phone");
-        } catch (NullPointerException ex){
-            throw new FailedOperation("Failed to create new user. There are some empty fields.");
+            model.save();
         }
-        if (isCorrectString(name, USER_NAME_STIRNG_PATTERN)){
-            if (isCorrectString(email, EMAIL_ADDRESS_STIRNG_PATTERN)) {
-                if (isCorrectString(phoneNumber, PHONE_NUMBER_STIRNG_PATTERN)) {
-                    user.setName(name);
-                    user.setPhoneNumber(phoneNumber);
-                    user.setEmailAddress(email);
-                    model.addUser(user);
-                    try {
-                        model.save();
-                        return (User) user.clone();
-                    } catch (IOException e) {
-                        throw new FailedOperation("Failed to add new user. Troubles with DB");
-                    }
-                } else {
-                    throw new FailedOperation("Failed to add new user. Wrong phone number");
-                }
-            }else{
-                throw new FailedOperation("Failed to add new user. Wrong email");
-            }
-        } else{
-            throw new FailedOperation("Failed to add new user. Wrong name");
+        catch (IOException ex){
+            throw new FailedOperation("Some issues with model were happened");
         }
     }
-    /**
-     * Search user by his id
-     * @param userID
-     *          user id
-     * @throws FailedOperation
-     *          If some troubles were happened
-     * @return clone of created Service object
-     * */
+
     @Override
     public User getUser(int userID) throws FailedOperation {
-        if (isValidID("User", userID)){
-            throw new FailedOperation("Incorrect ID");
+        if (!isValidID("User", userID)){
+            throw new FailedOperation("Incorrect user ID");
         }
-
-        return (User) model.getUserById(userID).clone();
+        return model.getUserById(userID);
     }
-    /**
-     * Change user data (E.g. name or email address)  and instantly save changes in storage
-     * @param userID
-     *          User id
-     * @param params
-     *          Map with with declared parameters specific for User class
-     * @throws FailedOperation
-     *          If some troubles were happened
-     * @return clone of User object
-     * */
+
     @Override
-    public User changeUserData(int userID, Map<String, Object> params) throws FailedOperation {
-
-        if (isValidID("User", userID)){
-            throw new FailedOperation("Incorrect ID");
-        }
-
-        User user = model.getUserById(userID);
-
-        String name = (String) params.getOrDefault("name", null);
-        String phoneNumber = (String) params.getOrDefault("phone", null);
-        String email = (String) params.getOrDefault("email", null);
-
-        if (name != null && isCorrectString(name, USER_NAME_STIRNG_PATTERN)){
-            user.setName(name);
-        }
-        if (phoneNumber != null && isCorrectString(phoneNumber, PHONE_NUMBER_STIRNG_PATTERN)){
-            user.setPhoneNumber(phoneNumber);
-        }
-        if (email != null && isCorrectString(email, EMAIL_ADDRESS_STIRNG_PATTERN)){
-            user.setEmailAddress(email);
-        }
-        try {
-            model.save();
-        } catch (IOException e) {
-            throw new FailedOperation("Failed to add new user. Troubles with DB");
-        }
-        return (User) user.clone();
+    public String[] getProvidedServices() {
+        return SERVICES_NAME;
     }
-    /**
-     * Delete user and instantly save changes in a storage
-     * @param userID
-     *          User id
-     * @throws FailedOperation
-     *          If some troubles were happened
-     * @return User wich was deleted
-     * */
-    @Override@Deprecated
-    public User deleteUser(int userID) throws FailedOperation {
-        if (isValidID("User", userID)){
-            throw new FailedOperation("Incorrect ID");
-        }
-        User user = model.getUserById(userID);
-        model.deleteUserById(userID);
-        try {
-            model.save();
-        } catch (IOException e) {
-            throw new FailedOperation("Failed to add new user. Troubles with DB");
-        }
-        return user;
-    }
-    /**
-     * Return all supported services names
-     * @return array of supported services names
-     * */
+
     @Override
-    public String[] getServices() {
-        return this.SERVICES_NAME;
-    }
-    /**
-     * Set {@code tariff} to user by his id  and instantly save changes in storage
-     * @param userID
-     *          User id
-     * @param tariff
-     *          Tariff object wich will be set up to user
-     * @throws FailedOperation
-     *          If some troubles were happened
-     * @return tariff wich was set up to user
-     * */
-    @Override
-    public Tariff setTariffToUser(int userID, Tariff tariff) throws FailedOperation {
-        if (isValidID("User", userID)){
-            throw new FailedOperation("Incorrect ID");
+    public Service getService(String serviceType, int serviceID) throws FailedOperation {
+        if (!isValidID(serviceType, serviceID)){
+            throw new FailedOperation("Incorrect user ID");
         }
-
-        User user = model.getUserById(userID);
-
-        Service newService, oldService;
-
-        try {
-            newService = tariff.getService();
-            oldService = (Service) getService(getServiceType(newService), tariff.getId()).clone();
-        } catch (CloneNotSupportedException e) {
-            throw new FailedOperation("Some troubles with model :(");
-        }
-        if (tariff.isEdited() && !oldService.equals(newService) && !isServiceFieldCorrect(newService)) {
-            throw new FailedOperation("Incorrect tariff data");
-        }
-
-        setObjectField(user, getServiceType(newService), newService);
-
-        try {
-            model.save();
-        } catch (IOException e) {
-            throw new FailedOperation("Failed to add new user. Troubles with DB");
-        }
-
-        return tariff;
-    }
-    /**
-     * Disable {@code serviceName} for user with such id
-     * @param userID
-     *          User id
-     * @param serviceName
-     *          Service name
-     * @throws FailedOperation
-     *          If some troubles were happened
-     * @return tariff wich was disabled for user
-     * */
-    @Override
-    public Tariff removeTariffFromUser(int userID, String serviceName) throws FailedOperation {
-
-        if (isValidID("User", userID)){
-            throw new FailedOperation("Incorrect ID");
-        }
-
-        User user = model.getUserById(userID);
-        Service oldService = (Service) getObjectField(user, serviceName);
-        setObjectField(user, serviceName, null);
-
-        try {
-            model.save();
-        } catch (IOException e) {
-            throw new FailedOperation("Failed to add new user. Troubles with DB");
-        }
-
-        return new Tariff(oldService, -1);
-    }
-    /**
-     * Creates new tariff based on {@code service} and instantly adds him to storage
-     * @param service
-     *          Configured Service object
-     * @throws FailedOperation
-     *          If some troubles were happened
-     * @return clone of created Service object
-     * */
-    @Override
-    public Tariff createTariff(Service service) throws FailedOperation{
-        if (isServiceFieldCorrect(service)){
-            String serviceName = getServiceType(service);
-            switch (serviceName){
-                case "Television":
-                    model.addTelevision((Television) ((Television)service).clone());
-                    break;
-                case "Internet":
-                    model.addInternet((Internet) ((Internet)service).clone());
-                    break;
-                case "Phone":
-                    model.addPhone((Phone) ((Phone)service).clone());
-                    break;
-            }
-            try {
-                model.save();
-            } catch (IOException e) {
-                throw new FailedOperation("Failed to add new user. Troubles with DB");
-            }
-        }
-
-        return new Tariff(service, 0);
-    }
-    /**
-     * Search tariff by its id and name of its service
-     * @param serviceName
-     *          Service name
-     * @param tariffID
-     *          Tariff id
-     * @throws FailedOperation
-     *          If some troubles were happened
-     * @return created Tariff based on found tariff object
-     * */
-    @Override
-    public Tariff getTariff(String serviceName, int tariffID) throws FailedOperation {
-        try {
-            return new Tariff((Service) getService(serviceName, tariffID).clone(), tariffID);
-        } catch (CloneNotSupportedException e) {
-            throw new FailedOperation("Some troubles with model :(");
+        switch (serviceType){
+            case "Internet":
+                return model.getInternetById(serviceID);
+            case "Television":
+                return model.getTelevisionById(serviceID);
+            case "Phone":
+                return model.getPhoneById(serviceID);
+            default:
+                throw new FailedOperation("Unsupported service : " + serviceType);
         }
     }
-    /**
-     * Returns all tariffs of {@code serviceName}
-     * @param serviceName
-     *          Service name
-     * @throws FailedOperation
-     *          If some troubles were happened
-     * @return Array of created Tariffs
-     * */
+
     @Override
-    public Tariff[] getAllTariffs(String serviceName) throws FailedOperation {
+    public Service[] getAllServices(String serviceType) throws FailedOperation {
         int count;
-        Tariff[] result;
-        switch (serviceName) {
+        Service[] result;
+        switch (serviceType) {
             case "Internets":
                 count = model.getInternetCount();
-                result = new Tariff[count];
+                result = new Service[count];
                 for (int i = 0; i < count; i++) {
-                    result[i] = new Tariff((Service) model.getInternetById(i).clone(), i);
+                    result[i] = model.getInternetById(i);
                 }
                 break;
             case "Televisions":
                 count = model.getTelevisionCount();
-                result = new Tariff[count];
+                result = new Service[count];
                 for (int i = 0; i < count; i++) {
-                    result[i] = new Tariff((Service) model.getTelevisionById(i).clone(), i);
+                    result[i] = model.getTelevisionById(i);
                 }
                 break;
             case "Phones":
                 count = model.getPhoneCount();
-                result = new Tariff[count];
+                result = new Service[count];
                 for (int i = 0; i < count; i++) {
-                    result[i] = new Tariff((Service) model.getPhoneById(i).clone(), i);
+                    result[i] = model.getPhoneById(i);
                 }
                 break;
             default:
-                throw new FailedOperation("Unexpected service name: " + serviceName);
+                throw new FailedOperation("Unexpected service name: " + serviceType);
         }
         return result;
     }
-    /**
-     * Change tariff parameters and instantly save it in storage
-     * @param tariffID
-     *          Tariff id
-     * @param tariff
-     *          Tariff object wich will be changed
-     * @throws FailedOperation
-     *          If some troubles were happened
-     * @return tariff wich was changed
-     * */
+
     @Override
-    public Tariff changeTariff(int tariffID, Tariff tariff) throws FailedOperation {
-        Service newService;
-        try {
-            newService = tariff.getService();
-        } catch (CloneNotSupportedException ex){
-            throw new FailedOperation("Some troubles with model :(");
+    public void setServiceToUser(int userID, Service service) throws FailedOperation {
+        if (!isValidID("User", userID)){
+            throw new FailedOperation("Incorrect user ID");
         }
-        String serviceName = getServiceType(newService);
-
-        if (isValidID(serviceName, tariffID)){
-            throw new FailedOperation("Incorrect ID");
-        }
-
-        Service oldService = getService(serviceName, tariffID);
-
-        if (tariff.isEdited() && !oldService.equals(newService)) {
-            if (!isServiceFieldCorrect(newService)) {
-                throw new FailedOperation("Incorrect tariff data");
-            }
-            migrateService(oldService, newService);
-        }
-        else{
-            return tariff;
-        }
-
-        try {
-            model.save();
-        } catch (IOException e) {
-            throw new FailedOperation("Failed to add new user. Troubles with DB");
-        }
-
-        return tariff;
-    }
-    /**
-     * Delete tariff and instantly save changes in a storage
-     * @param serviceName
-     *          Service name
-     * @param tariffID
-     *          Tariff id
-     * @throws FailedOperation
-     *          If some troubles were happened
-     * @return Tariff wich was deleted
-     * */
-    @Override
-    public Tariff deleteTariff(String serviceName, int tariffID) throws FailedOperation{
-        Service service = null;
-        if (isValidID(serviceName, tariffID)){
-            switch (serviceName){
-                case "Television":
-                    service = model.getTelevisionById(tariffID);
-                    model.deleteTelevisionById(tariffID);
-                    break;
-                case "Internet":
-                    service = model.getInternetById(tariffID);
-                    model.deleteInternetById(tariffID);
-                    break;
-                case "Phone":
-                    service = model.getPhoneById(tariffID);
-                    model.deletePhoneById(tariffID);
-                    break;
-            }
-            try {
-                model.save();
-                return new Tariff(service, tariffID);
-            } catch (IOException e) {
-                throw new FailedOperation("Failed to add new user. Troubles with DB");
-            }
-        }
-        throw new FailedOperation("Failed to delete tariff. Incorrect id");
-    }
-/**
- * @return Return Service object by Service name and id
- * */
-    private Service getService(String serviceName, int id) throws FailedOperation {
-        switch (serviceName) {
-            case "Television":
-                return model.getTelevisionById(id);
-            case "Phone":
-                return model.getPhoneById(id);
-            case "Internet":
-                return model.getInternetById(id);
+        User user = model.getUserById(userID);
+        switch (service.getType()) {
+            case "Internets":
+                user.setInternet((Internet)service);
+                break;
+            case "Televisions":
+                user.setTelevision((Television)service);
+                break;
+            case "Phones":
+                user.setPhone((Phone)service);
+                break;
             default:
-                throw new FailedOperation("No such service");
+                throw new FailedOperation("Unexpected service name: " + service.getType());
+        }
+        try{
+            model.save();
+        }
+        catch (IOException ex){
+            throw new FailedOperation("Some issues with model were happened");
         }
     }
-    /**
-     * Method update service in storage
-     * @param migrateFrom
-     *          Service wich should to be updated
-     * @param migrateTo
-     *          Service wich we want to set up
-     * @throws FailedOperation
-     *          Throws if some issues were happened
-     * @return Updated Service
-     **/
-    private Service migrateService(Service migrateTo, Service migrateFrom) throws FailedOperation {
-        Field[] concreteFields = migrateTo.getClass().getDeclaredFields();
-        Field[] baseFields = migrateTo.getClass().getSuperclass().getDeclaredFields();
-        for (Field field : concreteFields) {
-            try {
-                setObjectField(migrateTo, field.getName(), getObjectField(migrateFrom, field.getName()));
-            } catch (FailedOperation failedOperation) {
-                failedOperation.printStackTrace();
-                throw new FailedOperation("Some troubles with model :(");
-            }
+
+    @Override
+    public void changeUserData(int userID, User user) throws FailedOperation {
+        if (!isValidID("User", userID)){
+            throw new FailedOperation("Incorrect user ID");
         }
-        for (Field field : baseFields) {
-            try {
-                field.set(migrateTo, field.get(migrateFrom));
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-                throw new FailedOperation("Some troubles with model :(");
-            }
+        model.setUserById(userID, user);
+        try{
+            model.save();
         }
-        return migrateTo;
-    }
-    /**
-     * Get field of some object
-     * @param object
-     *          Object from what we are going to extract field
-     * @param fieldName
-     *          Name of field what we are going to extract
-     * @throws FailedOperation
-     *          Throws if some issues were happened
-     * @return Object value of that field
-     * */
-    private Object getObjectField(Object object, String fieldName) throws FailedOperation {
-        String capitalizedFieldName = fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-        try {
-            Method a = object.getClass().getMethod("get" + capitalizedFieldName);
-            return a.invoke(object);
-        } catch (NoSuchMethodException e) {
-            try {
-                Method a = object.getClass().getMethod("is" + capitalizedFieldName);
-                return a.invoke(object);
-            } catch (NoSuchMethodException ex) {
-                System.out.println(String.format("Object doesn't have field %s", fieldName));
-            } catch (IllegalAccessException ex) {
-                System.out.println(String.format("Field %s in object is private", fieldName));
-            } catch (InvocationTargetException ex) {
-                e.printStackTrace();
-                System.out.println(String.format(
-                        "Exception in model field name = %s",
-                        fieldName
-                ));
-            }
-        } catch (IllegalAccessException e) {
-            System.out.println(String.format("Field %s in object is private", fieldName));
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-            System.out.println(String.format(
-                    "Exception in model field name = %s",
-                    fieldName
-            ));
+        catch (IOException ex){
+            throw new FailedOperation("Some issues with model were happened");
         }
-        throw new FailedOperation("Failed to set such parameters");
     }
-    /**
-     * Set {@code param} to field of some object
-     * @param object
-     *          Object from what we are going to extract field
-     * @param fieldName
-     *          Name of field what we are going to extract
-     * @param param
-     *          Object that should be set to field
-     * @throws FailedOperation
-     *          Throws if some issues were happened
-     * @return Object value of that field
-     * */
-    private Service setObjectField(Object object, String fieldName, Object param) throws FailedOperation {
-        System.out.println("set " + fieldName + " to " + param + " in " + object.getClass().getName());
-        String capitalizedFieldName = fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-        try {
-            Method a = object.getClass().getMethod(
-                    "set" + capitalizedFieldName,
-                    param.getClass()
-            );
-            return (Service) a.invoke(object, new Object[]{param});
-        } catch (NoSuchMethodException e) {
-            System.out.println(String.format("Object doesn't have field %s", fieldName));
-        } catch (IllegalAccessException e) {
-            System.out.println(String.format("Field %s in object is private", fieldName));
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-            System.out.println(String.format(
-                    "Exception in model field name = %s",
-                    fieldName
-            ));
+
+    @Override
+    public void changeService(int serviceID, Service service) throws FailedOperation {
+        if (!isValidID(service.getType(), serviceID)){
+            throw new FailedOperation("Incorrect user ID");
         }
-        throw new FailedOperation("Failed to set such parameters");
+
+        switch (service.getType()) {
+            case "Internets":
+                model.setInternetById(serviceID, (Internet)service);
+                break;
+            case "Televisions":
+                model.setTelevisionById(serviceID, (Television)service);
+                break;
+            case "Phones":
+                model.setPhoneById(serviceID, (Phone)service);
+                break;
+            default:
+                throw new FailedOperation("Unexpected service name: " + service.getType());
+        }
+        try{
+            model.save();
+        }
+        catch (IOException ex){
+            throw new FailedOperation("Some issues with model were happened");
+        }
     }
-    /**
-     * Check whether string is corresponding with pattern or not
-     * @param suspect
-     *          Suspected string
-     * @param stringPattern
-     *          RegExp pattern
-     * @return boolean
-     * */
-    private boolean isCorrectString(String suspect, String stringPattern){
-        Pattern pattern = Pattern.compile(stringPattern);
-        Matcher matcher = pattern.matcher(suspect);
-        return matcher.matches();
+
+    @Override
+    public void removeServiceFromUser(int userID, String serviceType) throws FailedOperation {
+        if (!isValidID("User", userID)){
+            throw new FailedOperation("Incorrect user ID");
+        }
+        User user = model.getUserById(userID);
+        switch (serviceType) {
+            case "Internets":
+                user.setInternet(null);
+                break;
+            case "Televisions":
+                user.setTelevision(null);
+                break;
+            case "Phones":
+                user.setPhone(null);
+                break;
+            default:
+                throw new FailedOperation("Unexpected service name: " + serviceType);
+        }
+        try{
+            model.save();
+        }
+        catch (IOException ex){
+            throw new FailedOperation("Some issues with model were happened");
+        }
     }
-    /**
-     * Check whether service field is correct or not
-     * @param service
-     *          Service
-     * @return boolean
-     * */
-    private boolean isServiceFieldCorrect(Service service){
-        //TODO make up realization
-        return true;
+
+    @Override
+    public void deleteUser(int userID) throws FailedOperation {
+        if (!isValidID("User", userID)){
+            throw new FailedOperation("Incorrect user ID");
+        }
+        model.deleteUserById(userID);
     }
-    /**
-     * @return Type of service without package
-     * */
-    private String getServiceType(Service service){
-        String[] temp = service.getClass().getName().split(".");
-        return temp[temp.length - 1];
+
+    @Override
+    public void deleteService(String serviceType, int serviceID) throws FailedOperation {
+        if (!isValidID(serviceType, serviceID)){
+            throw new FailedOperation("Incorrect user ID");
+        }
+        switch (serviceType) {
+            case "Internets":
+                model.deleteInternetById(serviceID);
+                break;
+            case "Televisions":
+                model.deleteTelevisionById(serviceID);
+                break;
+            case "Phones":
+                model.deletePhoneById(serviceID);
+                break;
+            default:
+                throw new FailedOperation("Unexpected service name: " + serviceType);
+        }
+        try{
+            model.save();
+        }
+        catch (IOException ex){
+            throw new FailedOperation("Some issues with model were happened");
+        }
     }
-    /**
-     * @throws FailedOperation
-     *          Throws if some issues were happened
-     * @return If id correspond with some services or not
-     * */
-    private boolean isValidID(String type, int id) throws FailedOperation {
+    private boolean isValidID(String type, int ID) {
         int count;
-        boolean result;
-
-        switch (type) {
-
+        switch (type){
             case "User":
                 count = model.getUserCount();
-                result = (id >= count || id < 0);
                 break;
-
             case "Internet":
                 count = model.getInternetCount();
-                result = (id >= count || id < 0);
                 break;
-
             case "Television":
                 count = model.getTelevisionCount();
-                result = (id >= count || id < 0);
                 break;
-
             case "Phone":
                 count = model.getPhoneCount();
-                result = (id >= count || id < 0);
                 break;
-
             default:
-                throw new FailedOperation("Unexpected serviceName: " + type);
+                return false;
         }
-        return result;
+        return (count >= ID || ID < 0);
     }
 }

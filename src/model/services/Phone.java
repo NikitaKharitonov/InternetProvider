@@ -5,6 +5,8 @@ import util.Annotations.MethodParameter;
 import java.util.Date;
 
 public class Phone extends Service {
+
+    private int id;
     private int callsMinCount;
     private int smsCount;
 
@@ -45,6 +47,16 @@ public class Phone extends Service {
 
     public void setSmsCount(Integer smsCount) {
         this.smsCount = smsCount;
+    }
+
+    @Override
+    public String getType() {
+        return "Phone";
+    }
+
+    @Override
+    public int getId() {
+        return id;
     }
 
     @Override

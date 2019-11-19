@@ -4,7 +4,7 @@ import model.services.*;
 
 import java.io.Serializable;
 
-public class User implements Serializable, Cloneable{
+public class User implements Serializable{
     private String name;
     private String phoneNumber;
     private String emailAddress;
@@ -17,9 +17,9 @@ public class User implements Serializable, Cloneable{
         this.name = user.name;
         this.phoneNumber = user.phoneNumber;
         this.emailAddress = user.emailAddress;
-        this.internet = (Internet) user.internet.clone();
-        this.television = (Television) user.television.clone();
-        this.phone = (Phone) user.phone.clone();
+        this.internet = user.internet == null ? null : (Internet) user.internet.clone();
+        this.television = user.television == null ? null : (Television) user.television.clone();
+        this.phone = user.phone == null ? null : (Phone) user.phone.clone();
     }
 
     public String getName() {
@@ -70,9 +70,4 @@ public class User implements Serializable, Cloneable{
         this.television = television;
     }
 
-    @Override
-    public Object clone(){
-        //deep copy
-        return new User(this);
-    }
 }

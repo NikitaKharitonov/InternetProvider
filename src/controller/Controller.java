@@ -3,31 +3,28 @@ package controller;
 import model.services.*;
 import model.*;
 
-import java.util.Map;
 /**
  * Interface Controller
  * @author anteii
- * @version 0.1
+ * @version 0.2
  * */
 public interface Controller {
     /**
      * Creates new user with such parameters {@code params}
-     * @param params
-     *          Map with declared specific keys
+     * @param user
+     *          User object
      * @throws FailedOperation
      *          If some troubles were happened
-     * @return Created object
      * */
-    User      createUser(Map<String, Object> params) throws FailedOperation;
+    void      createUser(User user) throws FailedOperation;
     /**
      * Creates new tariff based on {@code service}
      * @param service
      *          Configured Service object
      * @throws FailedOperation
      *          If some troubles were happened
-     * @return Created Service object
      * */
-    Tariff    createTariff(Service service) throws FailedOperation;
+    void    createService(Service service) throws FailedOperation;
     /**
      * Search user by his id
      * @param userID
@@ -41,87 +38,81 @@ public interface Controller {
      * Return all supported services names
      * @return array of supported services names
      * */
-    String[]  getServices();
+    String[]  getProvidedServices();
     /**
      * Search tariff by its id and name of its service
-     * @param serviceName
-     *          Service name
-     * @param tariffID
-     *          Tariff id
+     * @param serviceType
+     *          Service type (e.g. Internet or Television)
+     * @param serviceID
+     *          Service id
      * @throws FailedOperation
      *          If some troubles were happened
-     * @return created Tariff based on found tariff object
+     * @return Service object from storage
      * */
-    Tariff    getTariff(String serviceName, int tariffID) throws FailedOperation;
+    Service    getService(String serviceType, int serviceID) throws FailedOperation;
     /**
      * Returns all tariffs of {@code serviceName}
-     * @param serviceName
-     *          Service name
+     * @param serviceType
+     *          Service type
      * @throws FailedOperation
      *          If some troubles were happened
-     * @return Array of created Tariffs
+     * @return Array of existing Services
      * */
-    Tariff[]  getAllTariffs(String serviceName) throws FailedOperation;
+    Service[]  getAllServices(String serviceType) throws FailedOperation;
     /**
-     * Set {@code tariff} to user by his id
+     * Set {@code service} to user by his id
      * @param userID
      *          User id
-     * @param tariff
-     *          Tariff object wich will be set up to user
+     * @param service
+     *          Service object wich will be set up to user
      * @throws FailedOperation
      *          If some troubles were happened
-     * @return tariff wich was set up to user
      * */
-    Tariff    setTariffToUser(int userID, Tariff tariff) throws FailedOperation;
+    void    setServiceToUser(int userID, Service service) throws FailedOperation;
     /**
      * Change user data (E.g. name or email address)
      * @param userID
      *          User id
-     * @param params
-     *          Map with with declared parameters specific for User class
+     * @param user
+     *          User object wich will be set up by userID
      * @throws FailedOperation
      *          If some troubles were happened
-     * @return User object
      * */
-    User      changeUserData(int userID, Map<String, Object> params) throws FailedOperation;
+    void      changeUserData(int userID, User user) throws FailedOperation;
     /**
      * Change tariff parameters
-     * @param tariffID
-     *          Tariff id
-     * @param tariff
-     *          Tariff object wich will be changed
+     * @param serviceID
+     *          Service id
+     * @param service
+     *          Service object wich will be changed
      * @throws FailedOperation
      *          If some troubles were happened
-     * @return tariff wich was changed
      * */
-    Tariff    changeTariff(int tariffID, Tariff tariff) throws FailedOperation;
+    void    changeService(int serviceID, Service service) throws FailedOperation;
     /**
      * Disable {@code serviceName} for user with such id
      * @param userID
      *          User id
-     * @param serviceName
-     *          Service name
+     * @param serviceType
+     *          Service type (e.g. Internet or Television)
      * @throws FailedOperation
      *          If some troubles were happened
-     * @return tariff wich was disabled for user
      * */
-    Tariff    removeTariffFromUser(int userID, String serviceName) throws FailedOperation;
+    void    removeServiceFromUser(int userID, String serviceType) throws FailedOperation;
     /**
      * Delete user
      * @param userID
      *          User id
      * @throws FailedOperation
      *          If some troubles were happened
-     * @return User wich was deleted
      * */
-    User      deleteUser(int userID) throws FailedOperation;
+    void      deleteUser(int userID) throws FailedOperation;
     /**
      * Delete tariff and instantly save changes in a storage
-     * @param serviceName
-     *          Service name
-     * @param tariffID
-     *          Tariff id
-     * @return Tariff wich was deleted
+     * @param serviceType
+     *          Service type (e.g. Internet or Television)
+     * @param serviceID
+     *          Service id
      * */
-    Tariff    deleteTariff(String serviceName, int tariffID) throws FailedOperation;
+    void    deleteService(String serviceType, int serviceID) throws FailedOperation;
 }

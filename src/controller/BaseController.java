@@ -2,7 +2,10 @@ package controller;
 
 import model.Model;
 import model.User;
+import model.services.Internet;
+import model.services.Phone;
 import model.services.Service;
+import model.services.Television;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -19,10 +22,10 @@ import java.util.regex.Pattern;
  * */
 public class BaseController implements Controller{
 
-    private final String USER_NAME_STIRNG_PATTERN = "\\w{6}\\w*";
-    private final String EMAIL_ADDRESS_STIRNG_PATTERN = "[\\w\\d]+@\\w+\\.\\w+";
-    private final String PHONE_NUMBER_STIRNG_PATTERN = "\\+\\d{11}";
-    private final String[] SERVICES_NAME = {"Internet", "Phone", "Television"};
+    private static final String USER_NAME_STIRNG_PATTERN = ".*";
+    private static final String EMAIL_ADDRESS_STIRNG_PATTERN = ".*";
+    private static final String PHONE_NUMBER_STIRNG_PATTERN = ".*";
+    private static final String[] SERVICES_NAME = { "Internet", "Phone", "Television" };
     private Model model;
     /**
      * Public constructor
@@ -50,31 +53,33 @@ public class BaseController implements Controller{
 
         try{
             name = (String) params.get("name");
-            email = (String) params.get("emailAddress");
-            phoneNumber = (String) params.get("phoneNumber");
+            email = (String) params.get("email");
+            phoneNumber = (String) params.get("phone");
         } catch (NullPointerException ex){
             throw new FailedOperation("Failed to create new user. There are some empty fields.");
         }
         if (isCorrectString(name, USER_NAME_STIRNG_PATTERN)){
-            if (isCorrectString(email, EMAIL_ADDRESS_STIRNG_PATTERN)){
-                if (isCorrectString(phoneNumber, PHONE_NUMBER_STIRNG_PATTERN)){
+            if (isCorrectString(email, EMAIL_ADDRESS_STIRNG_PATTERN)) {
+                if (isCorrectString(phoneNumber, PHONE_NUMBER_STIRNG_PATTERN)) {
                     user.setName(name);
                     user.setPhoneNumber(phoneNumber);
                     user.setEmailAddress(email);
                     model.addUser(user);
                     try {
                         model.save();
+                        return (User) user.clone();
                     } catch (IOException e) {
                         throw new FailedOperation("Failed to add new user. Troubles with DB");
                     }
+                } else {
                     throw new FailedOperation("Failed to add new user. Wrong phone number");
                 }
+            }else{
                 throw new FailedOperation("Failed to add new user. Wrong email");
             }
+        } else{
             throw new FailedOperation("Failed to add new user. Wrong name");
         }
-
-        return (User) user.clone();
     }
     /**
      * Search user by his id
@@ -112,23 +117,18 @@ public class BaseController implements Controller{
         User user = model.getUserById(userID);
 
         String name = (String) params.getOrDefault("name", null);
-        String phoneNumber = (String) params.getOrDefault("phoneNumber", null);
-        String email = (String) params.getOrDefault("emailAddress", null);
+        String phoneNumber = (String) params.getOrDefault("phone", null);
+        String email = (String) params.getOrDefault("email", null);
 
-        if (name != null){
-            if (phoneNumber != null){
-                if (email != null && isCorrectString(email, EMAIL_ADDRESS_STIRNG_PATTERN)){
-                    user.setEmailAddress(email);
-                }
-                if (isCorrectString(phoneNumber, PHONE_NUMBER_STIRNG_PATTERN)) {
-                    user.setPhoneNumber(phoneNumber);
-                }
-            }
-            if (isCorrectString(name, USER_NAME_STIRNG_PATTERN)) {
-                user.setName(name);
-            }
+        if (name != null && isCorrectString(name, USER_NAME_STIRNG_PATTERN)){
+            user.setName(name);
         }
-
+        if (phoneNumber != null && isCorrectString(phoneNumber, PHONE_NUMBER_STIRNG_PATTERN)){
+            user.setPhoneNumber(phoneNumber);
+        }
+        if (email != null && isCorrectString(email, EMAIL_ADDRESS_STIRNG_PATTERN)){
+            user.setEmailAddress(email);
+        }
         try {
             model.save();
         } catch (IOException e) {
@@ -149,13 +149,14 @@ public class BaseController implements Controller{
         if (isValidID("User", userID)){
             throw new FailedOperation("Incorrect ID");
         }
-        // model.deleteUser(userID)
+        User user = model.getUserById(userID);
+        model.deleteUserById(userID);
         try {
             model.save();
         } catch (IOException e) {
             throw new FailedOperation("Failed to add new user. Troubles with DB");
         }
-        return null;
+        return user;
     }
     /**
      * Return all supported services names
@@ -244,12 +245,24 @@ public class BaseController implements Controller{
      * */
     @Override
     public Tariff createTariff(Service service) throws FailedOperation{
-        //TODO make up realization
-
-        try {
-            model.save();
-        } catch (IOException e) {
-            throw new FailedOperation("Failed to add new user. Troubles with DB");
+        if (isServiceFieldCorrect(service)){
+            String serviceName = getServiceType(service);
+            switch (serviceName){
+                case "Television":
+                    model.addTelevision((Television) ((Television)service).clone());
+                    break;
+                case "Internet":
+                    model.addInternet((Internet) ((Internet)service).clone());
+                    break;
+                case "Phone":
+                    model.addPhone((Phone) ((Phone)service).clone());
+                    break;
+            }
+            try {
+                model.save();
+            } catch (IOException e) {
+                throw new FailedOperation("Failed to add new user. Troubles with DB");
+            }
         }
 
         return new Tariff(service, 0);
@@ -285,21 +298,21 @@ public class BaseController implements Controller{
         int count;
         Tariff[] result;
         switch (serviceName) {
-            case "Internet":
+            case "Internets":
                 count = model.getInternetCount();
                 result = new Tariff[count];
                 for (int i = 0; i < count; i++) {
                     result[i] = new Tariff((Service) model.getInternetById(i).clone(), i);
                 }
                 break;
-            case "Television":
+            case "Televisions":
                 count = model.getTelevisionCount();
                 result = new Tariff[count];
                 for (int i = 0; i < count; i++) {
                     result[i] = new Tariff((Service) model.getTelevisionById(i).clone(), i);
                 }
                 break;
-            case "Phone":
+            case "Phones":
                 count = model.getPhoneCount();
                 result = new Tariff[count];
                 for (int i = 0; i < count; i++) {
@@ -367,13 +380,30 @@ public class BaseController implements Controller{
      * */
     @Override
     public Tariff deleteTariff(String serviceName, int tariffID) throws FailedOperation{
-        //TODO make up realization
-        try {
-            model.save();
-        } catch (IOException e) {
-            throw new FailedOperation("Failed to add new user. Troubles with DB");
+        Service service = null;
+        if (isValidID(serviceName, tariffID)){
+            switch (serviceName){
+                case "Television":
+                    service = model.getTelevisionById(tariffID);
+                    model.deleteTelevisionById(tariffID);
+                    break;
+                case "Internet":
+                    service = model.getInternetById(tariffID);
+                    model.deleteInternetById(tariffID);
+                    break;
+                case "Phone":
+                    service = model.getPhoneById(tariffID);
+                    model.deletePhoneById(tariffID);
+                    break;
+            }
+            try {
+                model.save();
+                return new Tariff(service, tariffID);
+            } catch (IOException e) {
+                throw new FailedOperation("Failed to add new user. Troubles with DB");
+            }
         }
-        return null;
+        throw new FailedOperation("Failed to delete tariff. Incorrect id");
     }
 /**
  * @return Return Service object by Service name and id
@@ -535,31 +565,31 @@ public class BaseController implements Controller{
         int count;
         boolean result;
 
-        switch (type){
+        switch (type) {
 
-            case "USER":
+            case "User":
                 count = model.getUserCount();
                 result = (id >= count || id < 0);
-            break;
+                break;
 
             case "Internet":
                 count = model.getInternetCount();
                 result = (id >= count || id < 0);
-            break;
+                break;
 
             case "Television":
                 count = model.getTelevisionCount();
                 result = (id >= count || id < 0);
-            break;
+                break;
 
             case "Phone":
                 count = model.getPhoneCount();
                 result = (id >= count || id < 0);
-            break;
+                break;
+
             default:
                 throw new FailedOperation("Unexpected serviceName: " + type);
         }
-
         return result;
     }
 }

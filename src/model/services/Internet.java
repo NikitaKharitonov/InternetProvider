@@ -5,7 +5,7 @@ import util.Annotations.MethodParameter;
 import java.util.Date;
 
 public class Internet extends Service {
-    enum ConnectionType{ADSL, Dial_up, ISDN, Cable, Fiber}
+    public enum ConnectionType{ADSL, Dial_up, ISDN, Cable, Fiber}
 
     private int speed;
     private boolean antivirus;

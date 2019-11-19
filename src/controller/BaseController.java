@@ -8,6 +8,7 @@ import model.services.Service;
 import model.services.Television;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 
 public class BaseController implements Controller {
@@ -55,10 +56,7 @@ public class BaseController implements Controller {
     }
 
     @Override
-    public User getUser(int userID) throws FailedOperation {
-        if (!isValidID("User", userID)){
-            throw new FailedOperation("Incorrect user ID");
-        }
+    public User getUser(int userID){
         return model.getUserById(userID);
     }
 
@@ -69,9 +67,7 @@ public class BaseController implements Controller {
 
     @Override
     public Service getService(String serviceType, int serviceID) throws FailedOperation {
-        if (!isValidID(serviceType, serviceID)){
-            throw new FailedOperation("Incorrect user ID");
-        }
+
         switch (serviceType){
             case "Internet":
                 return model.getInternetById(serviceID);
@@ -85,30 +81,18 @@ public class BaseController implements Controller {
     }
 
     @Override
-    public Service[] getAllServices(String serviceType) throws FailedOperation {
+    public ArrayList<? extends Service> getAllServices(String serviceType) throws FailedOperation {
         int count;
-        Service[] result;
+        ArrayList<? extends Service> result;
         switch (serviceType) {
             case "Internets":
-                count = model.getInternetCount();
-                result = new Service[count];
-                for (int i = 0; i < count; i++) {
-                    result[i] = model.getInternetById(i);
-                }
+                result = model.getInternets();
                 break;
             case "Televisions":
-                count = model.getTelevisionCount();
-                result = new Service[count];
-                for (int i = 0; i < count; i++) {
-                    result[i] = model.getTelevisionById(i);
-                }
+                result = model.getTelevisions();
                 break;
             case "Phones":
-                count = model.getPhoneCount();
-                result = new Service[count];
-                for (int i = 0; i < count; i++) {
-                    result[i] = model.getPhoneById(i);
-                }
+                result = model.getPhones();
                 break;
             default:
                 throw new FailedOperation("Unexpected service name: " + serviceType);
@@ -118,9 +102,7 @@ public class BaseController implements Controller {
 
     @Override
     public void setServiceToUser(int userID, Service service) throws FailedOperation {
-        if (!isValidID("User", userID)){
-            throw new FailedOperation("Incorrect user ID");
-        }
+
         User user = model.getUserById(userID);
         switch (service.getType()) {
             case "Internets":
@@ -145,9 +127,7 @@ public class BaseController implements Controller {
 
     @Override
     public void changeUserData(int userID, User user) throws FailedOperation {
-        if (!isValidID("User", userID)){
-            throw new FailedOperation("Incorrect user ID");
-        }
+
         model.setUserById(userID, user);
         try{
             model.save();
@@ -159,9 +139,6 @@ public class BaseController implements Controller {
 
     @Override
     public void changeService(int serviceID, Service service) throws FailedOperation {
-        if (!isValidID(service.getType(), serviceID)){
-            throw new FailedOperation("Incorrect user ID");
-        }
 
         switch (service.getType()) {
             case "Internets":
@@ -186,9 +163,7 @@ public class BaseController implements Controller {
 
     @Override
     public void removeServiceFromUser(int userID, String serviceType) throws FailedOperation {
-        if (!isValidID("User", userID)){
-            throw new FailedOperation("Incorrect user ID");
-        }
+
         User user = model.getUserById(userID);
         switch (serviceType) {
             case "Internets":
@@ -213,17 +188,13 @@ public class BaseController implements Controller {
 
     @Override
     public void deleteUser(int userID) throws FailedOperation {
-        if (!isValidID("User", userID)){
-            throw new FailedOperation("Incorrect user ID");
-        }
+
         model.deleteUserById(userID);
     }
 
     @Override
     public void deleteService(String serviceType, int serviceID) throws FailedOperation {
-        if (!isValidID(serviceType, serviceID)){
-            throw new FailedOperation("Incorrect user ID");
-        }
+
         switch (serviceType) {
             case "Internets":
                 model.deleteInternetById(serviceID);
@@ -243,25 +214,5 @@ public class BaseController implements Controller {
         catch (IOException ex){
             throw new FailedOperation("Some issues with model were happened");
         }
-    }
-    private boolean isValidID(String type, int ID) {
-        int count;
-        switch (type){
-            case "User":
-                count = model.getUserCount();
-                break;
-            case "Internet":
-                count = model.getInternetCount();
-                break;
-            case "Television":
-                count = model.getTelevisionCount();
-                break;
-            case "Phone":
-                count = model.getPhoneCount();
-                break;
-            default:
-                return false;
-        }
-        return (count >= ID || ID < 0);
     }
 }

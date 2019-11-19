@@ -115,5 +115,17 @@ public class Model {
     public void setPhoneById(int id, Phone phone){
         phones.set(id, phone);
     }
+
+    public ArrayList<Internet> getInternets() {
+        return internets;
+    }
+
+    public ArrayList<Phone> getPhones() {
+        return phones;
+    }
+
+    public ArrayList<Television> getTelevisions() {
+        return televisions;
+    }
 }
 

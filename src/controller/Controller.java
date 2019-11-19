@@ -3,6 +3,8 @@ package controller;
 import model.services.*;
 import model.*;
 
+import java.util.ArrayList;
+
 /**
  * Interface Controller
  * @author anteii
@@ -58,7 +60,7 @@ public interface Controller {
      *          If some troubles were happened
      * @return Array of existing Services
      * */
-    Service[]  getAllServices(String serviceType) throws FailedOperation;
+    ArrayList<? extends Service>  getAllServices(String serviceType) throws FailedOperation;
     /**
      * Set {@code service} to user by his id
      * @param userID

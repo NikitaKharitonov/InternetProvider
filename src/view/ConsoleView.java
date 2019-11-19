@@ -77,11 +77,14 @@ public class ConsoleView implements View {
                 m.find();
                 user = controller.getUser(Integer.parseInt(m.group(1)));
                 if (m.group(2).equals("Internet")) {
-                    System.out.println(user.getInternet().toString());
+                    if (user.getInternet() != null)
+                        System.out.println(user.getInternet().toString());
                 } else if (m.group(2).equals("Phone")) {
-                    System.out.println(user.getPhone().toString());
+                    if (user.getPhone() != null)
+                        System.out.println(user.getPhone().toString());
                 } else {
-                    System.out.println(user.getPhone().toString());
+                    if (user.getTelevision() != null)
+                        System.out.println(user.getPhone().toString());
                 }
                 break;
             case GET_SERVICES:

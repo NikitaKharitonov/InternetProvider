@@ -6,7 +6,6 @@ import java.util.Date;
 
 public class Television extends Service {
 
-    private int id;
     private int numberOfChannels;
 
     public Television(
@@ -39,11 +38,6 @@ public class Television extends Service {
     @Override
     public String getType() {
         return "Television";
-    }
-
-    @Override
-    public int getId() {
-        return id;
     }
 
     @Override

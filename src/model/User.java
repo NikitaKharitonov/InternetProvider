@@ -5,12 +5,15 @@ import model.services.*;
 import java.io.Serializable;
 
 public class User implements Serializable{
+    private static int counter = 0;
+
     private String name;
     private String phoneNumber;
     private String emailAddress;
     private Internet internet;
     private Phone phone;
     private Television television;
+    private final int objectID = counter++;
 
     public User(){}
     private User(User user){
@@ -68,6 +71,10 @@ public class User implements Serializable{
 
     public void setTelevision(Television television) {
         this.television = television;
+    }
+
+    public int getObjectID() {
+        return objectID;
     }
 
 }

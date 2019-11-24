@@ -6,7 +6,6 @@ import java.util.Date;
 
 public class Phone extends Service {
 
-    private int id;
     private int callsMinCount;
     private int smsCount;
 
@@ -52,11 +51,6 @@ public class Phone extends Service {
     @Override
     public String getType() {
         return "Phone";
-    }
-
-    @Override
-    public int getId() {
-        return id;
     }
 
     @Override

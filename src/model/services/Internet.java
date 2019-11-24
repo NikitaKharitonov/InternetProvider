@@ -7,7 +7,6 @@ import java.util.Date;
 public class Internet extends Service {
     public enum ConnectionType{ADSL, Dial_up, ISDN, Cable, Fiber}
 
-    private int id;
     private int speed;
     private boolean antivirus;
     private ConnectionType connectionType;
@@ -66,11 +65,6 @@ public class Internet extends Service {
     @Override
     public String getType() {
         return "Internet";
-    }
-
-    @Override
-    public int getId() {
-        return id;
     }
 
     @Override

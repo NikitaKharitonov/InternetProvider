@@ -4,9 +4,12 @@ import java.io.Serializable;
 import java.util.Date;
 
 public abstract class Service implements Serializable, Cloneable {
+    private static int counter = 0;
+
     private String name;
     private Date activationDate;
     private int status;
+    private final int objectID = counter++; // (^_^)
 
     Service(String name, Date activationDate, Integer status) {
         this.name = name;
@@ -45,7 +48,10 @@ public abstract class Service implements Serializable, Cloneable {
     }
 
     abstract public String getType();
-    abstract public int getId();
+
+    public int getObjectID() {
+        return objectID;
+    }
 
     @Override
     public String toString() {

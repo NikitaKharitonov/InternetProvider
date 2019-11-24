@@ -11,14 +11,10 @@ public class Television extends Service {
     public Television(
             @MethodParameter(name = "name", type = String.class)
             String name,
-            @MethodParameter(name = "activationDate", type = Date.class)
-            Date activationDate,
-            @MethodParameter(name = "status", type = Status.class)
-            Status status,
             @MethodParameter(name = "numberOfChannels", type = Integer.class)
             Integer numberOfChannels ) {
 
-        super(name, activationDate, status);
+        super(name);
         this.numberOfChannels = numberOfChannels;
     }
 

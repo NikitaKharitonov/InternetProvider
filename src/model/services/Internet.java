@@ -14,10 +14,6 @@ public class Internet extends Service {
     public Internet(
             @MethodParameter(name = "name", type = String.class)
             String name,
-            @MethodParameter(name = "activationDate", type = Date.class)
-            Date activationDate,
-            @MethodParameter(name = "status", type = Status.class)
-            Status status,
             @MethodParameter(name = "speed", type = Integer.class)
             Integer speed,
             @MethodParameter(name = "antivirus", type = Boolean.class)
@@ -25,7 +21,7 @@ public class Internet extends Service {
             @MethodParameter(name = "connectionType", type = ConnectionType.class)
             ConnectionType connectionType ) {
 
-        super(name, activationDate, status);
+        super(name);
         this.speed = speed;
         this.antivirus = antivirus;
         this.connectionType = connectionType;

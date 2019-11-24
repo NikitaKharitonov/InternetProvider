@@ -12,16 +12,12 @@ public class Phone extends Service {
     public Phone(
             @MethodParameter(name = "name", type = String.class)
             String name,
-            @MethodParameter(name = "activationDate", type = Date.class)
-            Date activationDate,
-            @MethodParameter(name = "status", type = Status.class)
-            Status status,
             @MethodParameter(name = "callsMinCount", type = Integer.class)
             Integer callsMinCount,
             @MethodParameter(name = "smsCount", type = Integer.class)
             Integer smsCount ) {
 
-        super(name, activationDate, status);
+        super(name);
         this.callsMinCount = callsMinCount;
         this.smsCount = smsCount;
     }

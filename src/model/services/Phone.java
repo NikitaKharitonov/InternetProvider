@@ -14,8 +14,8 @@ public class Phone extends Service {
             String name,
             @MethodParameter(name = "activationDate", type = Date.class)
             Date activationDate,
-            @MethodParameter(name = "status", type = Integer.class)
-            Integer status,
+            @MethodParameter(name = "status", type = Status.class)
+            Status status,
             @MethodParameter(name = "callsMinCount", type = Integer.class)
             Integer callsMinCount,
             @MethodParameter(name = "smsCount", type = Integer.class)

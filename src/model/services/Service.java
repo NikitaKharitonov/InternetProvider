@@ -4,14 +4,17 @@ import java.io.Serializable;
 import java.util.Date;
 
 public abstract class Service implements Serializable, Cloneable {
+
+    enum Status{ON, OFF}
+
     private static int counter = 0;
 
     private String name;
     private Date activationDate;
-    private int status;
+    private Status status;
     private final int objectID = counter++; // (^_^)
 
-    Service(String name, Date activationDate, Integer status) {
+    Service(String name, Date activationDate, Status status) {
         this.name = name;
         this.status = status;
         this.activationDate = activationDate;
@@ -39,11 +42,11 @@ public abstract class Service implements Serializable, Cloneable {
         this.activationDate = activationDate;
     }
 
-    public int getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 

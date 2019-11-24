@@ -13,8 +13,8 @@ public class Television extends Service {
             String name,
             @MethodParameter(name = "activationDate", type = Date.class)
             Date activationDate,
-            @MethodParameter(name = "status", type = Integer.class)
-            Integer status,
+            @MethodParameter(name = "status", type = Status.class)
+            Status status,
             @MethodParameter(name = "numberOfChannels", type = Integer.class)
             Integer numberOfChannels ) {
 

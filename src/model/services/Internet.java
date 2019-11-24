@@ -16,8 +16,8 @@ public class Internet extends Service {
             String name,
             @MethodParameter(name = "activationDate", type = Date.class)
             Date activationDate,
-            @MethodParameter(name = "status", type = Integer.class)
-            Integer status,
+            @MethodParameter(name = "status", type = Status.class)
+            Status status,
             @MethodParameter(name = "speed", type = Integer.class)
             Integer speed,
             @MethodParameter(name = "antivirus", type = Boolean.class)

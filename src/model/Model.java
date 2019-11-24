@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public interface Model {
 
-    public void save() throws IOException;
+    void save() throws IOException;
 
     User getUserById(int id);
 

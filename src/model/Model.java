@@ -4,128 +4,56 @@ import model.services.Internet;
 import model.services.Phone;
 import model.services.Television;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.ArrayList;
 
-public class Model {
+public interface Model {
 
-    private ArrayList<User> users;
-    private ArrayList<Internet> internets;
-    private ArrayList<Phone> phones;
-    private ArrayList<Television> televisions;
+    public void save() throws IOException;
 
-    private final String usersDataPath = "/data/users";
-    private final String internetsDataPath = "/data/internets";
-    private final String phonesDataPath = "/data/phones";
-    private final String televisionsDataPath = "/data/televisions";
+    User getUserById(int id);
 
-    public Model(ArrayList<User> users) {
-        this.users = users;
-    }
+    void addUser(User user);
 
-    public Model() throws IOException, ClassNotFoundException {
-        ObjectInputStream usersData = new ObjectInputStream(new FileInputStream(System.getProperty("user.dir") + usersDataPath));
-        ObjectInputStream internetsData = new ObjectInputStream(new FileInputStream(System.getProperty("user.dir") + internetsDataPath));
-        ObjectInputStream phonesData = new ObjectInputStream(new FileInputStream(System.getProperty("user.dir") + phonesDataPath));
-        ObjectInputStream televisionsData = new ObjectInputStream(new FileInputStream(System.getProperty("user.dir") + televisionsDataPath));
-        users = (ArrayList<User>) usersData.readObject();
-        internets = (ArrayList<Internet>) internetsData.readObject();
-        phones = (ArrayList<Phone>) phonesData.readObject();
-        televisions = (ArrayList<Television>) televisionsData.readObject();
-    }
+    void deleteUserById(int id);
 
-    public void save() throws IOException {
-        ObjectOutputStream usersData = new ObjectOutputStream(new FileOutputStream(System.getProperty("user.dir") +usersDataPath));
-        ObjectOutputStream internetsData = new ObjectOutputStream(new FileOutputStream(System.getProperty("user.dir") +internetsDataPath));
-        ObjectOutputStream phonesData = new ObjectOutputStream(new FileOutputStream(System.getProperty("user.dir") + phonesDataPath));
-        ObjectOutputStream televisionsData = new ObjectOutputStream(new FileOutputStream(System.getProperty("user.dir") + televisionsDataPath));
-        usersData.writeObject(users);
-        internetsData.writeObject(internets);
-        phonesData.writeObject(phones);
-        televisionsData.writeObject(televisions);
-    }
+    Internet getInternetById(int id);
 
-    public User getUserById(int id) {
-        return users.get(id);
-    }
+    void addInternet(Internet internet);
 
-    public void addUser(User user) {
-        users.add(user);
-    }
+    void deleteInternetById(int id);
 
-    public void deleteUserById(int id) {
-        users.remove(id);
-    }
+    Phone getPhoneById(int id);
 
-    public Internet getInternetById(int id) {
-        return internets.get(id);
-    }
+    void addPhone(Phone phone);
 
-    public void addInternet(Internet internet) {
-        internets.add(internet);
-    }
+    void deletePhoneById(int id);
 
-    public void deleteInternetById(int id) {internets.remove(id);}
+    Television getTelevisionById(int id);
 
-    public Phone getPhoneById(int id) {
-        return phones.get(id);
-    }
+    void addTelevision(Television television);
 
-    public void addPhone(Phone phone) {
-        phones.add(phone);
-    }
+    void deleteTelevisionById(int id);
 
-    public void deletePhoneById(int id) {phones.remove(id);}
+    int getUserCount();
 
-    public Television getTelevisionById(int id) {
-        return televisions.get(id);
-    }
+    int getInternetCount();
 
-    public void addTelevision(Television television) {
-        televisions.add(television);
-    }
+    int getPhoneCount();
 
-    public void deleteTelevisionById(int id) {televisions.remove(id);}
+    int getTelevisionCount();
 
-    public int getUserCount() {
-        return users.size();
-    }
+    void setUserById(int id, User user);
 
-    public int getInternetCount() {
-        return internets.size();
-    }
+    void setInternetById(int id, Internet internet);
 
-    public int getPhoneCount() {
-        return phones.size();
-    }
+    void setTelevisionById(int id, Television television);
 
-    public int getTelevisionCount() {
-        return televisions.size();
-    }
+    void setPhoneById(int id, Phone phone);
 
-    public void setUserById(int id, User user){
-        users.set(id, user);
-    }
-    public void setInternetById(int id, Internet internet){
-        internets.set(id, internet);
-    }
-    public void setTelevisionById(int id, Television television){
-        televisions.set(id, television);
-    }
-    public void setPhoneById(int id, Phone phone){
-        phones.set(id, phone);
-    }
+    ArrayList<Internet> getInternets();
 
-    public ArrayList<Internet> getInternets() {
-        return internets;
-    }
+    ArrayList<Phone> getPhones();
 
-    public ArrayList<Phone> getPhones() {
-        return phones;
-    }
-
-    public ArrayList<Television> getTelevisions() {
-        return televisions;
-    }
+    ArrayList<Television> getTelevisions();
 }
-

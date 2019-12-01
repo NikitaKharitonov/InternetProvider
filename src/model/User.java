@@ -1,51 +1,27 @@
 package model;
 
-import model.services.*;
+import model.services.ServiceMap;
+import model.services.Service;
+import model.services.ActivatedService;
 
-import java.io.Serializable;
-import java.util.Date;
-
-public class User implements Serializable{
-    private static int counter = 0;
-
-    enum Status{ON, OFF}
-
-    class ServiceWrapper<T extends Service> {
-        final T service;
-        final Date activationDate = new Date();
-        Status status = Status.ON;
-
-        public ServiceWrapper(T service) {
-            this.service = service;
-        }
-
-        public void setStatus(Status status) {
-            this.status = status;
-        }
-
-        public Date getActivationDate() {
-            return activationDate;
-        }
-    }
-
+public class User {
+    private final long id;
     private String name;
     private String phoneNumber;
     private String emailAddress;
 
-    private ServiceWrapper<Internet> internet;
-    private ServiceWrapper<Phone> phone;
-    private ServiceWrapper<Television> television;
+    private ServiceMap serviceMap;
 
-    private final int objectID = counter++;
+    public User(long id, String name, String phoneNumber, String emailAddress, ServiceMap serviceMap) {
+        this.id = id;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.emailAddress = emailAddress;
+        this.serviceMap = serviceMap;
+    }
 
-    public User(){}
-    private User(User user){
-        this.name = user.name;
-        this.phoneNumber = user.phoneNumber;
-        this.emailAddress = user.emailAddress;
-        this.internet = user.internet == null ? null : new ServiceWrapper<>(user.internet.service);
-        this.television = user.television == null ? null : new ServiceWrapper<>(user.television.service);
-        this.phone = user.phone == null ? null : new ServiceWrapper<>(user.phone.service);
+    public long getId() {
+        return id;
     }
 
     public String getName() {
@@ -72,32 +48,11 @@ public class User implements Serializable{
         this.emailAddress = emailAddress;
     }
 
-    public ServiceWrapper<Internet> getInternet() {
-        return internet;
+    public ServiceMap getServiceMap() {
+        return serviceMap;
     }
 
-    public void setInternet(Internet internet) {
-        this.internet = new ServiceWrapper<>(internet);
+    public void putService(Service service) {
+        serviceMap.put(new ActivatedService(service.getId(), service.getClass().getSimpleName()));
     }
-
-    public ServiceWrapper<Phone> getPhone() {
-        return phone;
-    }
-
-    public void setPhone(Phone phone) {
-        this.phone = new ServiceWrapper<>(phone);
-    }
-
-    public ServiceWrapper<Television> getTelevision() {
-        return television;
-    }
-
-    public void setTelevision(Television television) {
-        this.television = new ServiceWrapper<>(television);
-    }
-
-    public int getObjectID() {
-        return objectID;
-    }
-
 }

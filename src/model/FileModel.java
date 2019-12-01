@@ -1,131 +1,214 @@
 package model;
 
-import model.services.Internet;
-import model.services.Phone;
-import model.services.Television;
+import model.services.*;
 
 import java.io.*;
-import java.util.ArrayList;
+import java.util.*;
 
 public class FileModel implements Model {
 
-    private ArrayList<User> users;
-    private ArrayList<Internet> internets;
-    private ArrayList<Phone> phones;
-    private ArrayList<Television> televisions;
+    private HashMap<Long, User> users;
+    private HashMap<Long, Service> services;
 
-    private final String usersDataPath = "/data/users";
-    private final String internetsDataPath = "/data/internets";
-    private final String phonesDataPath = "/data/phones";
-    private final String televisionsDataPath = "/data/televisions";
+    private final String projectDir = System.getProperty("user.dir");
+    private final String serviceDataPath = projectDir + "/data/services";
+    private final String usersDataPath = projectDir + "/data/users";
 
-    public FileModel(ArrayList<User> users) {
-        this.users = users;
+    private void writeUsers() throws IOException {
+        FileWriter writer = new FileWriter(usersDataPath);
+        writer.write(users.size() + " ");
+        for (Long id : users.keySet()) {
+            User user = users.get(id);
+            writer.write(id + " ");
+            writer.write(user.getName() + " ");
+            writer.write(user.getPhoneNumber() + " ");
+            writer.write(user.getEmailAddress() + " ");
+            ActivatedService[] activatedServices = user.getServiceMap().getServices();
+            writer.write(activatedServices.length + " ");
+            for (ActivatedService activatedService : activatedServices) {
+                writer.write(activatedService.getServiceID() + " ");
+                writer.write(activatedService.getType() + " ");
+                writer.write(activatedService.getActivationDate() + " ");
+            }
+        }
+        writer.close();
     }
 
-    public FileModel() throws IOException, ClassNotFoundException {
-        ObjectInputStream usersData = new ObjectInputStream(new FileInputStream(System.getProperty("user.dir") + usersDataPath));
-        ObjectInputStream internetsData = new ObjectInputStream(new FileInputStream(System.getProperty("user.dir") + internetsDataPath));
-        ObjectInputStream phonesData = new ObjectInputStream(new FileInputStream(System.getProperty("user.dir") + phonesDataPath));
-        ObjectInputStream televisionsData = new ObjectInputStream(new FileInputStream(System.getProperty("user.dir") + televisionsDataPath));
-        users = (ArrayList<User>) usersData.readObject();
-        internets = (ArrayList<Internet>) internetsData.readObject();
-        phones = (ArrayList<Phone>) phonesData.readObject();
-        televisions = (ArrayList<Television>) televisionsData.readObject();
+    private HashMap<Long, User> readUsers() throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(usersDataPath));
+        String line = reader.readLine();
+        if (line == null)
+            return null;
+        String[] words = line.split(" ");
+        int index = 0;
+        int size = Integer.parseInt(words[index++]);
+        HashMap<Long, User> users = new HashMap<>();
+        Long id;
+        String name, emailAddress, phoneNumber;
+        for (int i = 0; i < size; ++i) {
+            id = Long.valueOf(words[index++]);
+            name = words[index++];
+            emailAddress = words[index++];
+            phoneNumber = words[index++];
+            int activatedServicesCount = Integer.valueOf(words[index++]);
+            ActivatedService[] activatedServices = new ActivatedService[activatedServicesCount];
+            for (int j = 0; j < activatedServicesCount; ++j) {
+                int serviceID = Integer.valueOf(words[index++]);
+                String type = words[index++];
+                String activationDate = words[index++];
+                activatedServices[j] = new ActivatedService(serviceID, type, activationDate);
+            }
+            User user = new User(id, name, emailAddress, phoneNumber, new ServiceMap(activatedServices));
+            users.put(id, user);
+        }
+        reader.close();
+        return users;
+    }
+
+    private void writeServices() throws IOException {
+        FileWriter writer = new FileWriter(serviceDataPath);
+        writer.write(services.size() + " ");
+        for (Long id : services.keySet()) {
+            Service service = services.get(id);
+            writer.write(id + " ");
+            writer.write(service.getType() + " ");
+            writer.write(service.getName() + " ");
+            switch (service.getType()) {
+                case "Internet":
+                    Internet internet = (Internet) service;
+                    writer.write(internet.getSpeed() + " ");
+                    writer.write(internet.isAntivirus() + " ");
+                    writer.write(internet.getConnectionType() + " ");
+                    break;
+                case "Phone":
+                    Phone phone = (Phone) service;
+                    writer.write(phone.getCallsMinCount() + " ");
+                    writer.write(phone.getSmsCount() + " ");
+                    break;
+                case "Television":
+                    Television television = (Television) service;
+                    writer.write(television.getNumberOfChannels());
+                    break;
+            }
+        }
+        writer.close();
+    }
+
+    private HashMap<Long, Service> readServices() throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(serviceDataPath));
+        String line = reader.readLine();
+        if (line == null)
+            return null;
+        String[] words = line.split(" ");
+        int index = 0;
+        int size = Integer.parseInt(words[index++]);
+        HashMap<Long, Service> services = new HashMap<>();
+        Long id;
+        String type, name;
+        for (int i = 0; i < size; ++i) {
+            id = Long.valueOf(words[index++]);
+            type = words[index++];
+            name = words[index++];
+            Service service = null;
+            switch (type) {
+                case "Internet":
+                    int speed = Integer.valueOf(words[index++]);
+                    boolean antivirus = Boolean.valueOf(words[index++]);
+                    Internet.ConnectionType connectionType = Internet.ConnectionType.valueOf(words[index++]);
+                    service = new Internet(id, name, speed, antivirus, connectionType);
+                    break;
+                case "Phone":
+                    int callsMinCount = Integer.valueOf(words[index++]);
+                    int smsCount = Integer.valueOf(words[index++]);
+                    service = new Phone(id, name, callsMinCount, smsCount);
+                    break;
+                case "Television":
+                    int numberOfChannels = Integer.valueOf(words[index++]);
+                    service = new Television(id, name, numberOfChannels);
+                    break;
+            }
+            services.put(id, service);
+        }
+        reader.close();
+        return services;
+    }
+
+    public FileModel() throws IOException {
+        if ((users = readUsers()) == null)
+            users = new HashMap<>();
+        if ((services = readServices()) == null)
+            services = new HashMap<>();
     }
 
     public void save() throws IOException {
-        ObjectOutputStream usersData = new ObjectOutputStream(new FileOutputStream(System.getProperty("user.dir") +usersDataPath));
-        ObjectOutputStream internetsData = new ObjectOutputStream(new FileOutputStream(System.getProperty("user.dir") +internetsDataPath));
-        ObjectOutputStream phonesData = new ObjectOutputStream(new FileOutputStream(System.getProperty("user.dir") + phonesDataPath));
-        ObjectOutputStream televisionsData = new ObjectOutputStream(new FileOutputStream(System.getProperty("user.dir") + televisionsDataPath));
-        usersData.writeObject(users);
-        internetsData.writeObject(internets);
-        phonesData.writeObject(phones);
-        televisionsData.writeObject(televisions);
+        writeServices();
+        writeUsers();
     }
 
-    public User getUserById(int id) {
+    @Override
+    public User getUserById(long id) {
         return users.get(id);
     }
 
+    @Override
     public void addUser(User user) {
-        users.add(user);
+        users.put(user.getId(), user);
     }
 
-    public void deleteUserById(int id) {
+    @Override
+    public void removeUserById(long id) {
         users.remove(id);
     }
 
-    public Internet getInternetById(int id) {
-        return internets.get(id);
-    }
-
-    public void addInternet(Internet internet) {
-        internets.add(internet);
-    }
-
-    public void deleteInternetById(int id) {internets.remove(id);}
-
-    public Phone getPhoneById(int id) {
-        return phones.get(id);
-    }
-
-    public void addPhone(Phone phone) {
-        phones.add(phone);
-    }
-
-    public void deletePhoneById(int id) {phones.remove(id);}
-
-    public Television getTelevisionById(int id) {
-        return televisions.get(id);
-    }
-
-    public void addTelevision(Television television) {
-        televisions.add(television);
-    }
-
-    public void deleteTelevisionById(int id) {televisions.remove(id);}
-
+    @Override
     public int getUserCount() {
         return users.size();
     }
 
-    public int getInternetCount() {
-        return internets.size();
+    @Override
+    public long getUserMaxId() {
+        Set keys = users.keySet();
+        if (keys.size() == 0)
+            return 0;
+        else {
+            Long[] ids = new Long[keys.size()];
+            keys.toArray(ids);
+            Arrays.sort(ids);
+            return ids[ids.length - 1];
+        }
     }
 
-    public int getPhoneCount() {
-        return phones.size();
+    @Override
+    public Service getServiceById(long id) {
+        return services.get(id);
     }
 
-    public int getTelevisionCount() {
-        return televisions.size();
+    @Override
+    public void addService(Service service) {
+        services.put(service.getId(), service);
     }
 
-    public void setUserById(int id, User user){
-        users.set(id, user);
-    }
-    public void setInternetById(int id, Internet internet){
-        internets.set(id, internet);
-    }
-    public void setTelevisionById(int id, Television television){
-        televisions.set(id, television);
-    }
-    public void setPhoneById(int id, Phone phone){
-        phones.set(id, phone);
+    @Override
+    public void removeServiceById(long id) {
+        services.remove(id);
     }
 
-    public ArrayList<Internet> getInternets() {
-        return internets;
+    @Override
+    public int getServiceCount() {
+        return services.size();
     }
 
-    public ArrayList<Phone> getPhones() {
-        return phones;
-    }
-
-    public ArrayList<Television> getTelevisions() {
-        return televisions;
+    @Override
+    public long getServiceMaxId() {
+        Set keys = services.keySet();
+        if (keys.size() == 0)
+            return 0;
+        else {
+            Long[] ids = new Long[keys.size()];
+            keys.toArray(ids);
+            Arrays.sort(ids);
+            return ids[ids.length - 1];
+        }
     }
 }
 

@@ -1,6 +1,6 @@
 package model;
 
-public class IdGenerator<T> {
+public class IdGenerator {
     private long maxId;
 
     public IdGenerator(long maxId) {

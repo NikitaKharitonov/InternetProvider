@@ -9,18 +9,14 @@ public class Television extends Service {
     private int numberOfChannels;
 
     public Television(
+            @MethodParameter(name = "id", type = Long.class)
+                    Long id,
             @MethodParameter(name = "name", type = String.class)
-            String name,
+                    String name,
             @MethodParameter(name = "numberOfChannels", type = Integer.class)
-            Integer numberOfChannels ) {
-
-        super(name);
+                    Integer numberOfChannels ) {
+        super(id, name);
         this.numberOfChannels = numberOfChannels;
-    }
-
-    public Television(Television television) {
-        super(television);
-        this.numberOfChannels = television.numberOfChannels;
     }
 
     public int getNumberOfChannels() {
@@ -38,8 +34,9 @@ public class Television extends Service {
 
     @Override
     public String toString() {
-        return super.toString() + ": Television{" +
-                "numberOfChannels=" + numberOfChannels +
+        return "Television{" +
+                "name=" + name +
+                ", numberOfChannels=" + numberOfChannels +
                 '}';
     }
 
@@ -50,11 +47,5 @@ public class Television extends Service {
         if (!(obj instanceof Television))
             return false;
         return this.numberOfChannels == ((Television) obj).numberOfChannels;
-    }
-
-    @Override
-    public Object clone(){
-        //deep copying
-        return new Television(this);
     }
 }

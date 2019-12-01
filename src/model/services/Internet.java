@@ -12,26 +12,20 @@ public class Internet extends Service {
     private ConnectionType connectionType;
 
     public Internet(
+            @MethodParameter(name = "id", type = Long.class)
+                    Long id,
             @MethodParameter(name = "name", type = String.class)
-            String name,
+                    String name,
             @MethodParameter(name = "speed", type = Integer.class)
-            Integer speed,
+                    Integer speed,
             @MethodParameter(name = "antivirus", type = Boolean.class)
-            Boolean antivirus,
+                    Boolean antivirus,
             @MethodParameter(name = "connectionType", type = ConnectionType.class)
-            ConnectionType connectionType ) {
-
-        super(name);
+                    ConnectionType connectionType ) {
+        super(id, name);
         this.speed = speed;
         this.antivirus = antivirus;
         this.connectionType = connectionType;
-    }
-
-    public Internet(Internet internet) {
-        super(internet);
-        this.speed = internet.speed;
-        this.antivirus = internet.antivirus;
-        this.connectionType = internet.connectionType;
     }
 
     public int getSpeed() {
@@ -60,13 +54,15 @@ public class Internet extends Service {
 
     @Override
     public String getType() {
-        return "Internet";
+        return getClass().getSimpleName();
     }
 
     @Override
     public String toString() {
-        return super.toString() + ": Internet{" +
-                "speed=" + speed +
+        return getClass().getSimpleName() +
+                "{" +
+                "name=" + name +
+                ", speed=" + speed +
                 ", antivirus=" + antivirus +
                 ", connectionType=" + connectionType +
                 '}';
@@ -81,11 +77,5 @@ public class Internet extends Service {
         return this.connectionType == ((Internet) obj).connectionType
                 && this.antivirus == ((Internet) obj).antivirus
                 && this.speed == ((Internet) obj).speed;
-    }
-
-    @Override
-    public Object clone(){
-        //deep copying
-        return new Internet(this);
     }
 }

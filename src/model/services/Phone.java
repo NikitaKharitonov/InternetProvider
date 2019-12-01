@@ -10,22 +10,17 @@ public class Phone extends Service {
     private int smsCount;
 
     public Phone(
+            @MethodParameter(name = "id", type = Long.class)
+                    Long id,
             @MethodParameter(name = "name", type = String.class)
-            String name,
+                    String name,
             @MethodParameter(name = "callsMinCount", type = Integer.class)
-            Integer callsMinCount,
+                    Integer callsMinCount,
             @MethodParameter(name = "smsCount", type = Integer.class)
-            Integer smsCount ) {
-
-        super(name);
+                    Integer smsCount ) {
+        super(id, name);
         this.callsMinCount = callsMinCount;
         this.smsCount = smsCount;
-    }
-
-    public Phone(Phone phone) {
-        super(phone);
-        this.smsCount = phone.smsCount;
-        this.callsMinCount = phone.callsMinCount;
     }
 
     public int getCallsMinCount() {
@@ -46,13 +41,14 @@ public class Phone extends Service {
 
     @Override
     public String getType() {
-        return "Phone";
+        return getClass().getSimpleName();
     }
 
     @Override
     public String toString() {
-        return super.toString() + ": Phone{" +
-                "callsMinCount=" + callsMinCount +
+        return getClass().getSimpleName() + "{" +
+                "name=" + name +
+                ", callsMinCount=" + callsMinCount +
                 ", smsCount=" + smsCount +
                 '}';
     }
@@ -65,11 +61,5 @@ public class Phone extends Service {
             return false;
         return this.callsMinCount == ((Phone) obj).callsMinCount
                 && this.smsCount == ((Phone) obj).smsCount;
-    }
-
-    @Override
-    public Object clone(){
-        //deep copying
-        return new Phone(this);
     }
 }

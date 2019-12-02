@@ -1,5 +1,6 @@
 package controller;
 
+import model.IdGenerator;
 import model.Model;
 import model.User;
 import model.services.Internet;
@@ -13,11 +14,15 @@ import java.util.ArrayList;
 
 public class BaseController implements Controller {
 
+    private IdGenerator serviceIdGenerator;
+    private IdGenerator userIdGenerator;
     private Model model;
     private static final String[] SERVICES_NAME = { "Internet", "Phone", "Television" };
 
     public BaseController(Model model){
         this.model = model;
+        serviceIdGenerator = new IdGenerator(model.getServiceMaxId());
+        userIdGenerator = new IdGenerator(model.getUserMaxId());
     }
 
     @Override
@@ -33,19 +38,7 @@ public class BaseController implements Controller {
 
     @Override
     public void createService(Service service) throws FailedOperation {
-        switch (service.getType()){
-            case "Internet":
-                model.addInternet((Internet)service);
-                break;
-            case "Television":
-                model.addTelevision((Television)service);
-                break;
-            case "Phone":
-                model.addPhone((Phone)service);
-                break;
-            default:
-                throw new FailedOperation("Unsupported service : " + service.getType());
-        }
+        model.addService(service);
 
         try{
             model.save();
@@ -66,36 +59,19 @@ public class BaseController implements Controller {
     }
 
     @Override
-    public Service getService(String serviceType, int serviceID) throws FailedOperation {
-
-        switch (serviceType){
-            case "Internet":
-                return model.getInternetById(serviceID);
-            case "Television":
-                return model.getTelevisionById(serviceID);
-            case "Phone":
-                return model.getPhoneById(serviceID);
-            default:
-                throw new FailedOperation("Unsupported service : " + serviceType);
-        }
+    public Service getService(long serviceID){
+        return model.getServiceById(serviceID);
     }
 
     @Override
-    public ArrayList<? extends Service> getAllServices(String serviceType) throws FailedOperation {
-        int count;
-        ArrayList<? extends Service> result;
-        switch (serviceType) {
-            case "Internets":
-                result = model.getInternets();
-                break;
-            case "Televisions":
-                result = model.getTelevisions();
-                break;
-            case "Phones":
-                result = model.getPhones();
-                break;
-            default:
-                throw new FailedOperation("Unexpected service name: " + serviceType);
+    public ArrayList<Service> getAllServices(String serviceType){
+        ArrayList<Service> result = new ArrayList<>();
+            Service temp;
+            for (long i = 1; i <= model.getServiceCount(); i++) {
+                temp = model.getServiceById(i);
+                if (temp.getType().equals(serviceType)){
+                    result.add(temp);
+                }
         }
         return result;
     }
@@ -104,19 +80,8 @@ public class BaseController implements Controller {
     public void setServiceToUser(int userID, Service service) throws FailedOperation {
 
         User user = model.getUserById(userID);
-        switch (service.getType()) {
-            case "Internets":
-                user.setInternet((Internet)service);
-                break;
-            case "Televisions":
-                user.setTelevision((Television)service);
-                break;
-            case "Phones":
-                user.setPhone((Phone)service);
-                break;
-            default:
-                throw new FailedOperation("Unexpected service name: " + service.getType());
-        }
+        user.putService(service);
+
         try{
             model.save();
         }
@@ -126,9 +91,9 @@ public class BaseController implements Controller {
     }
 
     @Override
-    public void changeUserData(int userID, User user) throws FailedOperation {
-
-        model.setUserById(userID, user);
+    public void changeUserData(User user) throws FailedOperation {
+        model.removeUserById(user.getId());
+        model.addUser(user);
         try{
             model.save();
         }
@@ -138,21 +103,10 @@ public class BaseController implements Controller {
     }
 
     @Override
-    public void changeService(int serviceID, Service service) throws FailedOperation {
+    public void changeService(Service service) throws FailedOperation {
 
-        switch (service.getType()) {
-            case "Internets":
-                model.setInternetById(serviceID, (Internet)service);
-                break;
-            case "Televisions":
-                model.setTelevisionById(serviceID, (Television)service);
-                break;
-            case "Phones":
-                model.setPhoneById(serviceID, (Phone)service);
-                break;
-            default:
-                throw new FailedOperation("Unexpected service name: " + service.getType());
-        }
+        model.removeServiceById(service.getId());
+        model.addService(service);
         try{
             model.save();
         }
@@ -165,19 +119,7 @@ public class BaseController implements Controller {
     public void removeServiceFromUser(int userID, String serviceType) throws FailedOperation {
 
         User user = model.getUserById(userID);
-        switch (serviceType) {
-            case "Internets":
-                user.setInternet(null);
-                break;
-            case "Televisions":
-                user.setTelevision(null);
-                break;
-            case "Phones":
-                user.setPhone(null);
-                break;
-            default:
-                throw new FailedOperation("Unexpected service name: " + serviceType);
-        }
+        user.getServiceMap().remove(serviceType);
         try{
             model.save();
         }
@@ -188,31 +130,43 @@ public class BaseController implements Controller {
 
     @Override
     public void deleteUser(int userID) throws FailedOperation {
-
-        model.deleteUserById(userID);
+        model.removeUserById(userID);
     }
 
     @Override
-    public void deleteService(String serviceType, int serviceID) throws FailedOperation {
+    public void deleteService(long serviceID) throws FailedOperation {
 
-        switch (serviceType) {
-            case "Internets":
-                model.deleteInternetById(serviceID);
-                break;
-            case "Televisions":
-                model.deleteTelevisionById(serviceID);
-                break;
-            case "Phones":
-                model.deletePhoneById(serviceID);
-                break;
-            default:
-                throw new FailedOperation("Unexpected service name: " + serviceType);
-        }
+        model.removeServiceById(serviceID);
         try{
             model.save();
         }
         catch (IOException ex){
             throw new FailedOperation("Some issues with model were happened");
+        }
+    }
+
+    @Override
+    public long getNextServiceId() {
+        return serviceIdGenerator.next();
+    }
+    @Override
+    public long getNextUserId() {
+        return userIdGenerator.next();
+    }
+
+    @Override
+    public Internet.ConnectionType getConnectionType(String connectionType) {
+        switch (connectionType) {
+            case "ADSL":
+                return Internet.ConnectionType.ADSL;
+            case "DialUp":
+                return Internet.ConnectionType.Dial_up;
+            case "ISDN":
+                return Internet.ConnectionType.ISDN;
+            case "Cable":
+                return Internet.ConnectionType.Cable;
+            default:
+                return Internet.ConnectionType.Fiber;
         }
     }
 }

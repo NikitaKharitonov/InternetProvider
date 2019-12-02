@@ -87,7 +87,7 @@ public class FileModel implements Model {
                     break;
                 case "Television":
                     Television television = (Television) service;
-                    writer.write(television.getNumberOfChannels());
+                    writer.write(television.getNumberOfChannels() + " ");
                     break;
             }
         }

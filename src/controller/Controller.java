@@ -43,15 +43,13 @@ public interface Controller {
     String[]  getProvidedServices();
     /**
      * Search tariff by its id and name of its service
-     * @param serviceType
-     *          Service type (e.g. Internet or Television)
      * @param serviceID
      *          Service id
      * @throws FailedOperation
      *          If some troubles were happened
      * @return Service object from storage
      * */
-    Service    getService(String serviceType, int serviceID) throws FailedOperation;
+    Service    getService(long serviceID) throws FailedOperation;
     /**
      * Returns all tariffs of {@code serviceName}
      * @param serviceType
@@ -60,7 +58,7 @@ public interface Controller {
      *          If some troubles were happened
      * @return Array of existing Services
      * */
-    ArrayList<? extends Service>  getAllServices(String serviceType) throws FailedOperation;
+    ArrayList<Service>  getAllServices(String serviceType) throws FailedOperation;
     /**
      * Set {@code service} to user by his id
      * @param userID
@@ -73,24 +71,20 @@ public interface Controller {
     void    setServiceToUser(int userID, Service service) throws FailedOperation;
     /**
      * Change user data (E.g. name or email address)
-     * @param userID
-     *          User id
      * @param user
      *          User object wich will be set up by userID
      * @throws FailedOperation
      *          If some troubles were happened
      * */
-    void      changeUserData(int userID, User user) throws FailedOperation;
+    void      changeUserData(User user) throws FailedOperation;
     /**
      * Change tariff parameters
-     * @param serviceID
-     *          Service id
      * @param service
      *          Service object wich will be changed
      * @throws FailedOperation
      *          If some troubles were happened
      * */
-    void    changeService(int serviceID, Service service) throws FailedOperation;
+    void    changeService(Service service) throws FailedOperation;
     /**
      * Disable {@code serviceName} for user with such id
      * @param userID
@@ -111,10 +105,12 @@ public interface Controller {
     void      deleteUser(int userID) throws FailedOperation;
     /**
      * Delete tariff and instantly save changes in a storage
-     * @param serviceType
-     *          Service type (e.g. Internet or Television)
      * @param serviceID
      *          Service id
      * */
-    void    deleteService(String serviceType, int serviceID) throws FailedOperation;
+    void    deleteService(long serviceID) throws FailedOperation;
+
+    long getNextServiceId();
+    long getNextUserId();
+    Internet.ConnectionType getConnectionType(String connectionType);
 }

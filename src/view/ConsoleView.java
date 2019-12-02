@@ -2,304 +2,515 @@ package view;
 
 import controller.Controller;
 import controller.FailedOperation;
-import controller.Tariff;
 import model.User;
-import model.services.Internet;
-import model.services.Phone;
-import model.services.Service;
-import model.services.Television;
+import model.services.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ConsoleView implements View {
 
     Controller controller;
-    boolean isRunning;
 
     public ConsoleView(Controller controller) {
         this.controller = controller;
     }
 
     @Override
-    public void run() throws IOException {
-        isRunning = true;
+    public void run() throws IOException, FailedOperation {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        while (isRunning) {
+        while (true) {
             String line = reader.readLine();
             if (line.equals("exit")) {
-                isRunning = false;
-            } else if (line.equals("")){
+                break;
+            } else if (line.equals("")) {
                 System.out.println("It was an empty string. Try again please.");
                 continue;
             }
-            final Optional<Command> optCommand = Command.parseCommand(line);
-            if (optCommand.isPresent()) {
-                try {
-                    processCommand(optCommand.get(), line);
-                }
-                catch (FailedOperation e){
-                    System.out.println(e.getMessage());
-                } catch (CloneNotSupportedException e){
-                    System.out.println("Some unexpected behavior");
-                }
+            Command command = Command.parseCommand(line);
+            if (command != null) {
+                processCommand(command, line);
             } else {
                 System.out.println("The given command is not a valid. Try again please.");
             }
         }
     }
 
-    void processCommand(final Command command, final String line)
-            throws FailedOperation, CloneNotSupportedException {
-
+    private void processCommand(Command command, String line) throws FailedOperation {
         switch (command) {
             case GET_USER:
-                Pattern p = Pattern.compile(Command.GET_USER.getRegex());
-                Matcher m = p.matcher(line);
-                m.find();
-                User user = controller.getUser(Integer.parseInt(m.group(1)));
-                System.out.println("User (");
-                System.out.println("\tname: " + user.getName());
-                System.out.println("\tphone: " + user.getPhoneNumber());
-                System.out.println("\temail: " + user.getEmailAddress());
-                System.out.println(")");
+                Pattern pattern = Pattern.compile(Command.GET_USER.getRegex(), Pattern.CASE_INSENSITIVE);
+                Matcher matcher = pattern.matcher(line);
+                matcher.find();
+
+                int userID = Integer.parseInt(matcher.group(1));
+                User user = controller.getUser(userID);
+
+                System.out.println("GET_USER id=" + userID);
+                if (user != null) {
+                    System.out.println(user.getId());
+                    System.out.println(user.getName());
+                    System.out.println(user.getPhoneNumber());
+                    System.out.println(user.getEmailAddress());
+                } else {
+                    System.out.println("User is not found");
+                }
                 break;
+
             case GET_USER_SERVICE:
-                p = Pattern.compile(Command.GET_USER_SERVICE.getRegex());
-                m = p.matcher(line);
-                m.find();
-                user = controller.getUser(Integer.parseInt(m.group(1)));
-                if (m.group(2).equals("Internet")) {
-                    if (user.getInternet() != null)
-                        System.out.println(user.getInternet().toString());
-                } else if (m.group(2).equals("Phone")) {
-                    if (user.getPhone() != null)
-                        System.out.println(user.getPhone().toString());
-                } else {
-                    if (user.getTelevision() != null)
-                        System.out.println(user.getPhone().toString());
-                }
-                break;
-            case GET_SERVICES:
-                p = Pattern.compile(Command.GET_SERVICES.getRegex());
-                m = p.matcher(line);
-                m.find();
-                String[] services = controller.getServices();
-                for (String service : services) {
-                    System.out.println(service);
-                }
-                break;
-            case GET_TARIFF:
-                p = Pattern.compile(Command.GET_TARIFF.getRegex());
-                m = p.matcher(line);
-                m.find();
-                System.out.println(controller.getTariff(m.group(1), Integer.parseInt(m.group(2))).getService().toString());
-                break;
-            case GET_TARIFFS:
-                p = Pattern.compile(Command.GET_TARIFFS.getRegex());
-                m = p.matcher(line);
-                m.find();
-                for (Tariff tariff : controller.getAllTariffs(m.group(1))) {
-                    System.out.println(tariff.getService().toString());
-                }
-                break;
-            case CREATE_USER:
-                p = Pattern.compile(Command.CREATE_USER.getRegex());
-                m = p.matcher(line);
-                m.find();
-                Map<String, Object> params = new HashMap<>();
-                params.put("name", m.group(1));
-                params.put("phone", m.group(2));
-                params.put("email", m.group(3));
-                user = controller.createUser(params);
-                System.out.println("User (");
-                System.out.println("\tname: " + user.getName());
-                System.out.println("\tphone: " + user.getPhoneNumber());
-                System.out.println("\temail: " + user.getEmailAddress());
-                System.out.println(")");
-                break;
-            case CREATE_INTERNET:
-                p = Pattern.compile(Command.CREATE_INTERNET.getRegex());
-                m = p.matcher(line);
-                m.find();
-                String name = m.group(1);
-                Date date = new Date();
-                int speed = Integer.parseInt(m.group(2));
-                boolean antivirus = Boolean.parseBoolean(m.group(3));
-                Internet.ConnectionType connectionType;
-                String connection = m.group(4);
-                if (connection.equals("ADSL")) {
-                    connectionType = Internet.ConnectionType.ADSL;
-                } else if (connection.equals("DialUp")) {
-                    connectionType = Internet.ConnectionType.Dial_up;
-                } else if (connection.equals("Cable")) {
-                    connectionType = Internet.ConnectionType.Cable;
-                } else if (connection.equals("Fiber")) {
-                    connectionType = Internet.ConnectionType.Fiber;
-                } else {
-                    connectionType = Internet.ConnectionType.ISDN;
-                }
-                Tariff tariff = controller.createTariff(new Internet(name, date, 1, speed, antivirus, connectionType));
-                System.out.println(tariff.getService().toString());
-                break;
-            case CREATE_PHONE:
-                p = Pattern.compile(Command.CREATE_PHONE.getRegex());
-                m = p.matcher(line);
-                m.find();
-                name = m.group(1);
-                date = new Date();
-                int callsMinCount = Integer.parseInt(m.group(2));
-                int smsCount = Integer.parseInt(m.group(3));
-                tariff = controller.createTariff(new Phone(name, date, 1, callsMinCount, smsCount));
-                System.out.println(tariff.getService().toString());
-                break;
-            case CREATE_TELEVISION:
-                p = Pattern.compile(Command.CREATE_TELEVISION.getRegex());
-                m = p.matcher(line);
-                m.find();
-                name = m.group(1);
-                date = new Date();
-                int numberOfChannels = Integer.parseInt(m.group(2));
-                tariff = controller.createTariff(new Television(name, date, 1, numberOfChannels));
-                System.out.println(tariff.getService().toString());
-                break;
-            case CHANGE_USER:
-                p = Pattern.compile(Command.CHANGE_USER.getRegex());
-                m = p.matcher(line);
-                m.find();
-                params = new HashMap<>();
-                if (m.group(3) != null) {
-                    params.put("name", m.group(3));
-                }
-                if (m.group(5) != null) {
-                    params.put("phone", m.group(5));
-                }
-                if (m.group(7) != null) {
-                    params.put("email", m.group(7));
-                }
-                user = controller.changeUserData(Integer.parseInt(m.group(1)), params);
-                System.out.println("User (");
-                System.out.println("\tname: " + user.getName());
-                System.out.println("\tphone: " + user.getPhoneNumber());
-                System.out.println("\temail: " + user.getEmailAddress());
-                System.out.println(")");
-                break;
-            case CHANGE_INTERNET: // Необходимо дописать
-                p = Pattern.compile(Command.CHANGE_INTERNET.getRegex());
-                m = p.matcher(line);
-                m.find();
-                Internet oldInternet = (Internet)(controller.getTariff("Internet", Integer.parseInt(m.group(1))).getService());
-                date = new Date();
-                if (m.group(3) != null) {
-                    name = m.group(3);
-                } else {
-                    name = oldInternet.getName();
-                }
-                if (m.group(5) != null) {
-                    speed = Integer.parseInt(m.group(5));
-                } else {
-                    speed = oldInternet.getSpeed();
-                }
-                if (m.group(7) != null) {
-                    antivirus = Boolean.parseBoolean(m.group(7));
-                } else {
-                    antivirus = oldInternet.isAntivirus();
-                }
-                if (m.group(9) != null) {
-                    connection = m.group(9);
-                    if (connection.equals("ADSL")) {
-                        connectionType = Internet.ConnectionType.ADSL;
-                    } else if (connection.equals("DialUp")) {
-                        connectionType = Internet.ConnectionType.Dial_up;
-                    } else if (connection.equals("Cable")) {
-                        connectionType = Internet.ConnectionType.Cable;
-                    } else if (connection.equals("Fiber")) {
-                        connectionType = Internet.ConnectionType.Fiber;
-                    } else {
-                        connectionType = Internet.ConnectionType.ISDN;
+                pattern = Pattern.compile(Command.GET_USER_SERVICE.getRegex(), Pattern.CASE_INSENSITIVE);
+                matcher = pattern.matcher(line);
+                matcher.find();
+
+                userID = Integer.parseInt(matcher.group(1));
+                String serviceType = matcher.group(2);
+                user = controller.getUser(userID);
+
+                System.out.println("GET_USER_SERVICE id=" + userID + " service=" + serviceType);
+                if (user != null) {
+                    try {
+                        ActivatedService userService = user.getServiceMap().get(serviceType);
+                        switch (serviceType) {
+                            case "Internet":
+                                System.out.println(((Internet) controller.getService(userService.getServiceID())).toString());
+                                break;
+                            case "Television":
+                                System.out.println(((Television) controller.getService(userService.getServiceID())).toString());
+                                break;
+                            case "Phone":
+                                System.out.println(((Phone) controller.getService(userService.getServiceID())).toString());
+                                break;
+                        }
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("User service is not found");
                     }
                 } else {
-                    connectionType = oldInternet.getConnectionType();
+                    System.out.println("User is not found");
                 }
-                //Service newInternet = new Internet(name, date, 1, speed, antivirus, connectionType);
-                // Изменение тарифа
                 break;
-            case CHANGE_PHONE:
-                p = Pattern.compile(Command.CHANGE_PHONE.getRegex());
-                m = p.matcher(line);
-                m.find();
-                Phone oldPhone = (Phone)(controller.getTariff("Phone", Integer.parseInt(m.group(1))).getService());
-                date = new Date();
-                if (m.group(3) != null) {
-                    name = m.group(3);
+
+            case GET_SERVICE:
+                pattern = Pattern.compile(Command.GET_SERVICE.getRegex(), Pattern.CASE_INSENSITIVE);
+                matcher = pattern.matcher(line);
+                matcher.find();
+
+                serviceType = matcher.group(1);
+                long serviceID = Integer.parseInt(matcher.group(2));
+                System.out.println("GET_SERVICE service=" + serviceType + " serviceID=" + serviceID);
+
+                Service service = controller.getService(serviceID);
+                if (service != null && service.getClass().getSimpleName().equals(serviceType)) {
+                    switch (serviceType) {
+                        case "Internet":
+                            System.out.println(((Internet) service).toString());
+                            break;
+                        case "Television":
+                            System.out.println(((Television) service).toString());
+                            break;
+                        case "Phone":
+                            System.out.println(((Phone) service).toString());
+                            break;
+                    }
                 } else {
-                    name = oldPhone.getName();
+                    System.out.println("Service is not found");
                 }
-                if (m.group(5) != null) {
-                    callsMinCount = Integer.parseInt(m.group(5));
-                } else {
-                    callsMinCount = oldPhone.getCallsMinCount();
-                }
-                if (m.group(7) != null) {
-                    smsCount = Integer.parseInt(m.group(7));
-                } else {
-                    smsCount = oldPhone.getSmsCount();
-                }
-                // Service newPhone = new Phone(name, date, 1, callsMinCount, smsCount);
-                // Изменение тарифа
                 break;
+
+            case GET_SERVICES:
+                pattern = Pattern.compile(Command.GET_SERVICES.getRegex(), Pattern.CASE_INSENSITIVE);
+                matcher = pattern.matcher(line);
+                matcher.find();
+
+                serviceType = matcher.group(1);
+                System.out.println("GET_SERVICES service=" + serviceType);
+
+                ArrayList<Service> services = controller.getAllServices(serviceType);
+                if (!services.isEmpty()) {
+                    switch (serviceType) {
+                        case "Internet":
+                            for (Service curService : services) {
+                                System.out.println(((Internet) curService).toString());
+                            }
+                            break;
+                        case "Television":
+                            for (Service curService : services) {
+                                System.out.println(((Television) curService).toString());
+                            }
+                            break;
+                        case "Phone":
+                            for (Service curService : services) {
+                                System.out.println(((Phone) curService).toString());
+                            }
+                            break;
+                    }
+                } else {
+                    System.out.println("No services found");
+                }
+                break;
+
+            case CREATE_USER:
+                pattern = Pattern.compile(Command.CREATE_USER.getRegex(), Pattern.CASE_INSENSITIVE);
+                matcher = pattern.matcher(line);
+                matcher.find();
+
+                String name = matcher.group(1);
+                String phoneNumber = matcher.group(2);
+                String email = matcher.group(3);
+                System.out.println("CREATE_USER name=" + name + " phone=" + phoneNumber + " email=" + email);
+
+                controller.createUser(new User(controller.getNextUserId(), name, phoneNumber, email, new ServiceMap()));
+                break;
+
+            case CREATE_INTERNET:
+                pattern = Pattern.compile(Command.CREATE_INTERNET.getRegex(), Pattern.CASE_INSENSITIVE);
+                matcher = pattern.matcher(line);
+                matcher.find();
+
+                name = matcher.group(1);
+                Integer speed = Integer.parseInt(matcher.group(2));
+                boolean isAntivirus = Boolean.parseBoolean(matcher.group(3));
+                String strConnectionType = matcher.group(4);
+
+                Internet.ConnectionType connectionType = controller.getConnectionType(strConnectionType);
+                System.out.println("CREATE_INTERNET name=" + name + " speed=" + speed + " isAntivirus=" + isAntivirus +
+                        " connectionType=" + strConnectionType);
+
+                controller.createService(new Internet(controller.getNextServiceId(), name, speed, isAntivirus, connectionType));
+                break;
+
+            case CREATE_PHONE:
+                pattern = Pattern.compile(Command.CREATE_PHONE.getRegex(), Pattern.CASE_INSENSITIVE);
+                matcher = pattern.matcher(line);
+                matcher.find();
+
+                name = matcher.group(1);
+                int callsMinCount = Integer.parseInt(matcher.group(2));
+                int smsCount = Integer.parseInt(matcher.group(3));
+                System.out.println("CREATE_PHONE name=" + name + " callsMinCount=" + callsMinCount + " smsCount=" + smsCount);
+
+                controller.createService(new Phone(controller.getNextServiceId(), name, callsMinCount, smsCount));
+                break;
+
+            case CREATE_TELEVISION:
+                pattern = Pattern.compile(Command.CREATE_TELEVISION.getRegex(), Pattern.CASE_INSENSITIVE);
+                matcher = pattern.matcher(line);
+                matcher.find();
+
+                name = matcher.group(1);
+                int numberOfChannels = Integer.parseInt(matcher.group(2));
+                System.out.println("CREATE_TELEVISION name=" + name + " numberOfChannels=" + numberOfChannels);
+
+                controller.createService(new Television(controller.getNextServiceId(), name, numberOfChannels));
+                break;
+
+            case CHANGE_USER:
+                pattern = Pattern.compile(Command.CHANGE_USER.getRegex(), Pattern.CASE_INSENSITIVE);
+                matcher = pattern.matcher(line);
+                matcher.find();
+
+                userID = Integer.parseInt(matcher.group(1));
+                user = controller.getUser(userID);
+                if (user != null) {
+                    if (matcher.group(3) != null) {
+                        name = matcher.group(3);
+                    } else {
+                        // Копирование name
+                        name = user.getName();
+                    }
+                    if (matcher.group(5) != null) {
+                        phoneNumber = matcher.group(5);
+                    } else {
+                        // Копирование phone
+                        phoneNumber = user.getPhoneNumber();
+                    }
+                    if (matcher.group(7) != null) {
+                        email = matcher.group(7);
+                    } else {
+                        // Копирование email
+                        email = user.getEmailAddress();
+                    }
+                    controller.changeUserData(new User(userID, name, phoneNumber, email, user.getServiceMap()));
+                    System.out.println("CHANGE_USER idUser=" + userID + " name=" + name + " phone=" + phoneNumber +
+                            " email=" + email);
+                } else {
+                    System.out.println("User is not found");
+                }
+                break;
+
+            case CHANGE_USER_INTERNET:
+                pattern = Pattern.compile(Command.CHANGE_USER_INTERNET.getRegex(), Pattern.CASE_INSENSITIVE);
+                matcher = pattern.matcher(line);
+                matcher.find();
+
+                userID = Integer.parseInt(matcher.group(1));
+                user = controller.getUser(userID);
+                if (user != null) {
+                    try {
+                        ActivatedService userService = user.getServiceMap().get("Internet");
+                        serviceID = userService.getServiceID();
+                        Internet internet = (Internet) controller.getService(serviceID);
+                        if (matcher.group(3) != null) {
+                            name = matcher.group(3);
+                        } else {
+                            // Копирование name
+                            name = internet.getName();
+                        }
+                        if (matcher.group(5) != null) {
+                            speed = Integer.parseInt(matcher.group(5));
+                        } else {
+                            // Копирование speed
+                            speed = internet.getSpeed();
+                        }
+                        if (matcher.group(7) != null) {
+                            isAntivirus = Boolean.parseBoolean(matcher.group(7));
+                        } else {
+                            // Копирование isAntivirus
+                            isAntivirus = internet.isAntivirus();
+                        }
+                        if (matcher.group(9) != null) {
+                            strConnectionType = matcher.group(9);
+                            connectionType = controller.getConnectionType(strConnectionType);
+                        } else {
+                            // Копирование connectionType
+                            connectionType = internet.getConnectionType();
+                            strConnectionType = connectionType.toString();
+                        }
+                        System.out.println("CHANGE_USER_INTERNET userID=" + userID + " name=" + name + " speed=" +
+                                speed + " isAntivirus=" + isAntivirus + " connectionType=" + strConnectionType);
+                        controller.setServiceToUser(userID, new Internet(serviceID, name, speed, isAntivirus, connectionType));
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("User service is not found");
+                    }
+                } else {
+                    System.out.println("User is not found");
+                }
+                break;
+
+            case CHANGE_USER_PHONE:
+                pattern = Pattern.compile(Command.CHANGE_USER_PHONE.getRegex(), Pattern.CASE_INSENSITIVE);
+                matcher = pattern.matcher(line);
+                matcher.find();
+
+                userID = Integer.parseInt(matcher.group(1));
+                user = controller.getUser(userID);
+                if (user != null) {
+                    try {
+                        ActivatedService userService = user.getServiceMap().get("Phone");
+                        serviceID = userService.getServiceID();
+                        Phone phone = (Phone) controller.getService(serviceID);
+                        if (matcher.group(3) != null) {
+                            name = matcher.group(3);
+                        } else {
+                            // Копирование name
+                            name = phone.getName();
+                        }
+                        if (matcher.group(5) != null) {
+                            callsMinCount = Integer.parseInt(matcher.group(5));
+                        } else {
+                            // Копирование callsMinCount
+                            callsMinCount = phone.getCallsMinCount();
+                        }
+                        if (matcher.group(7) != null) {
+                            smsCount = Integer.parseInt(matcher.group(7));
+                        } else {
+                            // Копирование smsCount
+                            smsCount = phone.getSmsCount();
+                        }
+                        System.out.println("CHANGE_USER_PHONE userID=" + userID + " name=" + name + " callsMinCount=" +
+                                callsMinCount + " smsCount=" + smsCount);
+
+                        controller.setServiceToUser(userID, new Phone(serviceID, name, callsMinCount, smsCount));
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("User service is not found");
+                    }
+                } else {
+                    System.out.println("User is not found");
+                }
+                break;
+
+            case CHANGE_USER_TELEVISION:
+                pattern = Pattern.compile(Command.CHANGE_USER_TELEVISION.getRegex(), Pattern.CASE_INSENSITIVE);
+                matcher = pattern.matcher(line);
+                matcher.find();
+
+                userID = Integer.parseInt(matcher.group(1));
+                user = controller.getUser(userID);
+                if (user != null) {
+                    try {
+                        ActivatedService userService = user.getServiceMap().get("Television");
+                        serviceID = userService.getServiceID();
+                        Television television = (Television) controller.getService(serviceID);
+                        if (matcher.group(3) != null) {
+                            name = matcher.group(3);
+                        } else {
+                            // Копирование name
+                            name = television.getName();
+                        }
+                        if (matcher.group(5) != null) {
+                            numberOfChannels = Integer.parseInt(matcher.group(5));
+                        } else {
+                            // Копирование numberOfChannels
+                            numberOfChannels = television.getNumberOfChannels();
+                        }
+                        System.out.println("CHANGE_USER_TELEVISION userID=" + userID + " name=" + name +
+                                " numberOfChannels=" + numberOfChannels);
+
+                        controller.setServiceToUser(userID, new Television(serviceID, name, numberOfChannels));
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("User service is not found");
+                    }
+                } else {
+                    System.out.println("User is not found");
+                }
+                break;
+
+            case SET_USER_SERVICE:
+                pattern = Pattern.compile(Command.SET_USER_SERVICE.getRegex(), Pattern.CASE_INSENSITIVE);
+                matcher = pattern.matcher(line);
+                matcher.find();
+
+                userID = Integer.parseInt(matcher.group(1));
+                serviceID = Integer.parseInt(matcher.group(2));
+                System.out.println("SET_USER_SERVICE userID=" + userID + " serviceID=" + serviceID);
+
+                service = controller.getService(serviceID);
+                controller.setServiceToUser(userID, service);
+                break;
+
+            case CHANGE_INTERNET:
+                pattern = Pattern.compile(Command.CHANGE_INTERNET.getRegex(), Pattern.CASE_INSENSITIVE);
+                matcher = pattern.matcher(line);
+                matcher.find();
+
+                serviceID = Integer.parseInt(matcher.group(1));
+                service = controller.getService(serviceID);
+                if (service != null) {
+                    Internet internet = (Internet) service;
+                    if (matcher.group(3) != null) {
+                        name = matcher.group(3);
+                    } else {
+                        // Копирование name
+                        name = internet.getName();
+                    }
+                    if (matcher.group(5) != null) {
+                        speed = Integer.parseInt(matcher.group(5));
+                    } else {
+                        // Копирование speed
+                        speed = internet.getSpeed();
+                    }
+                    if (matcher.group(7) != null) {
+                        isAntivirus = Boolean.parseBoolean(matcher.group(7));
+                    } else {
+                        // Копирование isAntivirus
+                        isAntivirus = internet.isAntivirus();
+                    }
+                    if (matcher.group(9) != null) {
+                        strConnectionType = matcher.group(9);
+                        connectionType = controller.getConnectionType(strConnectionType);
+                    } else {
+                        // Копирование connectionType
+                        connectionType = internet.getConnectionType();
+                        strConnectionType = connectionType.toString();
+                    }
+                    controller.changeService(new Internet(serviceID, name, speed, isAntivirus, connectionType));
+                    System.out.println("CHANGE_INTERNET serviceID=" + serviceID + " name=" + name + " speed=" + speed +
+                            " isAntivirus=" + isAntivirus + " connectionType=" + strConnectionType);
+                } else {
+                    System.out.println("Service is not found");
+                }
+                break;
+
             case CHANGE_TELEVISION:
-                p = Pattern.compile(Command.CHANGE_TELEVISION.getRegex());
-                m = p.matcher(line);
-                m.find();
-                Television oldTelevision = (Television)(controller.getTariff("Television", Integer.parseInt(m.group(1))).getService());
-                date = new Date();
-                if (m.group(3) != null) {
-                    name = m.group(3);
-                } else {
-                    name = oldTelevision.getName();
+                pattern = Pattern.compile(Command.CHANGE_TELEVISION.getRegex(), Pattern.CASE_INSENSITIVE);
+                matcher = pattern.matcher(line);
+                matcher.find();
+
+                serviceID = Integer.parseInt(matcher.group(1));
+                service = controller.getService(serviceID);
+                if (service != null) {
+                    Television television = (Television) service;
+                    if (matcher.group(3) != null) {
+                        name = matcher.group(3);
+                    } else {
+                        // Копирование name
+                        name = television.getName();
+                    }
+                    if (matcher.group(5) != null) {
+                        numberOfChannels = Integer.parseInt(matcher.group(5));
+                    } else {
+                        numberOfChannels = television.getNumberOfChannels();
+                    }
+                    controller.changeService(new Television(serviceID, name, numberOfChannels));
                 }
-                if (m.group(5) != null) {
-                    numberOfChannels = Integer.parseInt(m.group(5));
-                } else {
-                    numberOfChannels = oldTelevision.getNumberOfChannels();
+                break;
+
+            case CHANGE_PHONE:
+                pattern = Pattern.compile(Command.CHANGE_PHONE.getRegex(), Pattern.CASE_INSENSITIVE);
+                matcher = pattern.matcher(line);
+                matcher.find();
+
+                serviceID = Integer.parseInt(matcher.group(1));
+                service = controller.getService(serviceID);
+                if (service != null) {
+                    Phone phone = (Phone) service;
+                    if (matcher.group(3) != null) {
+                        name = matcher.group(3);
+                    } else {
+                        // Копирование name
+                        name = phone.getName();
+                    }
+                    if (matcher.group(5) != null) {
+                        callsMinCount = Integer.parseInt(matcher.group(5));
+                    } else {
+                        callsMinCount = phone.getCallsMinCount();
+                    }
+                    if (matcher.group(7) != null) {
+                        smsCount = Integer.parseInt(matcher.group(7));
+                    } else {
+                        smsCount = phone.getSmsCount();
+                    }
+                    controller.changeService(new Phone(serviceID, name, callsMinCount, smsCount));
                 }
-                // Service newTelevision = new Television(name, date, 1, numberOfChannels);
-                // Изменение тарифа
                 break;
-            case SET_USER_TARIFF:
-                p = Pattern.compile(Command.SET_USER_TARIFF.getRegex());
-                m = p.matcher(line);
-                m.find();
-                // Изменение пользовательского тарифа
-                break;
+
             case DELETE_USER:
-                p = Pattern.compile(Command.DELETE_USER.getRegex());
-                m = p.matcher(line);
-                m.find();
-                controller.deleteUser(Integer.parseInt(m.group(1)));
-                System.out.println("User id=" + m.group(1) + " has been deleted");
+                pattern = Pattern.compile(Command.DELETE_USER.getRegex(), Pattern.CASE_INSENSITIVE);
+                matcher = pattern.matcher(line);
+                matcher.find();
+
+                userID = Integer.parseInt(matcher.group(1));
+                controller.deleteUser(userID);
+                System.out.println("DELETE_USER id=" + userID);
                 break;
-            case DELETE_TARIFF:
-                p = Pattern.compile(Command.DELETE_TARIFF.getRegex());
-                m = p.matcher(line);
-                m.find();
-                controller.deleteTariff(m.group(1), Integer.parseInt(m.group(2)));
-                System.out.println(m.group(1) + " id=" + m.group(2) + " has been deleted");
+
+            case DELETE_SERVICE:
+                pattern = Pattern.compile(Command.DELETE_SERVICE.getRegex(), Pattern.CASE_INSENSITIVE);
+                matcher = pattern.matcher(line);
+                matcher.find();
+
+                serviceType = matcher.group(1);
+                serviceID = Integer.parseInt(matcher.group(2));
+                service = controller.getService(serviceID);
+                if (service != null && service.getType().equals(serviceType)) {
+                    controller.deleteService(serviceID);
+                } else {
+                    System.out.println("Service is not found");
+                }
+                System.out.println("DELETE_SERVICE serviceType=" + serviceType + " id=" + serviceID);
                 break;
-            case DELETE_TARIFF_FROM_USER:
-                p = Pattern.compile(Command.DELETE_TARIFF_FROM_USER.getRegex());
-                m = p.matcher(line);
-                m.find();
-                controller.removeTariffFromUser(Integer.parseInt(m.group(1)), m.group(2));
-                System.out.println(m.group(2) + " has been deleted from User id=" + m.group(1));
+
+            case DELETE_USER_SERVICE:
+                pattern = Pattern.compile(Command.DELETE_USER_SERVICE.getRegex(), Pattern.CASE_INSENSITIVE);
+                matcher = pattern.matcher(line);
+                matcher.find();
+
+                userID = Integer.parseInt(matcher.group(1));
+                serviceType = matcher.group(2);
+                controller.removeServiceFromUser(userID, serviceType);
                 break;
         }
     }

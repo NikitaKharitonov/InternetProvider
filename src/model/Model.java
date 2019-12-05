@@ -8,7 +8,7 @@ public interface Model {
 
     void save() throws IOException;
 
-    User getUserById(long id);
+    User getUserById(long id) throws UserNotFoundException;
 
     void addUser(User user);
 
@@ -18,7 +18,7 @@ public interface Model {
 
     long getUserMaxId();
 
-    Service getServiceById(long id);
+    Service getServiceById(long id) throws ServiceNotFoundException;
 
     void addService(Service service);
 
@@ -27,4 +27,8 @@ public interface Model {
     int getServiceCount();
 
     long getServiceMaxId();
+
+    Service getUserServiceByType(long userID, String serviceType) throws ServiceNotFoundException, UserNotFoundException;
+
+    void setServiceToUser(long userId, long serviceId) throws ServiceNotFoundException, UserNotFoundException;
 }

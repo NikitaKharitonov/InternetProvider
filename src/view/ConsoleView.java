@@ -2,7 +2,7 @@ package view;
 
 import controller.Controller;
 import controller.FailedOperation;
-import model.User;
+import model.*;
 import model.services.*;
 
 import java.io.BufferedReader;
@@ -73,18 +73,7 @@ public class ConsoleView implements View {
                 System.out.println("GET_USER_SERVICE id=" + userID + " service=" + serviceType);
                 if (user != null) {
                     try {
-                        ActivatedService userService = user.getServiceMap().get(serviceType);
-                        switch (serviceType) {
-                            case "Internet":
-                                System.out.println(((Internet) controller.getService(userService.getServiceID())).toString());
-                                break;
-                            case "Television":
-                                System.out.println(((Television) controller.getService(userService.getServiceID())).toString());
-                                break;
-                            case "Phone":
-                                System.out.println(((Phone) controller.getService(userService.getServiceID())).toString());
-                                break;
-                        }
+                        System.out.println(user.getServiceIdByType(serviceType));
                     } catch (IllegalArgumentException e) {
                         System.out.println("User service is not found");
                     }
@@ -104,17 +93,7 @@ public class ConsoleView implements View {
 
                 Service service = controller.getService(serviceID);
                 if (service != null && service.getClass().getSimpleName().equals(serviceType)) {
-                    switch (serviceType) {
-                        case "Internet":
-                            System.out.println(((Internet) service).toString());
-                            break;
-                        case "Television":
-                            System.out.println(((Television) service).toString());
-                            break;
-                        case "Phone":
-                            System.out.println(((Phone) service).toString());
-                            break;
-                    }
+                    System.out.println(service.toString());
                 } else {
                     System.out.println("Service is not found");
                 }
@@ -130,23 +109,8 @@ public class ConsoleView implements View {
 
                 ArrayList<Service> services = controller.getAllServices(serviceType);
                 if (!services.isEmpty()) {
-                    switch (serviceType) {
-                        case "Internet":
-                            for (Service curService : services) {
-                                System.out.println(((Internet) curService).toString());
-                            }
-                            break;
-                        case "Television":
-                            for (Service curService : services) {
-                                System.out.println(((Television) curService).toString());
-                            }
-                            break;
-                        case "Phone":
-                            for (Service curService : services) {
-                                System.out.println(((Phone) curService).toString());
-                            }
-                            break;
-                    }
+                    for (Service curService : services)
+                        System.out.println(curService.toString());
                 } else {
                     System.out.println("No services found");
                 }
@@ -162,7 +126,7 @@ public class ConsoleView implements View {
                 String email = matcher.group(3);
                 System.out.println("CREATE_USER name=" + name + " phone=" + phoneNumber + " email=" + email);
 
-                controller.createUser(new User(controller.getNextUserId(), name, phoneNumber, email, new ServiceMap()));
+                controller.createUser(new User(controller.getNextUserId(), name, phoneNumber, email));
                 break;
 
             case CREATE_INTERNET:
@@ -233,7 +197,7 @@ public class ConsoleView implements View {
                         // Копирование email
                         email = user.getEmailAddress();
                     }
-                    controller.changeUserData(new User(userID, name, phoneNumber, email, user.getServiceMap()));
+                    controller.changeUserData(new User(userID, name, phoneNumber, email));
                     System.out.println("CHANGE_USER idUser=" + userID + " name=" + name + " phone=" + phoneNumber +
                             " email=" + email);
                 } else {
@@ -253,6 +217,7 @@ public class ConsoleView implements View {
                         ActivatedService userService = user.getServiceMap().get("Internet");
                         serviceID = userService.getServiceID();
                         Internet internet = (Internet) controller.getService(serviceID);
+
                         if (matcher.group(3) != null) {
                             name = matcher.group(3);
                         } else {
@@ -377,8 +342,7 @@ public class ConsoleView implements View {
                 serviceID = Integer.parseInt(matcher.group(2));
                 System.out.println("SET_USER_SERVICE userID=" + userID + " serviceID=" + serviceID);
 
-                service = controller.getService(serviceID);
-                controller.setServiceToUser(userID, service);
+                controller.setServiceToUser(userID, serviceID);
                 break;
 
             case CHANGE_INTERNET:

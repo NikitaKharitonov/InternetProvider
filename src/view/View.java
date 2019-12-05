@@ -6,6 +6,6 @@ import java.io.IOException;
 
 public interface View {
 
-    void run() throws IOException, FailedOperation, CloneNotSupportedException;
+    void run() throws IOException, FailedOperation;
 }
 

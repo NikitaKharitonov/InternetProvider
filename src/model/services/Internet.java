@@ -2,8 +2,6 @@ package model.services;
 
 import util.Annotations.MethodParameter;
 
-import java.util.Date;
-
 public class Internet extends Service {
     public enum ConnectionType{ADSL, Dial_up, ISDN, Cable, Fiber}
 

@@ -2,8 +2,6 @@ package model.services;
 
 import util.Annotations.MethodParameter;
 
-import java.util.Date;
-
 public class Phone extends Service {
 
     private int callsMinCount;

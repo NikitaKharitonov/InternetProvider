@@ -1,16 +1,11 @@
 package controller;
 
-import model.IdGenerator;
-import model.Model;
-import model.User;
+import model.*;
 import model.services.Internet;
-import model.services.Phone;
 import model.services.Service;
-import model.services.Television;
 
 import java.io.IOException;
 import java.util.ArrayList;
-
 
 public class BaseController implements Controller {
 
@@ -32,7 +27,7 @@ public class BaseController implements Controller {
             model.save();
         }
         catch (IOException ex){
-            throw new FailedOperation("Some issues with model were happened");
+            throw new FailedOperation(ex.getMessage());
         }
     }
 
@@ -49,7 +44,7 @@ public class BaseController implements Controller {
     }
 
     @Override
-    public User getUser(int userID){
+    public User getUser(int userID) throws UserNotFoundException {
         return model.getUserById(userID);
     }
 
@@ -59,12 +54,12 @@ public class BaseController implements Controller {
     }
 
     @Override
-    public Service getService(long serviceID){
+    public Service getService(long serviceID) throws ServiceNotFoundException {
         return model.getServiceById(serviceID);
     }
 
     @Override
-    public ArrayList<Service> getAllServices(String serviceType){
+    public ArrayList<Service> getAllServices(String serviceType) throws ServiceNotFoundException{
         ArrayList<Service> result = new ArrayList<>();
             Service temp;
             for (long i = 1; i <= model.getServiceCount(); i++) {
@@ -77,16 +72,14 @@ public class BaseController implements Controller {
     }
 
     @Override
-    public void setServiceToUser(int userID, Service service) throws FailedOperation {
-
-        User user = model.getUserById(userID);
-        user.putService(service);
+    public void setServiceToUser(long userID, long serviceId) throws FailedOperation, UserNotFoundException, ServiceNotFoundException {
+        model.setServiceToUser(userID, serviceId);
 
         try{
             model.save();
         }
         catch (IOException ex){
-            throw new FailedOperation("Some issues with model were happened");
+            throw new FailedOperation(ex.getMessage());
         }
     }
 
@@ -116,15 +109,16 @@ public class BaseController implements Controller {
     }
 
     @Override
-    public void removeServiceFromUser(int userID, String serviceType) throws FailedOperation {
+    public void removeServiceFromUser(int userID, String serviceType) throws FailedOperation, UserNotFoundException {
 
         User user = model.getUserById(userID);
-        user.getServiceMap().remove(serviceType);
+        user.removeService(serviceType);
+
         try{
             model.save();
         }
         catch (IOException ex){
-            throw new FailedOperation("Some issues with model were happened");
+            throw new FailedOperation(ex.getMessage());
         }
     }
 
@@ -141,7 +135,7 @@ public class BaseController implements Controller {
             model.save();
         }
         catch (IOException ex){
-            throw new FailedOperation("Some issues with model were happened");
+            throw new FailedOperation(ex.getMessage());
         }
     }
 
@@ -156,17 +150,7 @@ public class BaseController implements Controller {
 
     @Override
     public Internet.ConnectionType getConnectionType(String connectionType) {
-        switch (connectionType) {
-            case "ADSL":
-                return Internet.ConnectionType.ADSL;
-            case "DialUp":
-                return Internet.ConnectionType.Dial_up;
-            case "ISDN":
-                return Internet.ConnectionType.ISDN;
-            case "Cable":
-                return Internet.ConnectionType.Cable;
-            default:
-                return Internet.ConnectionType.Fiber;
-        }
+        return Internet.ConnectionType.valueOf(connectionType);
+
     }
 }

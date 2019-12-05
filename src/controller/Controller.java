@@ -1,7 +1,8 @@
 package controller;
 
-import model.services.*;
 import model.*;
+import model.services.Internet;
+import model.services.Service;
 
 import java.util.ArrayList;
 
@@ -35,7 +36,7 @@ public interface Controller {
      *          If some troubles were happened
      * @return Created Service object
      * */
-    User      getUser(int userID) throws FailedOperation;
+    User      getUser(int userID) throws FailedOperation, UserNotFoundException;
     /**
      * Return all supported services names
      * @return array of supported services names
@@ -49,7 +50,7 @@ public interface Controller {
      *          If some troubles were happened
      * @return Service object from storage
      * */
-    Service    getService(long serviceID) throws FailedOperation;
+    Service    getService(long serviceID) throws FailedOperation, ServiceNotFoundException;
     /**
      * Returns all tariffs of {@code serviceName}
      * @param serviceType
@@ -58,7 +59,7 @@ public interface Controller {
      *          If some troubles were happened
      * @return Array of existing Services
      * */
-    ArrayList<Service>  getAllServices(String serviceType) throws FailedOperation;
+    ArrayList<Service>  getAllServices(String serviceType) throws FailedOperation, ServiceNotFoundException;
     /**
      * Set {@code service} to user by his id
      * @param userID
@@ -68,7 +69,7 @@ public interface Controller {
      * @throws FailedOperation
      *          If some troubles were happened
      * */
-    void    setServiceToUser(int userID, Service service) throws FailedOperation;
+    void    setServiceToUser(long userID, long serviceId) throws FailedOperation, UserNotFoundException, ServiceNotFoundException;
     /**
      * Change user data (E.g. name or email address)
      * @param user
@@ -94,7 +95,7 @@ public interface Controller {
      * @throws FailedOperation
      *          If some troubles were happened
      * */
-    void    removeServiceFromUser(int userID, String serviceType) throws FailedOperation;
+    void    removeServiceFromUser(int userID, String serviceType) throws FailedOperation, UserNotFoundException;
     /**
      * Delete user
      * @param userID

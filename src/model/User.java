@@ -1,5 +1,7 @@
 package model;
 
+import model.services.Service;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
@@ -8,16 +10,16 @@ public class User {
 
     private class ActivatedService {
 
-        final long serviceID;
+        final Service service;
         final String activationDate;
 
-        public ActivatedService(long serviceID) {
-            this.serviceID = serviceID;
+        public ActivatedService(Service service) {
+            this.service = service;
             activationDate = new Date().toString().replaceAll(" ", "_");
         }
 
-        public ActivatedService(long serviceID, String activationDate) {
-            this.serviceID = serviceID;
+        public ActivatedService(Service service, String activationDate) {
+            this.service = service;
             this.activationDate = activationDate;
         }
     }
@@ -69,7 +71,7 @@ public class User {
         ActivatedService activatedService = activatedServiceHashMap.get(serviceType);
         if (activatedService == null)
             throw new ServiceNotFoundException("Service of type " + serviceType + " not found");
-        return activatedService.serviceID;
+        return activatedService.service.getId();
     }
 
     public String getActivationDateByType(String serviceType) throws ServiceNotFoundException {
@@ -79,12 +81,12 @@ public class User {
         return activatedService.activationDate;
     }
 
-    public void addService(long serviceId, String serviceType) {
-        activatedServiceHashMap.put(serviceType, new ActivatedService(serviceId));
+    public void addService(Service service) {
+        activatedServiceHashMap.put(service.getType(), new ActivatedService(service));
     }
 
-    public void addService(long serviceId, String serviceType, String activationDate) {
-        activatedServiceHashMap.put(serviceType, new ActivatedService(serviceId, activationDate));
+    public void addService(Service service, String activationDate) {
+        activatedServiceHashMap.put(service.getType(), new ActivatedService(service, activationDate));
     }
 
     public void removeService(String serviceType) {

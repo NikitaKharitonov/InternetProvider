@@ -28,7 +28,16 @@ public class FileModel implements Model {
                 writer.write(user.getName() + " ");
                 writer.write(user.getPhoneNumber() + " ");
                 writer.write(user.getEmailAddress() + " ");
+
+                // Check for deleted services
                 String[] serviceTypes = user.getServiceTypes();
+                for (String serviceType: serviceTypes) {
+                    long serviceId = user.getServiceIdByType(serviceType);
+                    if (services.get(serviceId) == null)
+                        user.removeService(serviceType);
+                }
+
+                serviceTypes = user.getServiceTypes();
                 writer.write(serviceTypes.length + " ");
                 for (String serviceType: serviceTypes) {
                     writer.write(user.getServiceIdByType(serviceType) + " ");
@@ -38,7 +47,7 @@ public class FileModel implements Model {
             }
             writer.close();
         } catch (IOException | ServiceNotFoundException e) {
-            throw new IOException("Could not write users to file");
+            throw new IOException("Failed to write users to file");
         }
     }
 
@@ -65,17 +74,17 @@ public class FileModel implements Model {
                 User user = new User(id, name, emailAddress, phoneNumber);
                 int activatedServicesCount = Integer.parseInt(words[index++]);
                 for (int j = 0; j < activatedServicesCount; ++j) {
-                    int serviceID = Integer.parseInt(words[index++]);
+                    long serviceID = Integer.parseInt(words[index++]);
                     String serviceType = words[index++];
                     String activationDate = words[index++];
-                    user.addService(serviceID, serviceType, activationDate);
+                    user.addService(services.get(serviceID), activationDate);
                 }
                 users.put(id, user);
             }
             reader.close();
             return users;
         } catch (IOException e) {
-            throw new IOException("Could not read users from file");
+            throw new IOException("Failed to read users from file");
         }
     }
 
@@ -111,7 +120,7 @@ public class FileModel implements Model {
             }
             writer.close();
         } catch (IOException e) {
-            throw new IOException("Could not write services to file");
+            throw new IOException("Failed to write services to file");
         }
     }
 
@@ -157,15 +166,16 @@ public class FileModel implements Model {
             reader.close();
             return services;
         } catch (IOException e) {
-            throw new IOException("Could not read services from file");
+            throw new IOException("Failed to read services from file");
         }
     }
 
     public FileModel() throws IOException {
-        if ((users = readUsers()) == null)
-            users = new HashMap<>();
         if ((services = readServices()) == null)
             services = new HashMap<>();
+        if ((users = readUsers()) == null)
+            users = new HashMap<>();
+
     }
 
     public void save() throws IOException {
@@ -248,10 +258,22 @@ public class FileModel implements Model {
     @Override
     public Service getUserServiceByType(long userID, String serviceType) throws ServiceNotFoundException, UserNotFoundException {
         User user = getUserById(userID);
-        long serviceId = user.getServiceIdByType(serviceType);
-        Service service = services.get(serviceId);
-        if (service == null)
+        long serviceId;
+        Service service;
+        try {
+            serviceId = user.getServiceIdByType(serviceType);
+            service = services.get(serviceId);
+            if (service == null)
+                throw new ServiceNotFoundException("Service with of type " + serviceType + " at user with id " + userID + " does not exist anymore");
+        } catch (ServiceNotFoundException e) {
             throw new ServiceNotFoundException("Service of type " + serviceType + " at user with id " + userID + " not found");
+        } finally {
+            try {
+                save();
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+            }
+        }
         return service;
     }
 
@@ -259,7 +281,7 @@ public class FileModel implements Model {
     public void setServiceToUser(long userId, long serviceId) throws ServiceNotFoundException, UserNotFoundException {
         User user = getUserById(userId);
         Service service = getServiceById(serviceId);
-        user.addService(serviceId, service.getType());
+        user.addService(service);
     }
 }
 

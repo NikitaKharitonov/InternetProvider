@@ -25,6 +25,7 @@ public class Models {
         try {
             FileWriter writer = new FileWriter(filePath);
             writer.write(usersToString(users));
+            writer.close();
         } catch (IOException e) {
             throw new IOException("Failed to write users to file");
         }
@@ -66,6 +67,7 @@ public class Models {
         try {
             FileWriter writer = new FileWriter(filePath);
             writer.write(servicesToString(services));
+            writer.close();
         } catch (IOException e) {
             throw new IOException("Failed to write services to file");
         }

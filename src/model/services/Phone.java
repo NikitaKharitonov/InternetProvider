@@ -1,7 +1,11 @@
 package model.services;
 
 import model.ValueReader;
+import org.w3c.dom.Element;
 import util.Annotations.MethodParameter;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 public class Phone extends Service {
 
@@ -26,6 +30,12 @@ public class Phone extends Service {
         super(str);
         callsMinCount = Integer.parseInt(ValueReader.nextValue());
         smsCount = Integer.parseInt(ValueReader.nextValue());
+    }
+
+    public Phone(Element element) {
+        super(element);
+        callsMinCount = Integer.parseInt(element.getElementsByTagName("number_of_calling_minutes").item(0).getTextContent());
+        smsCount = Integer.parseInt(element.getElementsByTagName("number_of_sms").item(0).getTextContent());
     }
 
     public int getCallsMinCount() {
@@ -57,6 +67,39 @@ public class Phone extends Service {
                 ", callsMinCount=" + callsMinCount +
                 ", smsCount=" + smsCount +
                 '}';
+    }
+
+    public void toXML(XMLStreamWriter xMLStreamWriter) throws XMLStreamException {
+        xMLStreamWriter.writeStartElement("service");
+        xMLStreamWriter.writeCharacters("\n");
+
+        xMLStreamWriter.writeStartElement("type");
+        xMLStreamWriter.writeCharacters(getClass().getSimpleName());
+        xMLStreamWriter.writeEndElement();
+        xMLStreamWriter.writeCharacters("\n");
+
+        xMLStreamWriter.writeStartElement("id");
+        xMLStreamWriter.writeCharacters(String.valueOf(id));
+        xMLStreamWriter.writeEndElement();
+        xMLStreamWriter.writeCharacters("\n");
+
+        xMLStreamWriter.writeStartElement("name");
+        xMLStreamWriter.writeCharacters(name);
+        xMLStreamWriter.writeEndElement();
+        xMLStreamWriter.writeCharacters("\n");
+
+        xMLStreamWriter.writeStartElement("number_of_calling_minutes");
+        xMLStreamWriter.writeCharacters(String.valueOf(callsMinCount));
+        xMLStreamWriter.writeEndElement();
+        xMLStreamWriter.writeCharacters("\n");
+
+        xMLStreamWriter.writeStartElement("number_of_sms");
+        xMLStreamWriter.writeCharacters(String.valueOf(smsCount));
+        xMLStreamWriter.writeEndElement();
+        xMLStreamWriter.writeCharacters("\n");
+
+        xMLStreamWriter.writeEndElement();
+        xMLStreamWriter.writeCharacters("\n");
     }
 
     @Override

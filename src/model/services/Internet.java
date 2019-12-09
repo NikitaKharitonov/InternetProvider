@@ -1,7 +1,12 @@
 package model.services;
 
 import model.ValueReader;
+import org.w3c.dom.Element;
 import util.Annotations.MethodParameter;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 
 public class Internet extends Service {
     public enum ConnectionType{ADSL, Dial_up, ISDN, Cable, Fiber}
@@ -32,6 +37,13 @@ public class Internet extends Service {
         speed = Integer.parseInt(ValueReader.nextValue());
         antivirus = Boolean.parseBoolean(ValueReader.nextValue());
         connectionType = ConnectionType.valueOf(ValueReader.nextValue());
+    }
+
+    public Internet(Element element) {
+        super(element);
+        this.speed = Integer.parseInt(element.getElementsByTagName("speed").item(0).getTextContent());
+        this.antivirus = Boolean.parseBoolean(element.getElementsByTagName("antivirus").item(0).getTextContent());
+        this.connectionType = ConnectionType.valueOf(element.getElementsByTagName("connection_type").item(0).getTextContent());
     }
 
     public int getSpeed() {
@@ -72,6 +84,44 @@ public class Internet extends Service {
                 ", antivirus=" + antivirus +
                 ", connectionType=" + connectionType +
                 '}';
+    }
+
+    public void toXML(XMLStreamWriter xMLStreamWriter) throws XMLStreamException {
+        xMLStreamWriter.writeStartElement("service");
+        xMLStreamWriter.writeCharacters("\n");
+
+        xMLStreamWriter.writeStartElement("type");
+        xMLStreamWriter.writeCharacters(getClass().getSimpleName());
+        xMLStreamWriter.writeEndElement();
+        xMLStreamWriter.writeCharacters("\n");
+
+        xMLStreamWriter.writeStartElement("id");
+        xMLStreamWriter.writeCharacters(String.valueOf(id));
+        xMLStreamWriter.writeEndElement();
+        xMLStreamWriter.writeCharacters("\n");
+
+        xMLStreamWriter.writeStartElement("name");
+        xMLStreamWriter.writeCharacters(name);
+        xMLStreamWriter.writeEndElement();
+        xMLStreamWriter.writeCharacters("\n");
+
+        xMLStreamWriter.writeStartElement("speed");
+        xMLStreamWriter.writeCharacters(String.valueOf(speed));
+        xMLStreamWriter.writeEndElement();
+        xMLStreamWriter.writeCharacters("\n");
+
+        xMLStreamWriter.writeStartElement("antivirus");
+        xMLStreamWriter.writeCharacters(String.valueOf(antivirus));
+        xMLStreamWriter.writeEndElement();
+        xMLStreamWriter.writeCharacters("\n");
+
+        xMLStreamWriter.writeStartElement("connection_type");
+        xMLStreamWriter.writeCharacters(connectionType.toString());
+        xMLStreamWriter.writeEndElement();
+        xMLStreamWriter.writeCharacters("\n");
+
+        xMLStreamWriter.writeEndElement();
+        xMLStreamWriter.writeCharacters("\n");
     }
 
     @Override

@@ -1,19 +1,20 @@
 package model.services;
 
 import model.ValueReader;
+import org.w3c.dom.Element;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import java.io.Serializable;
 
 public abstract class Service implements Serializable, Cloneable {
 
     final long id;
     String name;
-    //State state;
 
     Service(long id, String name) {
         this.id = id;
         this.name = name;
-        //this.state = State.ACTIVE;
     }
 
     Service(String str) {
@@ -22,11 +23,10 @@ public abstract class Service implements Serializable, Cloneable {
         this.name = ValueReader.nextValue();
     }
 
-//    Service(long id, String name, State state) {
-//        this.id = id;
-//        this.name = name;
-//        this.state = state;
-//    }
+    Service(Element element) {
+        this.id = Long.parseLong(element.getElementsByTagName("id").item(0).getTextContent());
+        this.name = element.getElementsByTagName("name").item(0).getTextContent();
+    }
 
     public String getName() {
         return name;
@@ -42,11 +42,6 @@ public abstract class Service implements Serializable, Cloneable {
 
     public abstract String getType();
 
-//    public State getState() {
-//        return state;
-//    }
-//
-//    public void setState(State state) {
-//        this.state = state;
-//    }
+    public abstract void toXML(XMLStreamWriter xmlStreamWriter) throws XMLStreamException;
+
 }

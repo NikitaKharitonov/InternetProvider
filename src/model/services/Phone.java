@@ -1,5 +1,6 @@
 package model.services;
 
+import model.ValueReader;
 import util.Annotations.MethodParameter;
 
 public class Phone extends Service {
@@ -19,6 +20,12 @@ public class Phone extends Service {
         super(id, name);
         this.callsMinCount = callsMinCount;
         this.smsCount = smsCount;
+    }
+
+    public Phone(String str) {
+        super(str);
+        callsMinCount = Integer.parseInt(ValueReader.nextValue());
+        smsCount = Integer.parseInt(ValueReader.nextValue());
     }
 
     public int getCallsMinCount() {
@@ -44,8 +51,9 @@ public class Phone extends Service {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "{" +
-                "name=" + name +
+        return getClass().getSimpleName() +
+                " {id=" + id +
+                ", name=" + name +
                 ", callsMinCount=" + callsMinCount +
                 ", smsCount=" + smsCount +
                 '}';

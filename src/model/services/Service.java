@@ -1,16 +1,32 @@
 package model.services;
 
+import model.ValueReader;
+
 import java.io.Serializable;
 
 public abstract class Service implements Serializable, Cloneable {
 
-    private final long id;
+    final long id;
     String name;
+    //State state;
 
     Service(long id, String name) {
         this.id = id;
         this.name = name;
+        //this.state = State.ACTIVE;
     }
+
+    Service(String str) {
+        ValueReader.setString(str);
+        this.id = Long.parseLong(ValueReader.nextValue());
+        this.name = ValueReader.nextValue();
+    }
+
+//    Service(long id, String name, State state) {
+//        this.id = id;
+//        this.name = name;
+//        this.state = state;
+//    }
 
     public String getName() {
         return name;
@@ -25,4 +41,12 @@ public abstract class Service implements Serializable, Cloneable {
     }
 
     public abstract String getType();
+
+//    public State getState() {
+//        return state;
+//    }
+//
+//    public void setState(State state) {
+//        this.state = state;
+//    }
 }

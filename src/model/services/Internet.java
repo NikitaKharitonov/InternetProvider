@@ -1,5 +1,6 @@
 package model.services;
 
+import model.ValueReader;
 import util.Annotations.MethodParameter;
 
 public class Internet extends Service {
@@ -24,6 +25,13 @@ public class Internet extends Service {
         this.speed = speed;
         this.antivirus = antivirus;
         this.connectionType = connectionType;
+    }
+
+    public Internet(String str) {
+        super(str);
+        speed = Integer.parseInt(ValueReader.nextValue());
+        antivirus = Boolean.parseBoolean(ValueReader.nextValue());
+        connectionType = ConnectionType.valueOf(ValueReader.nextValue());
     }
 
     public int getSpeed() {
@@ -58,8 +66,8 @@ public class Internet extends Service {
     @Override
     public String toString() {
         return getClass().getSimpleName() +
-                "{" +
-                "name=" + name +
+                " {id=" + id +
+                ", name=" + name +
                 ", speed=" + speed +
                 ", antivirus=" + antivirus +
                 ", connectionType=" + connectionType +

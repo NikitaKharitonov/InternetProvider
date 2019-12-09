@@ -1,5 +1,6 @@
 package model.services;
 
+import model.ValueReader;
 import util.Annotations.MethodParameter;
 
 public class Television extends Service {
@@ -17,6 +18,11 @@ public class Television extends Service {
         this.numberOfChannels = numberOfChannels;
     }
 
+    public Television(String str) {
+        super(str);
+        numberOfChannels = Integer.parseInt(ValueReader.nextValue());
+    }
+
     public int getNumberOfChannels() {
         return numberOfChannels;
     }
@@ -32,8 +38,9 @@ public class Television extends Service {
 
     @Override
     public String toString() {
-        return "Television{" +
-                "name=" + name +
+        return getClass().getSimpleName() +
+                " {id=" + id +
+                ", name=" + name +
                 ", numberOfChannels=" + numberOfChannels +
                 '}';
     }

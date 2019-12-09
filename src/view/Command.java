@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 public enum Command {
     GET_USER("^get User id=(\\d+)$"),
     GET_USER_SERVICE("^get User id=(\\d+) service=(Internet|Phone|Television)$"),
-    GET_SERVICE("^get (Internet|Phone|Television) id=(\\d+)$"),
+    GET_SERVICE("^get Service id=(\\d+)$"),
     GET_SERVICES("^get (Internet|Phone|Television)s$"),
 
     CREATE_USER("^create User name=([\\w ]+) phone=(\\+7\\d{10}) email=([\\w\\d._%-]+@[\\w\\d.-]+\\.\\w{2,4})$"),
@@ -27,7 +27,9 @@ public enum Command {
 
     DELETE_USER("^delete User id=(\\d+)$"),
     DELETE_SERVICE("^delete (Internet|Television|Phone) id=(\\d+)$"),
-    DELETE_USER_SERVICE("^delete User id=(\\d+) service=(Internet|Television|Phone)$");
+    DELETE_USER_SERVICE("^delete User id=(\\d+) service=(Internet|Television|Phone)$"),
+    HELP("^help$"),
+    EXIT("^exit$");
 
     private final String regex;
 
@@ -42,12 +44,19 @@ public enum Command {
     public static Command parseCommand(final String rawString) {
         Matcher matcher;
         for (final Command nextCommand : values()) {
-            matcher = Pattern.compile(nextCommand.getRegex(), Pattern.CASE_INSENSITIVE).matcher(rawString);
+            matcher = Pattern.compile(nextCommand.getRegex()).matcher(rawString);
             if (matcher.find()) {
                 return nextCommand;
             }
         }
         return null;
+    }
+
+    public static Matcher getMatcher(Command command, String line) {
+        Pattern pattern = Pattern.compile(command.getRegex());
+        Matcher matcher = pattern.matcher(line);
+        matcher.find();
+        return matcher;
     }
 }
 

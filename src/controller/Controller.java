@@ -71,7 +71,7 @@ public interface Controller {
      * @throws FailedOperation
      *          If some troubles were happened
      * */
-    void    setServiceToUser(long userID, long serviceId) throws FailedOperation, UserNotFoundException, ServiceNotFoundException;
+    void    setServiceToUser(int userID, Service service) throws FailedOperation, UserNotFoundException, ServiceNotFoundException;
     /**
      * Change user data (E.g. name or email address)
      * @param user

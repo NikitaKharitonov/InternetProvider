@@ -1,8 +1,10 @@
 package controller;
 
-import model.*;
+import model.exceptions.ServiceNotFoundException;
+import model.exceptions.UserNotFoundException;
 import model.services.Internet;
 import model.services.Service;
+import model.users.User;
 
 import java.util.ArrayList;
 

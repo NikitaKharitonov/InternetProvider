@@ -1,8 +1,11 @@
 package controller;
 
 import model.*;
+import model.exceptions.ServiceNotFoundException;
+import model.exceptions.UserNotFoundException;
 import model.services.Internet;
 import model.services.Service;
+import model.users.User;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,12 +37,11 @@ public class BaseController implements Controller {
     @Override
     public void createService(Service service) throws FailedOperation {
         model.addService(service);
-
         try{
             model.save();
         }
         catch (IOException ex){
-            throw new FailedOperation("Some issues with model were happened");
+            throw new FailedOperation(ex.getMessage());
         }
     }
 
@@ -54,87 +56,90 @@ public class BaseController implements Controller {
     }
 
     @Override
-    public Service getService(long serviceID) throws ServiceNotFoundException {
-        return model.getServiceById(serviceID);
+    public Service getService(long serviceID) throws FailedOperation {
+        try {
+            return model.getServiceById(serviceID);
+        } catch (ServiceNotFoundException ex) {
+            throw new FailedOperation(ex.getMessage());
+        }
     }
 
     @Override
     public ArrayList<Service> getAllServices(String serviceType) throws ServiceNotFoundException{
         ArrayList<Service> result = new ArrayList<>();
-            Service temp;
-            for (long i = 1; i <= model.getServiceCount(); i++) {
-                temp = model.getServiceById(i);
-                if (temp.getType().equals(serviceType)){
-                    result.add(temp);
-                }
+        Service temp;
+        for (long i = 1; i <= model.getServiceCount(); i++) {
+            temp = model.getServiceById(i);
+            if (temp.getType().equals(serviceType)){
+                result.add(temp);
+            }
         }
         return result;
     }
 
     @Override
-    public void setServiceToUser(long userID, long serviceId) throws FailedOperation, UserNotFoundException, ServiceNotFoundException {
-        model.setServiceToUser(userID, serviceId);
-
+    public void setServiceToUser(long userID, long serviceId) throws FailedOperation {
         try{
+            model.setServiceToUser(userID, serviceId);
             model.save();
         }
-        catch (IOException ex){
+        catch (IOException | UserNotFoundException | ServiceNotFoundException ex){
             throw new FailedOperation(ex.getMessage());
         }
     }
 
     @Override
     public void changeUserData(User user) throws FailedOperation {
-        model.removeUserById(user.getId());
-        model.addUser(user);
         try{
+            model.removeUserById(user.getId());
+            model.addUser(user);
             model.save();
         }
-        catch (IOException ex){
-            throw new FailedOperation("Some issues with model were happened");
+        catch (IOException | UserNotFoundException ex){
+            throw new FailedOperation(ex.getMessage());
         }
     }
 
     @Override
     public void changeService(Service service) throws FailedOperation {
-
-        model.removeServiceById(service.getId());
-        model.addService(service);
         try{
+            model.removeServiceById(service.getId());
+            model.addService(service);
             model.save();
         }
-        catch (IOException ex){
-            throw new FailedOperation("Some issues with model were happened");
+        catch (IOException | ServiceNotFoundException ex){
+            throw new FailedOperation(ex.getMessage());
         }
     }
 
     @Override
-    public void removeServiceFromUser(int userID, String serviceType) throws FailedOperation, UserNotFoundException {
-
-        User user = model.getUserById(userID);
-        user.removeService(serviceType);
-
+    public void removeServiceFromUser(int userID, String serviceType) throws FailedOperation {
         try{
+            User user = model.getUserById(userID);
+            user.removeService(serviceType);
             model.save();
         }
-        catch (IOException ex){
+        catch (IOException | UserNotFoundException ex){
             throw new FailedOperation(ex.getMessage());
         }
     }
 
     @Override
     public void deleteUser(int userID) throws FailedOperation {
-        model.removeUserById(userID);
+        try {
+            model.removeUserById(userID);
+        } catch (UserNotFoundException ex) {
+            throw new FailedOperation(ex.getMessage());
+        }
     }
 
     @Override
     public void deleteService(long serviceID) throws FailedOperation {
-
-        model.removeServiceById(serviceID);
         try{
+            model.removeServiceById(serviceID);
             model.save();
         }
-        catch (IOException ex){
+        catch (IOException | ServiceNotFoundException ex){
             throw new FailedOperation(ex.getMessage());
         }
     }
@@ -143,6 +148,7 @@ public class BaseController implements Controller {
     public long getNextServiceId() {
         return serviceIdGenerator.next();
     }
+
     @Override
     public long getNextUserId() {
         return userIdGenerator.next();
@@ -151,6 +157,5 @@ public class BaseController implements Controller {
     @Override
     public Internet.ConnectionType getConnectionType(String connectionType) {
         return Internet.ConnectionType.valueOf(connectionType);
-
     }
 }

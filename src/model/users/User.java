@@ -2,7 +2,11 @@ package model.users;
 
 import model.ValueReader;
 import model.exceptions.ServiceNotFoundException;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -52,6 +56,23 @@ public class User {
             String type = ValueReader.nextValue();
             long serviceId = Long.parseLong(ValueReader.nextValue());
             String activationDate = ValueReader.nextValue();
+            activatedServiceHashMap.put(type, new ActivatedService(serviceId, activationDate));
+        }
+    }
+
+    public User(Element eElement) {
+        id = Long.parseLong(eElement.getElementsByTagName("id").item(0).getTextContent());
+        name = eElement.getElementsByTagName("name").item(0).getTextContent();
+        emailAddress = eElement.getElementsByTagName("email_address").item(0).getTextContent();
+        phoneNumber = eElement.getElementsByTagName("phone_number").item(0).getTextContent();
+        int activatedServicesCount = Integer.parseInt(eElement.getElementsByTagName("activated_services_count").item(0).getTextContent());
+        activatedServiceHashMap = new HashMap<>();
+        for (int i = 0; i< activatedServicesCount; ++i) {
+            NodeList serviceList = eElement.getElementsByTagName("activated_services");
+            Element serviceElement = (Element) serviceList.item(i);
+            long serviceId = Long.parseLong(serviceElement.getElementsByTagName("service_id").item(0).getTextContent());
+            String type = serviceElement.getElementsByTagName("type").item(0).getTextContent();
+            String activationDate = serviceElement.getElementsByTagName("activation_date").item(0).getTextContent();
             activatedServiceHashMap.put(type, new ActivatedService(serviceId, activationDate));
         }
     }
@@ -106,8 +127,15 @@ public class User {
         activatedServiceHashMap.put(type, new ActivatedService(serviceId, activationDate));
     }
 
-    public void removeService(String serviceType) {
+    public void removeServiceByType(String serviceType) {
         activatedServiceHashMap.remove(serviceType);
+    }
+
+    public void removeServiceById(long serviceId) {
+        for (String serviceType: activatedServiceHashMap.keySet()) {
+            if (activatedServiceHashMap.get(serviceType).serviceId == serviceId)
+                activatedServiceHashMap.remove(serviceType);
+        }
     }
 
     public String[] getServiceTypes() {
@@ -163,5 +191,66 @@ public class User {
         }
         builder.append("}}");
         return builder.toString();
+    }
+
+    public void toXML(XMLStreamWriter xMLStreamWriter) throws XMLStreamException {
+        xMLStreamWriter.writeStartElement("user");
+        xMLStreamWriter.writeCharacters("\n");
+
+        xMLStreamWriter.writeStartElement("id");
+        xMLStreamWriter.writeCharacters(String.valueOf(id));
+        xMLStreamWriter.writeEndElement();
+        xMLStreamWriter.writeCharacters("\n");
+
+        xMLStreamWriter.writeStartElement("name");
+        xMLStreamWriter.writeCharacters(name);
+        xMLStreamWriter.writeEndElement();
+        xMLStreamWriter.writeCharacters("\n");
+
+        xMLStreamWriter.writeStartElement("email_address");
+        xMLStreamWriter.writeCharacters(emailAddress);
+        xMLStreamWriter.writeEndElement();
+        xMLStreamWriter.writeCharacters("\n");
+
+        xMLStreamWriter.writeStartElement("phone_number");
+        xMLStreamWriter.writeCharacters(phoneNumber);
+        xMLStreamWriter.writeEndElement();
+        xMLStreamWriter.writeCharacters("\n");
+
+        xMLStreamWriter.writeStartElement("activated_services_count");
+        xMLStreamWriter.writeCharacters(String.valueOf(activatedServiceHashMap.size()));
+        xMLStreamWriter.writeEndElement();
+        xMLStreamWriter.writeCharacters("\n");
+
+        xMLStreamWriter.writeStartElement("activated_services");
+        xMLStreamWriter.writeCharacters("\n");
+
+        for (String serviceType: activatedServiceHashMap.keySet()) {
+            xMLStreamWriter.writeStartElement("activated_service");
+            xMLStreamWriter.writeEndElement();
+            xMLStreamWriter.writeCharacters("\n");
+
+            xMLStreamWriter.writeStartElement("service_id");
+            xMLStreamWriter.writeCharacters(String.valueOf(activatedServiceHashMap.get(serviceType).serviceId));
+            xMLStreamWriter.writeEndElement();
+            xMLStreamWriter.writeCharacters("\n");
+
+            xMLStreamWriter.writeStartElement("type");
+            xMLStreamWriter.writeCharacters(serviceType);
+            xMLStreamWriter.writeEndElement();
+            xMLStreamWriter.writeCharacters("\n");
+
+            xMLStreamWriter.writeStartElement("activation_date");
+            xMLStreamWriter.writeCharacters(activatedServiceHashMap.get(serviceType).activationDate);
+            xMLStreamWriter.writeEndElement();
+            xMLStreamWriter.writeCharacters("\n");
+
+            xMLStreamWriter.writeEndElement();
+            xMLStreamWriter.writeEndElement();
+        }
+        xMLStreamWriter.writeEndElement();
+        xMLStreamWriter.writeCharacters("\n");
+        xMLStreamWriter.writeEndElement();
+        xMLStreamWriter.writeCharacters("\n");
     }
 }

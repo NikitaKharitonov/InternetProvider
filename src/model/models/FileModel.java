@@ -25,14 +25,6 @@ public class FileModel implements Model {
     }
 
     public void save() throws IOException {
-        // Check for deleted services
-        for (User user : users.values()) {
-            ArrayList<Long> serviceIds = user.getServiceIds();
-            for (Long serviceId : serviceIds)
-                if (services.get(serviceId) == null)
-                    user.removeService(services.get(serviceId).getType());
-        }
-
         Models.writeServicesToFile(services, serviceDataPath);
         Models.writeUsersToFile(users, usersDataPath);
     }
@@ -92,6 +84,8 @@ public class FileModel implements Model {
 
     @Override
     public void removeServiceById(long id) {
+        for (User user : users.values())
+            user.removeServiceById(id);
         services.remove(id);
     }
 

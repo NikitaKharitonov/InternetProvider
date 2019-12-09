@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<services>
+<service>
+<type>Internet</type>
+<id>1</id>
+<name>internet</name>
+<speed>20</speed>
+<antivirus>false</antivirus>
+<connection_type>Dial_up</connection_type>
+</service>
+<service>
+<type>Phone</type>
+<id>2</id>
+<name>phone</name>
+<number_of_calling_minutes>32</number_of_calling_minutes>
+<number_of_sms>16</number_of_sms>
+</service>
+<service>
+<type>Television</type>
+<id>3</id>
+<name>tele</name>
+<number_of_channels>128</number_of_channels>
+</service>
+</services>

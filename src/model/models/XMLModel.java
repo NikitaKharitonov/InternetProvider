@@ -17,8 +17,8 @@ public class XMLModel implements Model {
     private HashMap<Long, Service> services; // each key represents the service's ID
 
     private final String projectDir = System.getProperty("user.dir");
-    private final String usersDataPath = projectDir + "/data/xml/users"; // file for the services data storage
-    private final String serviceDataPath = projectDir + "/data/xml/services"; // file for the services data storage
+    private final String usersDataPath = projectDir + "/data/xml/users.xml"; // file for the services data storage
+    private final String serviceDataPath = projectDir + "/data/xml/services.xml"; // file for the services data storage
 
     public XMLModel() throws IOException {
         services = Models.readServicesFromXML(serviceDataPath);

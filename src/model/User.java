@@ -1,5 +1,6 @@
 package model;
 
+import model.exceptions.ServiceNotFoundException;
 import model.services.Service;
 
 import java.util.Date;

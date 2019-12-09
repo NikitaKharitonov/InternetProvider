@@ -3,6 +3,8 @@ package view;
 import controller.Controller;
 import controller.FailedOperation;
 import model.*;
+import model.exceptions.ServiceNotFoundException;
+import model.exceptions.UserNotFoundException;
 import model.services.*;
 
 import java.io.BufferedReader;

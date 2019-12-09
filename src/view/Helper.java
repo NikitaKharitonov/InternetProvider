@@ -2,9 +2,9 @@ package view;
 
 import controller.Controller;
 import controller.FailedOperation;
-import model.ServiceNotFoundException;
-import model.User;
-import model.UserNotFoundException;
+import model.exceptions.ServiceNotFoundException;
+import model.users.User;
+import model.exceptions.UserNotFoundException;
 import model.services.Internet;
 import model.services.Phone;
 import model.services.Service;

@@ -79,7 +79,7 @@ public interface Controller {
      * @throws FailedOperation
      *          If some troubles were happened
      * */
-    void      changeUserData(User user) throws FailedOperation;
+    void      changeUserData(User user) throws FailedOperation, UserNotFoundException;
     /**
      * Change tariff parameters
      * @param service
@@ -87,7 +87,7 @@ public interface Controller {
      * @throws FailedOperation
      *          If some troubles were happened
      * */
-    void    changeService(Service service) throws FailedOperation;
+    void    changeService(Service service) throws FailedOperation, ServiceNotFoundException;
     /**
      * Disable {@code serviceName} for user with such id
      * @param userID
@@ -105,13 +105,13 @@ public interface Controller {
      * @throws FailedOperation
      *          If some troubles were happened
      * */
-    void      deleteUser(int userID) throws FailedOperation;
+    void      deleteUser(int userID) throws FailedOperation, UserNotFoundException;
     /**
      * Delete tariff and instantly save changes in a storage
      * @param serviceID
      *          Service id
      * */
-    void    deleteService(long serviceID) throws FailedOperation;
+    void    deleteService(long serviceID) throws FailedOperation, ServiceNotFoundException;
 
     long getNextServiceId();
     long getNextUserId();

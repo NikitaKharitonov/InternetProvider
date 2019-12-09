@@ -1,10 +1,13 @@
 package controller;
 
 import model.*;
+import model.exceptions.ServiceNotFoundException;
+import model.exceptions.UserNotFoundException;
 import model.services.Internet;
 import model.services.Phone;
 import model.services.Service;
 import model.services.Television;
+import model.users.User;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,7 +39,7 @@ public class BaseController implements Controller {
     }
 
     @Override
-    public User getUser(int userID) throws UserNotFoundException {
+    public User getUser(int userID) throws UserNotFoundException, UserNotFoundException {
         return model.getUserById(userID);
     }
 
@@ -53,12 +56,12 @@ public class BaseController implements Controller {
     @Override
     public ArrayList<Service> getAllServices(String serviceType) throws ServiceNotFoundException {
         ArrayList<Service> result = new ArrayList<>();
-            Service temp;
-            for (long i = 1; i <= model.getServiceCount(); i++) {
-                temp = model.getServiceById(i);
-                if (temp.getType().equals(serviceType)){
-                    result.add(temp);
-                }
+        Service temp;
+        for (long i = 1; i <= model.getServiceCount(); i++) {
+            temp = model.getServiceById(i);
+            if (temp.getType().equals(serviceType)){
+                result.add(temp);
+            }
         }
         return result;
     }
@@ -67,20 +70,20 @@ public class BaseController implements Controller {
     public void setServiceToUser(int userID, Service service) throws FailedOperation, UserNotFoundException {
 
         User user = model.getUserById(userID);
-        user.addService(service);
+        user.addService(service.getType(), service.getId());
 
         saveChanges();
     }
 
     @Override
-    public void changeUserData(User user) throws FailedOperation {
+    public void changeUserData(User user) throws FailedOperation, UserNotFoundException {
         model.removeUserById(user.getId());
         model.addUser(user);
         saveChanges();
     }
 
     @Override
-    public void changeService(Service service) throws FailedOperation {
+    public void changeService(Service service) throws FailedOperation, ServiceNotFoundException {
 
         model.removeServiceById(service.getId());
         model.addService(service);
@@ -96,12 +99,12 @@ public class BaseController implements Controller {
     }
 
     @Override
-    public void deleteUser(int userID) throws FailedOperation {
+    public void deleteUser(int userID) throws FailedOperation, UserNotFoundException {
         model.removeUserById(userID);
     }
 
     @Override
-    public void deleteService(long serviceID) throws FailedOperation {
+    public void deleteService(long serviceID) throws FailedOperation, ServiceNotFoundException {
 
         model.removeServiceById(serviceID);
         saveChanges();

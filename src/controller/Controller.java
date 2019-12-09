@@ -71,7 +71,7 @@ public interface Controller {
      * @throws FailedOperation
      *          If some troubles were happened
      * */
-    void    setServiceToUser(int userID, Service service) throws FailedOperation, UserNotFoundException, ServiceNotFoundException;
+    void    setServiceToUser(long userID, long serviceId) throws FailedOperation, UserNotFoundException, ServiceNotFoundException;
     /**
      * Change user data (E.g. name or email address)
      * @param user
@@ -79,7 +79,7 @@ public interface Controller {
      * @throws FailedOperation
      *          If some troubles were happened
      * */
-    void      changeUserData(User user) throws FailedOperation, UserNotFoundException;
+    void      changeUserData(User user) throws FailedOperation;
     /**
      * Change tariff parameters
      * @param service
@@ -87,7 +87,7 @@ public interface Controller {
      * @throws FailedOperation
      *          If some troubles were happened
      * */
-    void    changeService(Service service) throws FailedOperation, ServiceNotFoundException;
+    void    changeService(Service service) throws FailedOperation;
     /**
      * Disable {@code serviceName} for user with such id
      * @param userID
@@ -97,7 +97,7 @@ public interface Controller {
      * @throws FailedOperation
      *          If some troubles were happened
      * */
-    void    removeServiceFromUser(int userID, String serviceType) throws FailedOperation, UserNotFoundException;
+    void    removeServiceFromUser(long userID, String serviceType) throws FailedOperation, UserNotFoundException;
     /**
      * Delete user
      * @param userID
@@ -105,13 +105,13 @@ public interface Controller {
      * @throws FailedOperation
      *          If some troubles were happened
      * */
-    void      deleteUser(int userID) throws FailedOperation, UserNotFoundException;
+    void      deleteUser(long userID) throws FailedOperation;
     /**
      * Delete tariff and instantly save changes in a storage
      * @param serviceID
      *          Service id
      * */
-    void    deleteService(long serviceID) throws FailedOperation, ServiceNotFoundException;
+    void    deleteService(long serviceID) throws FailedOperation;
 
     long getNextServiceId();
     long getNextUserId();

@@ -15,10 +15,6 @@ public enum Command {
     CREATE_TELEVISION("^create Television name=([\\w\\d ]+) numberOfChannels=(\\d+)$"),
 
     CHANGE_USER("^set User id=(\\d+)( name=([\\w ]+))?( phone=(\\+7\\d{10}))?( email=([\\w\\d._%-]+@[\\w\\d.-]+\\.\\w{2,4}))?$"),
-    CHANGE_USER_INTERNET("^set User id=(\\d+) service=Internet( name=([\\w\\d ]+))?( speed=(\\d+))?( antivirus=(true|false))?( connectionType=(ADSL|DialUp|ISDN|Cable|Fiber))?$"),
-    CHANGE_USER_PHONE("^set User id=(\\d+) service=Phone( name=([\\w\\d ]+))?( callsMinCount=(\\d+))?( smsCount=(\\d+))?$"),
-    CHANGE_USER_TELEVISION("^set User id=(\\d+) service=Television( name=([\\w\\d ]+))?( numberOfChannels=(\\d+))?$"),
-
     CHANGE_INTERNET("^set Internet id=(\\d+)( name=([\\w\\d ]+))?( speed=(\\d+))?( antivirus=(true|false))?( connectionType=(ADSL|DialUp|ISDN|Cable|Fiber))?$"),
     CHANGE_PHONE("^set Phone id=(\\d+)( name=([\\w\\d ]+))?( callsMinCount=(\\d+))?( smsCount=(\\d+))?$"),
     CHANGE_TELEVISION("^set Television id=(\\d+)( name=([\\w\\d ]+))?( numberOfChannels=(\\d+))?$"),
@@ -26,7 +22,7 @@ public enum Command {
     SET_USER_SERVICE("^set User id=(\\d+) serviceID=(\\d+)$"),
 
     DELETE_USER("^delete User id=(\\d+)$"),
-    DELETE_SERVICE("^delete (Internet|Television|Phone) id=(\\d+)$"),
+    DELETE_SERVICE("^delete Service id=(\\d+)$"),
     DELETE_USER_SERVICE("^delete User id=(\\d+) service=(Internet|Television|Phone)$"),
     HELP("^help$"),
     EXIT("^exit$");

@@ -98,16 +98,98 @@ public class Helper {
         User user = getUser(userID);
         if (params.containsKey("name")) {
             user.setName(params.get("name"));
-            System.out.println("User name has been changed.");
         }
         if (params.containsKey("phone")) {
             user.setPhoneNumber(params.get("phone"));
-            System.out.println("User phone number has been changed.");
         }
         if (params.containsKey("email")) {
             user.setEmailAddress(params.get("email"));
-            System.out.println("User email address has been changed.");
         }
         controller.changeUserData(user);
+        System.out.println("User has been changed.");
+    }
+
+    public void changeInternet(int serviceID, HashMap<String, String> params)
+            throws FailedOperation, ServiceNotFoundException {
+        Internet internet;
+        try {
+            internet = (Internet) getService(serviceID);
+        } catch (ClassCastException e) {
+            throw new ServiceNotFoundException("");
+        }
+        if (params.containsKey("name")) {
+            internet.setName(params.get("name"));
+        }
+        if (params.containsKey("speed")) {
+            internet.setSpeed(Integer.parseInt(params.get("speed")));
+        }
+        if (params.containsKey("antivirus")) {
+            internet.setAntivirus(Boolean.parseBoolean(params.get("antivirus")));
+        }
+        if (params.containsKey("connectionType")) {
+            internet.setConnectionType(controller.getConnectionType(params.get("connectionType")));
+        }
+        controller.createService(internet);
+        System.out.println("Internet has been changed");
+    }
+
+    public void changePhone(int serviceID, HashMap<String, String> params)
+            throws FailedOperation, ServiceNotFoundException {
+        Phone phone;
+        try {
+            phone = (Phone) getService(serviceID);
+        } catch (ClassCastException e) {
+            throw new ServiceNotFoundException("");
+        }
+        if (params.containsKey("name")) {
+            phone.setName(params.get("name"));
+        }
+        if (params.containsKey("callsMinCount")) {
+            phone.setCallsMinCount(Integer.parseInt(params.get("callsMinCount")));
+        }
+        if (params.containsKey("smsCount")) {
+            phone.setSmsCount(Integer.parseInt(params.get("smsCount")));
+        }
+        controller.createService(phone);
+        System.out.println("Phone has been changed.");
+    }
+
+    public void changeTelevision(int serviceID, HashMap<String, String> params)
+            throws FailedOperation, ServiceNotFoundException {
+        Television television;
+        try {
+            television = (Television) getService(serviceID);
+        } catch (ClassCastException e) {
+            throw new ServiceNotFoundException("");
+        }
+        if (params.containsKey("name")) {
+            television.setName(params.get("name"));
+        }
+        if (params.containsKey("numberOfChannels")) {
+            television.setNumberOfChannels(Integer.parseInt(params.get("numberOfChannels")));
+        }
+        controller.createService(television);
+        System.out.println("Television has been changed.");
+    }
+
+    public void setUserService(int userID, long serviceID)
+            throws FailedOperation, ServiceNotFoundException, UserNotFoundException {
+        Service service = getService(serviceID);
+        controller.setServiceToUser(userID, service);
+        System.out.println("User service has been changed.");
+    }
+
+    public void deleteUser(int userID) throws FailedOperation, UserNotFoundException {
+        controller.deleteUser(userID);
+        System.out.println("User has been deleted.");
+    }
+
+    public void deleteService(int serviceID) throws FailedOperation, ServiceNotFoundException {
+        controller.deleteService(serviceID);
+        System.out.println("Service has been deleted.");
+    }
+
+    public void deleteUserService(int userID, String serviceType) throws FailedOperation, UserNotFoundException {
+        controller.removeServiceFromUser(userID, serviceType);
     }
 }

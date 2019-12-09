@@ -99,8 +99,9 @@ public class BaseController implements Controller {
     }
 
     @Override
-    public void deleteUser(int userID) throws FailedOperation, UserNotFoundException {
+    public void deleteUser(int userID) throws UserNotFoundException, FailedOperation {
         model.removeUserById(userID);
+        saveChanges();
     }
 
     @Override

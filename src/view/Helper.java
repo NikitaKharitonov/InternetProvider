@@ -4,13 +4,11 @@ import controller.Controller;
 import controller.FailedOperation;
 import model.exceptions.ServiceNotFoundException;
 import model.users.User;
-import model.exceptions.UserNotFoundException;
 import model.services.Internet;
 import model.services.Phone;
 import model.services.Service;
 import model.services.Television;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Helper {
@@ -20,27 +18,29 @@ public class Helper {
         this.controller = controller;
     }
 
-    public User getUser(int userID) throws UserNotFoundException, FailedOperation {
+    public User getUser(int userID) throws FailedOperation {
         return controller.getUser(userID);
     }
 
-    public void printUser(int userID) throws FailedOperation, UserNotFoundException {
+    public void printUser(int userID) throws FailedOperation {
         User user = getUser(userID);
-        System.out.println("Id: " + user.getId());
-        System.out.println("Name: " + user.getName());
-        System.out.println("Phone number: " + user.getPhoneNumber());
-        System.out.println("Email: " + user.getEmailAddress());
+        System.out.println(user.toString());
     }
 
-    public Service getService(long serviceID) throws FailedOperation, ServiceNotFoundException {
+    public void printUsers() {
+        if (controller.getUsersData().equals("")) {
+            System.out.println("No users.");
+        } else {
+            System.out.println(controller.getUsersData());
+        }
+    }
+
+    public Service getService(long serviceID) throws FailedOperation {
         return controller.getService(serviceID);
     }
 
-    public void printService(long serviceID) throws FailedOperation, ServiceNotFoundException {
+    public void printService(long serviceID) throws FailedOperation {
         Service service = getService(serviceID);
-        System.out.println("Id: " + service.getId());
-        System.out.println("Type: " + service.getType());
-        System.out.println("Name: " + service.getName());
         switch (service.getType()) {
             case "Internet":
                 System.out.println(((Internet) service).toString());
@@ -54,22 +54,22 @@ public class Helper {
         }
     }
 
-    public void printServices(String serviceType) throws FailedOperation, ServiceNotFoundException {
-        ArrayList<Service> services = controller.getAllServices(serviceType);
-        if (!services.isEmpty()) {
-            for (Service curService : services) {
-                System.out.print("Id: " + curService.getId() + " ");
-                System.out.println(curService.toString());
-            }
+    public void printServices() {
+        if (controller.getServicesData().equals("")) {
+            System.out.println("No services");
         } else {
-            throw new ServiceNotFoundException("");
+            System.out.println(controller.getServicesData());
         }
     }
 
     public void printUserService(int userID, String serviceType)
-            throws FailedOperation, UserNotFoundException, ServiceNotFoundException {
+            throws FailedOperation {
         User user = getUser(userID);
-        printService(user.getServiceIdByType(serviceType));
+        try {
+            printService(user.getServiceIdByType(serviceType));
+        } catch (ServiceNotFoundException e){
+            throw new FailedOperation(e);
+        }
     }
 
     public void createUser(String name, String phoneNumber, String emailAddress) throws FailedOperation {
@@ -94,7 +94,7 @@ public class Helper {
         System.out.println("Television was created.");
     }
 
-    public void changeUser(int userID, HashMap<String, String> params) throws FailedOperation, UserNotFoundException {
+    public void changeUser(int userID, HashMap<String, String> params) throws FailedOperation {
         User user = getUser(userID);
         if (params.containsKey("name")) {
             user.setName(params.get("name"));
@@ -110,12 +110,12 @@ public class Helper {
     }
 
     public void changeInternet(int serviceID, HashMap<String, String> params)
-            throws FailedOperation, ServiceNotFoundException {
+            throws FailedOperation {
         Internet internet;
         try {
             internet = (Internet) getService(serviceID);
         } catch (ClassCastException e) {
-            throw new ServiceNotFoundException("");
+            throw new FailedOperation(new ServiceNotFoundException("User with id " + serviceID + " not found"));
         }
         if (params.containsKey("name")) {
             internet.setName(params.get("name"));
@@ -134,12 +134,12 @@ public class Helper {
     }
 
     public void changePhone(int serviceID, HashMap<String, String> params)
-            throws FailedOperation, ServiceNotFoundException {
+            throws FailedOperation {
         Phone phone;
         try {
             phone = (Phone) getService(serviceID);
         } catch (ClassCastException e) {
-            throw new ServiceNotFoundException("");
+            throw new FailedOperation(new ServiceNotFoundException("User with id " + serviceID + " not found"));
         }
         if (params.containsKey("name")) {
             phone.setName(params.get("name"));
@@ -155,12 +155,12 @@ public class Helper {
     }
 
     public void changeTelevision(int serviceID, HashMap<String, String> params)
-            throws FailedOperation, ServiceNotFoundException {
+            throws FailedOperation {
         Television television;
         try {
             television = (Television) getService(serviceID);
         } catch (ClassCastException e) {
-            throw new ServiceNotFoundException("");
+            throw new FailedOperation(new ServiceNotFoundException("User with id " + serviceID + " not found"));
         }
         if (params.containsKey("name")) {
             television.setName(params.get("name"));
@@ -173,23 +173,22 @@ public class Helper {
     }
 
     public void setUserService(int userID, long serviceID)
-            throws FailedOperation, ServiceNotFoundException, UserNotFoundException {
-        Service service = getService(serviceID);
-        controller.setServiceToUser(userID, service);
+            throws FailedOperation {
+        controller.setServiceToUser(userID, serviceID);
         System.out.println("User service has been changed.");
     }
 
-    public void deleteUser(int userID) throws FailedOperation, UserNotFoundException {
+    public void deleteUser(int userID) throws FailedOperation {
         controller.deleteUser(userID);
         System.out.println("User has been deleted.");
     }
 
-    public void deleteService(int serviceID) throws FailedOperation, ServiceNotFoundException {
+    public void deleteService(int serviceID) throws FailedOperation {
         controller.deleteService(serviceID);
         System.out.println("Service has been deleted.");
     }
 
-    public void deleteUserService(int userID, String serviceType) throws FailedOperation, UserNotFoundException {
+    public void deleteUserService(int userID, String serviceType) throws FailedOperation {
         controller.removeServiceFromUser(userID, serviceType);
     }
 }

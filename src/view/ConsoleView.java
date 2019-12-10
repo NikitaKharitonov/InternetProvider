@@ -2,8 +2,6 @@ package view;
 
 import controller.Controller;
 import controller.FailedOperation;
-import model.exceptions.ServiceNotFoundException;
-import model.exceptions.UserNotFoundException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,7 +18,7 @@ public class ConsoleView implements View {
     }
 
     @Override
-    public void run() throws IOException, FailedOperation {
+    public void run() throws IOException {
         System.out.println("Expected to enter.");
         System.out.println("\"help\" for information, \"exit\" for exit.");
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -34,12 +32,9 @@ public class ConsoleView implements View {
             if (command != null) {
                 try {
                     processCommand(command, line);
-                } catch (UserNotFoundException e) {
-                    System.out.println("User is not found.");
-                } catch (ServiceNotFoundException e) {
-                    System.out.println("Service is not found.");
                 } catch (FailedOperation e) {
-                    System.out.println("Unexpected operation. Try again please.");
+                    System.out.println(e.getMessage());
+                    System.out.println("Try again please.");
                 }
             } else {
                 System.out.println("The given command is not a valid. Try again please.");
@@ -49,13 +44,17 @@ public class ConsoleView implements View {
     }
 
     private void processCommand(Command command, String line)
-            throws FailedOperation, UserNotFoundException, ServiceNotFoundException {
+            throws FailedOperation {
         Matcher matcher;
         HashMap<String, String> params = new HashMap<>();
         switch (command) {
             case GET_USER:
                 matcher = Command.getMatcher(command, line);
                 helper.printUser(Integer.parseInt(matcher.group(1)));
+                break;
+
+            case GET_USERS:
+                helper.printUsers();
                 break;
 
             case GET_USER_SERVICE:
@@ -69,8 +68,7 @@ public class ConsoleView implements View {
                 break;
 
             case GET_SERVICES:
-                matcher = Command.getMatcher(command, line);
-                helper.printServices(matcher.group(1));
+                helper.printServices();
                 break;
 
             case CREATE_USER:

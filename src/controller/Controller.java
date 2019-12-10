@@ -38,7 +38,7 @@ public interface Controller {
      *          If some troubles were happened
      * @return Created Service object
      * */
-    User      getUser(int userID) throws FailedOperation, UserNotFoundException;
+    User      getUser(int userID) throws FailedOperation;
     /**
      * Return all supported services names
      * @return array of supported services names
@@ -52,7 +52,7 @@ public interface Controller {
      *          If some troubles were happened
      * @return Service object from storage
      * */
-    Service    getService(long serviceID) throws FailedOperation, ServiceNotFoundException;
+    Service    getService(long serviceID) throws FailedOperation;
     /**
      * Returns all tariffs of {@code serviceName}
      * @param serviceType
@@ -61,17 +61,15 @@ public interface Controller {
      *          If some troubles were happened
      * @return Array of existing Services
      * */
-    ArrayList<Service>  getAllServices(String serviceType) throws FailedOperation, ServiceNotFoundException;
+    ArrayList<Service>  getAllServices(String serviceType) throws FailedOperation;
     /**
      * Set {@code service} to user by his id
      * @param userID
      *          User id
-     * @param service
-     *          Service object wich will be set up to user
      * @throws FailedOperation
      *          If some troubles were happened
      * */
-    void    setServiceToUser(long userID, long serviceId) throws FailedOperation, UserNotFoundException, ServiceNotFoundException;
+    void    setServiceToUser(long userID, long serviceId) throws FailedOperation;
     /**
      * Change user data (E.g. name or email address)
      * @param user
@@ -97,7 +95,7 @@ public interface Controller {
      * @throws FailedOperation
      *          If some troubles were happened
      * */
-    void    removeServiceFromUser(long userID, String serviceType) throws FailedOperation, UserNotFoundException;
+    void    removeServiceFromUser(long userID, String serviceType) throws FailedOperation;
     /**
      * Delete user
      * @param userID
@@ -116,4 +114,6 @@ public interface Controller {
     long getNextServiceId();
     long getNextUserId();
     Internet.ConnectionType getConnectionType(String connectionType);
+    String getUsersData();
+    String getServicesData();
 }

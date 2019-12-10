@@ -128,7 +128,8 @@ public class BaseController implements Controller {
     public void deleteUser(long userID) throws FailedOperation {
         try {
             model.removeUserById(userID);
-        } catch (UserNotFoundException ex) {
+            model.save();
+        } catch (IOException | UserNotFoundException ex) {
             throw new FailedOperation(ex.getMessage());
         }
     }

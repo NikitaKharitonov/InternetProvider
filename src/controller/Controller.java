@@ -66,8 +66,6 @@ public interface Controller {
      * Set {@code service} to user by his id
      * @param userID
      *          User id
-     * @param service
-     *          Service object wich will be set up to user
      * @throws FailedOperation
      *          If some troubles were happened
      * */
@@ -116,4 +114,6 @@ public interface Controller {
     long getNextServiceId();
     long getNextUserId();
     Internet.ConnectionType getConnectionType(String connectionType);
+    String getUsersData();
+    String getServicesData();
 }

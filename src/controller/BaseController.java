@@ -157,6 +157,14 @@ public class BaseController implements Controller {
     public Internet.ConnectionType getConnectionType(String connectionType) {
         return Internet.ConnectionType.valueOf(connectionType);
     }
+    @Override
+    public String getUsersData(){
+        return model.getUserData();
+    }
+    @Override
+    public String getServicesData(){
+        return model.getServiceData();
+    }
 
     private void saveChanges() throws FailedOperation {
         try{

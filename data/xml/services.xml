@@ -21,4 +21,10 @@
 <name>tele</name>
 <number_of_channels>128</number_of_channels>
 </service>
+<service>
+<type>Television</type>
+<id>4</id>
+<name>kigo</name>
+<number_of_channels>100500</number_of_channels>
+</service>
 </services>

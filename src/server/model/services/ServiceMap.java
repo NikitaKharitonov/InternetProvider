@@ -30,13 +30,12 @@ public class ServiceMap {
 
     public ServiceMap(Element element) {
         NodeList nList = element.getElementsByTagName("service");
-        HashMap<Long, Service> users = new HashMap<>();
         for (int temp = 0; temp < nList.getLength(); temp++) {
             Node nNode = nList.item(temp);
             if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                 org.w3c.dom.Element eElement = (org.w3c.dom.Element) nNode;
                 Service service = ServiceFactory.createService(eElement);
-                users.put(service.getId(), service);
+                hashMap.put(service.getId(), service);
             }
         }
     }

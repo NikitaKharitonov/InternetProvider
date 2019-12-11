@@ -12,6 +12,8 @@ public interface Model {
 
     void setDataStorageFactory(DataStorageFactory dataStorageFactory);
 
+    void read() throws IOException;
+
     void save() throws IOException;
 
     User getUserById(long id) throws UserNotFoundException;

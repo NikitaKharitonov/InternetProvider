@@ -20,12 +20,18 @@ public class BaseModel implements Model {
     private DataStorageFactory dataStorageFactory = new TextFileDataStorageFactory();
 
     public BaseModel() throws IOException {
-        userMap = dataStorageFactory.readUsers();
-        serviceMap = dataStorageFactory.readServices();
+        //read();
     }
 
     public void setDataStorageFactory(DataStorageFactory factory) {
         dataStorageFactory = factory;
+    }
+
+    public void read() throws IOException {
+        if ((userMap = dataStorageFactory.readUsers()) == null)
+            userMap = new UserMap();
+        if ((serviceMap = dataStorageFactory.readServices()) == null)
+            serviceMap = new ServiceMap();
     }
 
     @Override
@@ -59,6 +65,8 @@ public class BaseModel implements Model {
 
     @Override
     public long getUserMaxId() {
+        if (userMap.size() == 0)
+            return 0;
         Set<Long> set = userMap.idSet();
         Long[] longs = new Long[set.size()];
         set.toArray(longs);
@@ -98,6 +106,8 @@ public class BaseModel implements Model {
 
     @Override
     public long getServiceMaxId() {
+        if (serviceMap.size() == 0)
+            return 0;
         Set<Long> set = serviceMap.idSet();
         Long[] longs = new Long[set.size()];
         set.toArray(longs);

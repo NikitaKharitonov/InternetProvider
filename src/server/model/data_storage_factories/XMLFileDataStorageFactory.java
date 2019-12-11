@@ -18,7 +18,8 @@ import java.io.IOException;
 
 public class XMLFileDataStorageFactory implements DataStorageFactory {
     final private String userDataPath = "./data/xml/users.xml";
-    final private String serviceDataPath = "./data/xml/users.xml";
+    final private String serviceDataPath = "./data/xml/services.xml";
+
     @Override
     public void writeUsers(UserMap users) throws IOException {
         try {
@@ -39,6 +40,8 @@ public class XMLFileDataStorageFactory implements DataStorageFactory {
     public UserMap readUsers() throws IOException {
         try {
             File inputFile = new File(userDataPath);
+            if (inputFile.length() == 0)
+                return null;
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(inputFile);
@@ -70,6 +73,8 @@ public class XMLFileDataStorageFactory implements DataStorageFactory {
     public ServiceMap readServices() throws IOException {
         try {
             File inputFile = new File(serviceDataPath);
+            if (inputFile.length() == 0)
+                return null;
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(inputFile);

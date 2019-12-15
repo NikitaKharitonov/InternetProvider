@@ -1,10 +1,10 @@
-import server.controller.BaseController;
-import server.controller.FailedOperation;
-import server.model.data_storage_factories.XMLFileDataStorageFactory;
-import server.model.models.Model;
-import server.view.ConsoleView;
-import server.view.View;
-import server.model.models.BaseModel;
+import controller.BaseController;
+import controller.FailedOperation;
+import model.data_storage_factories.XMLFileDataStorageFactory;
+import model.models.Model;
+import view.ConsoleView;
+import view.View;
+import model.models.BaseModel;
 
 import java.io.IOException;
 

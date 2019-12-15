@@ -14,41 +14,8 @@ public class ProviderServer {
 
     public ProviderServer(){}
 
-
     public ProviderServer(Controller controller){
         this.controller = controller;
-    }
-
-    private class clientConnection implements Runnable{
-
-        Socket socket;
-        InputStream in;
-        OutputStream out;
-
-        clientConnection(Socket clientSocket) throws IOException {
-            socket = clientSocket;
-            in = socket.getInputStream();
-            out = socket.getOutputStream();
-        }
-
-        @Override
-        public void run() {
-            System.out.println("processed");
-            try {
-                ObjectInputStream objectInputStream = new ObjectInputStream(in);
-                String temp = (String) objectInputStream.readObject();
-                while(!temp.equals("<END>")){
-                    System.out.println(temp);
-                    temp = (String) objectInputStream.readObject();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-
-        }
-
     }
 
     public void start() throws IOException {
@@ -57,11 +24,13 @@ public class ProviderServer {
         while (true){
             Socket clientSocket = serverSocket.accept();
             System.out.println("Client accepted!");
-            try {
-                activeConnections.add(new Thread(new clientConnection(clientSocket)));
-                activeConnections.getLast().start();
-            } catch (IOException ex){
-                System.out.println("Client was rejected");
+            activeConnections.add(new Thread(new clientConnection(clientSocket, controller)));
+            activeConnections.getLast().start();
+
+            for (int i = 0; i < activeConnections.size(); i++) {
+                if (!activeConnections.get(i).isAlive()){
+                    activeConnections.remove(i);
+                }
             }
         }
     }

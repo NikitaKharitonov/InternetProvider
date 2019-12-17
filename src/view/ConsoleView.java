@@ -3,29 +3,39 @@ package view;
 import controller.Controller;
 import controller.FailedOperation;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 
 public class ConsoleView implements View {
 
     Helper helper;
+    private BufferedReader reader;
+    private BufferedWriter writer;
 
     public ConsoleView(Controller controller) {
-        this.helper = new Helper(controller);
+        this.helper = new Helper(controller, System.out);
+        this.writer = new BufferedWriter( new OutputStreamWriter(System.out));
+        this.reader = new BufferedReader(new InputStreamReader(System.in));
+    }
+    public ConsoleView(Controller controller, InputStream inputStream, OutputStream outputStream) {
+        this.helper = new Helper(controller, outputStream);
+        this.writer = new BufferedWriter( new OutputStreamWriter(outputStream));
+        this.reader = new BufferedReader(new InputStreamReader(inputStream));
     }
 
     @Override
     public void run() throws IOException {
-        System.out.println("Expected to enter.");
-        System.out.println("\"help\" for information, \"exit\" for exit.");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("Start");
+        println("Expected to enter.");
+        println("\"help\" for information, \"exit\" for exit.");
+
         while (true) {
+            System.out.println("asd");
             String line = reader.readLine();
+            System.out.println(line);
             if (line.equals("")) {
-                System.out.println("It was an empty string. Try again please.");
+                println("It was an empty string. Try again please.");
                 continue;
             }
             Command command = Command.parseCommand(line);
@@ -33,12 +43,12 @@ public class ConsoleView implements View {
                 try {
                     processCommand(command, line);
                 } catch (FailedOperation e) {
-                    System.out.println(e.getMessage());
-                    System.out.println("Try again please.");
+                    println(e.getMessage());
+                    println("Try again please.");
                 }
             } else {
-                System.out.println("The given command is not a valid. Try again please.");
-                System.out.println("\"help\" for information.");
+                println("The given command is not a valid. Try again please.");
+                println("\"help\" for information.");
             }
         }
     }
@@ -171,12 +181,21 @@ public class ConsoleView implements View {
 
             case HELP:
                 for (Command curCommand : Command.values()) {
-                    System.out.println(curCommand.name() + " \"" + curCommand.getRegex() + "\"");
+                    println(curCommand.name() + " \"" + curCommand.getRegex() + "\"");
                 }
                 break;
 
             case EXIT:
                 System.exit(0);
+        }
+    }
+
+    private void println(String msg){
+        try {
+            writer.write(msg + "\n\r");
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

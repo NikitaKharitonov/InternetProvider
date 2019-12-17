@@ -95,7 +95,7 @@ public class BaseModel implements Model {
     public void removeServiceById(long id) throws ServiceNotFoundException {
         for (User user : userMap.users())
             user.removeServiceById(id);
-        userMap.remove(id);
+        serviceMap.remove(id);
     }
 
     @Override

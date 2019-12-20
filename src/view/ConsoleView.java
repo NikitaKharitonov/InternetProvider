@@ -26,17 +26,17 @@ public class ConsoleView implements View {
 
     @Override
     public void run() throws IOException {
-        System.out.println("Start");
-        println("Expected to enter.");
         println("\"help\" for information, \"exit\" for exit.");
+        println("Waiting for input.");
 
         while (true) {
-            System.out.println("asd");
             String line = reader.readLine();
-            System.out.println(line);
             if (line.equals("")) {
                 println("It was an empty string. Try again please.");
                 continue;
+            }
+            else if (line.toLowerCase().equals("exit")){
+                break;
             }
             Command command = Command.parseCommand(line);
             if (command != null) {
@@ -184,15 +184,13 @@ public class ConsoleView implements View {
                     println(curCommand.name() + " \"" + curCommand.getRegex() + "\"");
                 }
                 break;
-
-            case EXIT:
-                System.exit(0);
         }
     }
 
     private void println(String msg){
         try {
-            writer.write(msg + "\n\r");
+            writer.write(msg);
+            writer.newLine();
             writer.flush();
         } catch (IOException e) {
             e.printStackTrace();

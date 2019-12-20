@@ -9,16 +9,22 @@ import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 
+
 class ClientConnection{
 
     private Socket socket;
     private Controller controller;
 
+    ClientConnection(Socket clientSocket, Controller controller){
+        socket = clientSocket;
+        this.controller = controller;
+    }
+
     private class Processor implements Runnable{
 
         @Override
         public void run() {
-            System.out.println("Start client " + socket.getInetAddress().toString());
+            System.out.println("Client " + socket.getInetAddress().toString() + " connected");
             try{
 
                 View console = new ConsoleView(
@@ -26,37 +32,32 @@ class ClientConnection{
                         socket.getInputStream(),
                         socket.getOutputStream()
                 );
+
                 console.run();
 
                 socket.close();
-            } catch (EOFException e){
-                System.out.println("Client socket was close");
-            } catch( SocketException e){
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (FailedOperation failedOperation) {
-                failedOperation.printStackTrace();
+
+            } catch (SocketException e){
+                System.out.println(e.getMessage());
+                System.out.println("Connections isn't working well. Client probably closed program");
+            } catch (IOException | FailedOperation e){
+                System.out.println(e.getMessage());
             }
-            System.out.println("End client " + socket.getInetAddress().toString());
+
+            System.out.println("Client " + socket.getInetAddress().toString() + " disconnected");
         }
     }
 
-    ClientConnection(Socket clientSocket, Controller controller){
-        socket = clientSocket;
-        this.controller = controller;
-    }
-
-    public void start(){
+    void start(){
         Thread processor = new Thread(new Processor());
         processor.start();
     }
 
-    public boolean isStopped(){
+    boolean isStopped(){
         return socket.isClosed();
     }
 
-    public void stop() throws IOException {
+    void stop() throws IOException {
         socket.close();
     }
 }

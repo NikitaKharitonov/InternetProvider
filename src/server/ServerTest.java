@@ -10,10 +10,11 @@ import java.io.IOException;
 public class ServerTest {
     public static void main(String[] args){
         try {
+            // Creating main component and start off server
             Model model = new BaseModel();
             model.setDataStorageFactory(new XMLFileDataStorageFactory());
             model.read();
-            ProviderServer providerServer = new ProviderServer(new BaseController(model));
+            ProviderServer providerServer = new ProviderServer(new BaseController(model), 8080);
             providerServer.start();
         } catch (IOException e) {
             e.printStackTrace();

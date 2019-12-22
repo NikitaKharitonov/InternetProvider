@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>controller</OriginalElement>
+  <nodes>
+    <node x="1022.9431729201715" y="66.99999999999986">controller.Controller</node>
+    <node x="422.02948060378947" y="0.0">controller.BaseController</node>
+    <node x="0.0" y="232.5">controller.FailedOperation</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="controller.BaseController" target="controller.Controller">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="controller.BaseController" target="controller.FailedOperation">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+  </edges>
+  <settings layout="Circular" zoom="1.0" x="644.5" y="303.0" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Constructors</Category>
+    <Category>Properties</Category>
+    <Category>Inner Classes</Category>
+    <Category>Methods</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

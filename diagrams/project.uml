@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="1601.8372380552555" y="2382.172876753575">model.users.User</node>
+    <node x="805.7396392337907" y="2561.6912928103297">model.services.ServiceMap</node>
+    <node x="3112.8884162201384" y="12.0">client.Client</node>
+    <node x="590.2633340072041" y="513.5554014579691">view.Helper</node>
+    <node x="1417.3168375747434" y="464.5624228629622">model.exceptions.UserNotFoundException</node>
+    <node x="496.62228801288654" y="2435.017023600386">model.data_storage_factories.TextFileDataStorageFactory</node>
+    <node x="2189.557573924102" y="1422.354072839505">model.services.Internet</node>
+    <node x="47.320727982124254" y="1701.0661491697315">server.ServerTest</node>
+    <node x="1895.4540859659016" y="720.9874235212615">controller.Controller</node>
+    <node x="2142.8110971278998" y="1019.4545603215887">view.View</node>
+    <node x="2012.938669721544" y="838.2856586994483">view.ConsoleView</node>
+    <node x="1081.7726495149227" y="2584.6959125055564">model.services.Service</node>
+    <node x="2066.942790473615" y="3007.441662741312">model.users.User.ActivatedService</node>
+    <node x="2064.445144981616" y="2058.947707315979">model.util.ValueReader</node>
+    <node x="143.53885074049208" y="947.6893228406437">server.ClientConnection</node>
+    <node x="1366.0517774559862" y="2562.649744367038">model.users.UserMap</node>
+    <node x="2076.824583186513" y="0.0">model.util.IdGenerator</node>
+    <node x="1956.922735190729" y="2214.395348087049">model.services.Phone</node>
+    <node x="2164.447992300349" y="1139.6721921448548">model.services.Internet.ConnectionType</node>
+    <node x="2895.0388288201934" y="0.0">client.clientSocket</node>
+    <node x="2146.6802563440933" y="1889.9229118438905">model.services.Television</node>
+    <node x="305.45370933722063" y="2278.2191931839398">model.data_storage_factories.DataStorageFactory</node>
+    <node x="2193.907995727486" y="1687.656967998505">model.services.ServiceFactory</node>
+    <node x="293.31514644755794" y="802.8402747940369">server.ClientConnection.Processor</node>
+    <node x="1239.0138095417244" y="2606.193680465616">model.models.Model</node>
+    <node x="2713.0388288201934" y="163.29552970825898">view.Command</node>
+    <node x="0.0" y="1435.7781667899321">server.ProviderServer</node>
+    <node x="1684.337238055255" y="537.0362679180379">controller.BaseController</node>
+    <node x="401.5846077792687" y="666.035533410901">controller.FailedOperation</node>
+    <node x="810.146374919095" y="440.1933120524702">model.exceptions.ServiceNotFoundException</node>
+    <node x="99.26993299330638" y="2025.1520126373593">model.data_storage_factories.XMLFileDataStorageFactory</node>
+    <node x="24.46945734537985" y="1188.3879252246766">server.ConnectionManager</node>
+    <node x="1123.8485315511286" y="377.9702778052017">model.models.BaseModel</node>
+    <node x="111.57637992358127" y="1844.116285110697">Main</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="view.Helper" target="model.services.Internet">
+      <point x="-10.073794452256834" y="0.0" />
+      <point x="-10.073794452256834" y="0.0" />
+    </edge>
+    <edge source="model.data_storage_factories.DataStorageFactory" target="model.services.ServiceMap">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="model.models.Model" target="model.users.User">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="model.models.BaseModel" target="model.services.ServiceMap">
+      <point x="-5.0581369489477765" y="0.0" />
+      <point x="-5.0581369489477765" y="0.0" />
+    </edge>
+    <edge source="Main" target="model.data_storage_factories.XMLFileDataStorageFactory">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="controller.BaseController" target="controller.FailedOperation">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="model.data_storage_factories.XMLFileDataStorageFactory" target="model.services.ServiceMap">
+      <point x="3.0562243468892802" y="-3.9572076950144037" />
+      <point x="3.056224346889337" y="-3.9572076950144037" />
+    </edge>
+    <edge source="model.models.Model" target="model.services.Service">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="controller.BaseController" target="model.models.Model">
+      <point x="-5.152855657730811" y="0.0" />
+      <point x="-5.152855657730839" y="0.0" />
+    </edge>
+    <edge source="view.Helper" target="controller.FailedOperation">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="server.ClientConnection" target="server.ClientConnection.Processor">
+      <point x="-12.165086172393899" y="0.0" />
+      <point x="-12.165086172393899" y="0.0" />
+    </edge>
+    <edge source="model.services.ServiceFactory" target="model.services.Service">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="model.services.Internet" target="model.util.ValueReader">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="model.data_storage_factories.XMLFileDataStorageFactory" target="model.users.UserMap">
+      <point x="-12.734754019327056" y="0.0" />
+      <point x="-12.734754019326317" y="0.0" />
+    </edge>
+    <edge source="model.data_storage_factories.TextFileDataStorageFactory" target="model.users.UserMap">
+      <point x="0.6945977551669102" y="-4.9515183488014145" />
+      <point x="0.6945977551668534" y="-4.951518348801528" />
+    </edge>
+    <edge source="server.ServerTest" target="model.data_storage_factories.XMLFileDataStorageFactory">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="controller.BaseController" target="controller.Controller">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="server.ConnectionManager" target="server.ClientConnection">
+      <point x="10.829794242637263" y="0.0" />
+      <point x="10.82979424263715" y="0.0" />
+    </edge>
+    <edge source="view.Helper" target="model.exceptions.ServiceNotFoundException">
+      <point x="0.0" y="5.337663763867113" />
+      <point x="14.2845902499987" y="0.0" />
+    </edge>
+    <edge source="model.users.User" target="model.exceptions.ServiceNotFoundException">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="model.services.ServiceFactory" target="model.services.Television">
+      <point x="-5.186303375473926" y="0.0" />
+      <point x="-5.186303375473926" y="-5.6843418860808015E-14" />
+    </edge>
+    <edge source="view.ConsoleView" target="view.Command">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="controller.BaseController" target="model.exceptions.ServiceNotFoundException">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="Main" target="controller.BaseController">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="server.ServerTest" target="model.models.Model">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="model.models.BaseModel" target="model.exceptions.UserNotFoundException">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="model.users.User.ActivatedService" target="model.users.User">
+      <point x="-17.768871686814805" y="0.0" />
+      <point x="-17.76887168681469" y="-1.1368683772161603E-13" />
+    </edge>
+    <edge source="model.models.BaseModel" target="model.services.Service">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="server.ClientConnection.Processor" target="view.View">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="model.data_storage_factories.DataStorageFactory" target="model.users.UserMap">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="model.services.Internet.ConnectionType" target="model.services.Internet">
+      <point x="10.145364872433447" y="0.0" />
+      <point x="10.14536487243322" y="0.0" />
+    </edge>
+    <edge source="model.services.ServiceMap" target="model.services.Service">
+      <point x="0.0" y="5.061845855848787" />
+      <point x="0.0" y="5.061845855849015" />
+    </edge>
+    <edge source="controller.Controller" target="model.services.Internet.ConnectionType">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="controller.BaseController" target="model.util.IdGenerator">
+      <point x="5.92295722893823" y="0.0" />
+      <point x="5.922957228938117" y="0.0" />
+    </edge>
+    <edge source="model.models.BaseModel" target="model.users.User">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="model.services.Internet" target="model.services.Internet.ConnectionType">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="client.Client" target="client.clientSocket">
+      <point x="0.0" y="-5.0" />
+      <point x="0.0" y="-5.0" />
+    </edge>
+    <edge source="view.ConsoleView" target="controller.Controller">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="server.ClientConnection.Processor" target="server.ClientConnection">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="view.ConsoleView" target="view.View">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="server.ConnectionManager" target="controller.Controller">
+      <point x="0.0" y="5.17766000426127" />
+      <point x="19.252393497149683" y="0.0" />
+    </edge>
+    <edge source="model.services.ServiceFactory" target="model.services.Internet">
+      <point x="-4.990335354584431" y="-0.31072986464960195" />
+      <point x="-4.990335354584431" y="-0.31072986464960906" />
+    </edge>
+    <edge source="server.ClientConnection.Processor" target="controller.FailedOperation">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="server.ClientConnection.Processor" target="view.ConsoleView">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="server.ProviderServer" target="server.ConnectionManager">
+      <point x="-4.943161602712053" y="-0.7517668318530006" />
+      <point x="-4.943161602712053" y="-0.75176683185299" />
+    </edge>
+    <edge source="model.services.Service" target="model.util.ValueReader">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="Main" target="controller.FailedOperation">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="model.models.BaseModel" target="model.data_storage_factories.DataStorageFactory">
+      <point x="4.560445879101074" y="2.049959361497258" />
+      <point x="4.560445879101053" y="2.049959361497258" />
+    </edge>
+    <edge source="server.ServerTest" target="server.ProviderServer">
+      <point x="5.013703853516745" y="0.0" />
+      <point x="5.013703853516745" y="0.0" />
+    </edge>
+    <edge source="model.data_storage_factories.TextFileDataStorageFactory" target="model.services.ServiceMap">
+      <point x="1.917196334590244" y="-4.617830466207465" />
+      <point x="1.917196334590244" y="-4.6178304662073515" />
+    </edge>
+    <edge source="server.ServerTest" target="model.models.BaseModel">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="server.ServerTest" target="controller.BaseController">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="controller.BaseController" target="model.services.Service">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="controller.BaseController" target="model.users.User">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="controller.Controller" target="model.users.User">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="model.services.Phone" target="model.services.Service">
+      <point x="0.0" y="-5.418086921691042" />
+      <point x="0.0" y="-5.418086921690929" />
+    </edge>
+    <edge source="controller.BaseController" target="model.exceptions.UserNotFoundException">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="Main" target="view.View">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="model.services.Phone" target="model.util.ValueReader">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="Main" target="model.models.Model">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="view.Helper" target="model.services.Television">
+      <point x="3.3195508112830794" y="-3.7390617019929095" />
+      <point x="3.3195508112830794" y="-3.7390617019929095" />
+    </edge>
+    <edge source="view.ConsoleView" target="view.Helper">
+      <point x="0.0" y="-5.1405339328443915" />
+      <point x="0.0" y="-5.1405339328443915" />
+    </edge>
+    <edge source="model.models.BaseModel" target="model.exceptions.ServiceNotFoundException">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="model.models.Model" target="model.data_storage_factories.DataStorageFactory">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="model.models.BaseModel" target="model.users.UserMap">
+      <point x="4.97381608556401" y="-0.5110318453723721" />
+      <point x="4.97381608556401" y="-0.5110318453723721" />
+    </edge>
+    <edge source="model.services.Internet" target="model.services.Service">
+      <point x="-7.10012479768875" y="0.0" />
+      <point x="-7.100124797688665" y="0.0" />
+    </edge>
+    <edge source="model.services.Television" target="model.util.ValueReader">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="model.data_storage_factories.TextFileDataStorageFactory" target="model.data_storage_factories.DataStorageFactory">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="model.services.ServiceFactory" target="model.services.Phone">
+      <point x="-5.547662832342894" y="0.0" />
+      <point x="-5.547662832343121" y="0.0" />
+    </edge>
+    <edge source="controller.Controller" target="model.services.Service">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="Main" target="view.ConsoleView">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="model.users.UserMap" target="model.users.User">
+      <point x="25.139600560153042" y="0.0" />
+      <point x="0.0" y="10.899404092462646" />
+    </edge>
+    <edge source="Main" target="model.models.BaseModel">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="controller.BaseController" target="model.services.Internet.ConnectionType">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="view.ConsoleView" target="controller.FailedOperation">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="controller.BaseController" target="model.services.Internet">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="model.data_storage_factories.XMLFileDataStorageFactory" target="model.data_storage_factories.DataStorageFactory">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="view.Helper" target="model.services.Phone">
+      <point x="3.9329560102006553" y="-3.0873705676233385" />
+      <point x="3.9329560102006553" y="-3.0873705676233385" />
+    </edge>
+    <edge source="model.services.Television" target="model.services.Service">
+      <point x="-9.198893007990932" y="5.6843418860808015E-14" />
+      <point x="0.0" y="-5.956771271560456" />
+    </edge>
+    <edge source="view.Helper" target="controller.Controller">
+      <point x="0.7151584198171008" y="-4.94859055030463" />
+      <point x="0.7151584198171577" y="-4.94859055030463" />
+    </edge>
+    <edge source="server.ClientConnection" target="controller.Controller">
+      <point x="0.0" y="5.0522086364288725" />
+      <point x="-1.1368683772161603E-13" y="5.0522086364288725" />
+    </edge>
+    <edge source="view.Helper" target="model.users.User">
+      <point x="-5.776363620998154" y="0.0" />
+      <point x="-5.776363620998268" y="0.0" />
+    </edge>
+    <edge source="server.ProviderServer" target="controller.Controller">
+      <point x="-1.8869068742546915" y="-4.6302896721360725" />
+      <point x="-1.8869068742548052" y="-4.630289672136087" />
+    </edge>
+    <edge source="model.users.User" target="model.users.User.ActivatedService">
+      <point x="-5.922957228938344" y="-1.1368683772161603E-13" />
+      <point x="-5.922957228938117" y="0.0" />
+    </edge>
+    <edge source="model.services.ServiceMap" target="model.services.ServiceFactory">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="model.models.BaseModel" target="model.models.Model">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="model.users.User" target="model.util.ValueReader">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="view.Helper" target="model.services.Service">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+  </edges>
+  <settings layout="Circular" zoom="0.5" x="1215.0" y="650.0" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Inner Classes</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

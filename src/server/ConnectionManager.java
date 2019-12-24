@@ -47,4 +47,8 @@ class ConnectionManager {
             }
         }
     }
+
+    public int getConnectionsNumber(){
+        return connections.size();
+    }
 }

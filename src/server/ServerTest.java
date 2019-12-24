@@ -16,6 +16,7 @@ public class ServerTest {
             model.read();
             ProviderServer providerServer = new ProviderServer(new BaseController(model), 8080);
             providerServer.start();
+            System.out.println("App closed");
         } catch (IOException e) {
             e.printStackTrace();
         }

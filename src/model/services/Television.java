@@ -1,6 +1,6 @@
 package model.services;
 
-import model.util.ValueReader;
+import model.util.ValueParser;
 import org.w3c.dom.Element;
 import util.Annotations.MethodParameter;
 
@@ -24,7 +24,7 @@ public class Television extends Service {
 
     public Television(String str) {
         super(str);
-        numberOfChannels = Integer.parseInt(ValueReader.nextValue());
+        numberOfChannels = Integer.parseInt(ValueParser.getValue("numberOfChannels"));
     }
 
     public Television(Element element) {

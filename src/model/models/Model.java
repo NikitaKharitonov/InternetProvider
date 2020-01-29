@@ -7,10 +7,11 @@ import model.services.Service;
 import model.users.User;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 public interface Model {
 
-    void setDataStorageFactory(DataStorageFactory dataStorageFactory);
+    //void setDataStorageFactory(DataStorageFactory dataStorageFactory);
 
     void read() throws IOException;
 
@@ -43,4 +44,7 @@ public interface Model {
     Service getUserServiceByType(long userID, String serviceType) throws ServiceNotFoundException, UserNotFoundException;
 
     void setServiceToUser(long userId, long serviceId) throws ServiceNotFoundException, UserNotFoundException;
+
+    void setServiceToUser(long userId, long serviceId, String date) throws ServiceNotFoundException, UserNotFoundException, ParseException;
+
 }

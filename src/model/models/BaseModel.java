@@ -1,7 +1,8 @@
 package model.models;
 
+import javafx.scene.input.DataFormat;
 import model.data_storage_factories.DataStorageFactory;
-import model.data_storage_factories.TextFileDataStorageFactory;
+import model.data_storage_factories.XMLFileDataStorageFactory;
 import model.exceptions.ServiceNotFoundException;
 import model.exceptions.UserNotFoundException;
 import model.services.ServiceMap;
@@ -10,21 +11,25 @@ import model.services.Service;
 import model.users.User;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Set;
 
 public class BaseModel implements Model {
     private UserMap userMap;
     private ServiceMap serviceMap;
-    private DataStorageFactory dataStorageFactory = new TextFileDataStorageFactory();
+    private DataStorageFactory dataStorageFactory = new XMLFileDataStorageFactory();
 
     public BaseModel() throws IOException {
-        //read();
+       // read();
     }
 
-    public void setDataStorageFactory(DataStorageFactory factory) {
-        dataStorageFactory = factory;
-    }
+//    public void setDataStorageFactory(DataStorageFactory factory) {
+//        dataStorageFactory = factory;
+//    }
 
     public void read() throws IOException {
         if ((userMap = dataStorageFactory.readUsers()) == null)
@@ -93,9 +98,10 @@ public class BaseModel implements Model {
 
     @Override
     public void removeServiceById(long id) throws ServiceNotFoundException {
-        for (User user : userMap.users())
-            user.removeServiceById(id);
-        serviceMap.remove(id);
+        //fixme
+//        for (User user : userMap.users())
+//            user.removeServiceById(id);
+//        serviceMap.remove(id);
     }
 
     @Override
@@ -128,5 +134,13 @@ public class BaseModel implements Model {
         User user = getUserById(userId);
         Service service = getServiceById(serviceId);
         user.addService(service.getType(), serviceId);
+    }
+
+    @Override
+    public void setServiceToUser(long userId, long serviceId, String time) throws ServiceNotFoundException, UserNotFoundException, ParseException {
+        Date date = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(time);
+        User user = getUserById(userId);
+        Service service = getServiceById(serviceId);
+        user.addService(service.getType(), serviceId, date);
     }
 }

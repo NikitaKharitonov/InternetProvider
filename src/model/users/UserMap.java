@@ -6,6 +6,7 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import java.text.ParseException;
 import java.util.*;
 
 public class UserMap {
@@ -16,15 +17,15 @@ public class UserMap {
 
     }
 
-    public UserMap(String str) {
-        String[] lines = str.split("\n");
-        for (String line: lines) {
-            User user = new User(line);
-            hashMap.put(user.getId(), user);
-        }
-    }
+//    public UserMap(String str) {
+//        String[] lines = str.split("\n");
+//        for (String line: lines) {
+//            User user = new User(line);
+//            hashMap.put(user.getId(), user);
+//        }
+//    }
 
-    public UserMap(Element element) {
+    public UserMap(Element element) throws ParseException {
         NodeList nodeList = element.getElementsByTagName("user");
         for (int temp = 0; temp < nodeList.getLength(); temp++) {
             Node nNode = nodeList.item(temp);

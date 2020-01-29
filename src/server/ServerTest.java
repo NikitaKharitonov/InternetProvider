@@ -12,7 +12,6 @@ public class ServerTest {
         try {
             // Creating main component and start off server
             Model model = new BaseModel();
-            model.setDataStorageFactory(new XMLFileDataStorageFactory());
             model.read();
             ProviderServer providerServer = new ProviderServer(new BaseController(model), 8080);
             providerServer.start();

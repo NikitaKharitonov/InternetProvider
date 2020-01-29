@@ -1,6 +1,6 @@
 package model.services;
 
-import model.util.ValueReader;
+import model.util.ValueParser;
 import org.w3c.dom.Element;
 import util.Annotations.MethodParameter;
 
@@ -28,8 +28,8 @@ public class Phone extends Service {
 
     public Phone(String str) {
         super(str);
-        callsMinCount = Integer.parseInt(ValueReader.nextValue());
-        smsCount = Integer.parseInt(ValueReader.nextValue());
+        callsMinCount = Integer.parseInt(ValueParser.getValue("callsMinCount"));
+        smsCount = Integer.parseInt(ValueParser.getValue("smsCount"));
     }
 
     public Phone(Element element) {

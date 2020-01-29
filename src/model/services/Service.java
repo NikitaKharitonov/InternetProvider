@@ -1,6 +1,6 @@
 package model.services;
 
-import model.util.ValueReader;
+import model.util.ValueParser;
 import org.w3c.dom.Element;
 
 import javax.xml.stream.XMLStreamException;
@@ -18,9 +18,9 @@ public abstract class Service implements Serializable, Cloneable {
     }
 
     Service(String str) {
-        ValueReader.setString(str);
-        this.id = Long.parseLong(ValueReader.nextValue());
-        this.name = ValueReader.nextValue();
+        ValueParser.setString(str);
+        this.id = Long.parseLong(ValueParser.getValue("id"));
+        this.name = ValueParser.getValue("name");
     }
 
     Service(Element element) {

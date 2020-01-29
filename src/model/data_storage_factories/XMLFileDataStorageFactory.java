@@ -15,6 +15,7 @@ import javax.xml.stream.XMLStreamWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
 
 public class XMLFileDataStorageFactory implements DataStorageFactory {
     final private String userDataPath = "./data/xml/users.xml";
@@ -48,7 +49,7 @@ public class XMLFileDataStorageFactory implements DataStorageFactory {
             doc.getDocumentElement().normalize();
             Element element = doc.getDocumentElement();
             return new UserMap(element);
-        } catch (ParserConfigurationException | SAXException e) {
+        } catch (ParserConfigurationException | SAXException | ParseException e) {
             throw new IOException("Failed to read users from XML file");
         }
     }

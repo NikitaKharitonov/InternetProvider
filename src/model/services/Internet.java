@@ -1,6 +1,6 @@
 package model.services;
 
-import model.util.ValueReader;
+import model.util.ValueParser;
 import org.w3c.dom.Element;
 import util.Annotations.MethodParameter;
 
@@ -34,9 +34,9 @@ public class Internet extends Service {
 
     public Internet(String str) {
         super(str);
-        speed = Integer.parseInt(ValueReader.nextValue());
-        antivirus = Boolean.parseBoolean(ValueReader.nextValue());
-        connectionType = ConnectionType.valueOf(ValueReader.nextValue());
+        speed = Integer.parseInt(ValueParser.getValue("speed"));
+        antivirus = Boolean.parseBoolean(ValueParser.getValue("antivirus"));
+        connectionType = ConnectionType.valueOf(ValueParser.getValue("connectionType"));
     }
 
     public Internet(Element element) {

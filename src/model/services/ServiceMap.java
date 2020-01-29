@@ -97,7 +97,7 @@ public class ServiceMap {
     }
 
     public void writeToXML(XMLStreamWriter xMLStreamWriter) throws XMLStreamException {
-        xMLStreamWriter.writeStartElement("users");
+        xMLStreamWriter.writeStartElement("services");
         xMLStreamWriter.writeCharacters("\n");
         for (Long id: hashMap.keySet())
             hashMap.get(id).toXML(xMLStreamWriter);

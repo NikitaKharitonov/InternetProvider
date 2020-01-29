@@ -116,7 +116,7 @@ public class BaseController implements Controller {
     public void removeServiceFromUser(long userID, String serviceType) throws FailedOperation {
         try{
             User user = model.getUserById(userID);
-            user.removeServiceByType(serviceType);
+            //user.removeServiceByType(serviceType);
         }
         catch (UserNotFoundException ex){
             throw new FailedOperation(ex);

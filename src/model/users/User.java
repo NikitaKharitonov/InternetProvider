@@ -282,46 +282,49 @@ public class User {
         xMLStreamWriter.writeCharacters("\n");
 
         for (String serviceType: activatedServiceHashMap.keySet()) {
-            xMLStreamWriter.writeStartElement("activated_service");
-            xMLStreamWriter.writeCharacters("\n");
-
-            xMLStreamWriter.writeStartElement("type");
-            xMLStreamWriter.writeCharacters(serviceType);
-            xMLStreamWriter.writeEndElement();
-            xMLStreamWriter.writeCharacters("\n");
-
             ServiceHistory serviceHistory = activatedServiceHashMap.get(serviceType);
             LinkedList<ActivatedService> activatedServices = serviceHistory.activatedServices;
 
-            xMLStreamWriter.writeStartElement("service_count");
-            xMLStreamWriter.writeCharacters(String.valueOf(activatedServices.size()));
-            xMLStreamWriter.writeEndElement();
-            xMLStreamWriter.writeCharacters("\n");
-
-            xMLStreamWriter.writeStartElement("service_history");
-            xMLStreamWriter.writeCharacters("\n");
-            for (ActivatedService service: activatedServices) {
-                xMLStreamWriter.writeStartElement("service");
+            if (activatedServices.size() != 0) {
+                xMLStreamWriter.writeStartElement("activated_service");
                 xMLStreamWriter.writeCharacters("\n");
 
-                xMLStreamWriter.writeStartElement("service_id");
-                xMLStreamWriter.writeCharacters(String.valueOf(service.serviceId));
+                xMLStreamWriter.writeStartElement("type");
+                xMLStreamWriter.writeCharacters(serviceType);
                 xMLStreamWriter.writeEndElement();
                 xMLStreamWriter.writeCharacters("\n");
 
-                xMLStreamWriter.writeStartElement("activation_date");
-                xMLStreamWriter.writeCharacters(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(service.activationDate));
+                xMLStreamWriter.writeStartElement("service_count");
+                xMLStreamWriter.writeCharacters(String.valueOf(activatedServices.size()));
+                xMLStreamWriter.writeEndElement();
+                xMLStreamWriter.writeCharacters("\n");
+
+                xMLStreamWriter.writeStartElement("service_history");
+                xMLStreamWriter.writeCharacters("\n");
+                for (ActivatedService service : activatedServices) {
+                    xMLStreamWriter.writeStartElement("service");
+                    xMLStreamWriter.writeCharacters("\n");
+
+                    xMLStreamWriter.writeStartElement("service_id");
+                    xMLStreamWriter.writeCharacters(String.valueOf(service.serviceId));
+                    xMLStreamWriter.writeEndElement();
+                    xMLStreamWriter.writeCharacters("\n");
+
+                    xMLStreamWriter.writeStartElement("activation_date");
+                    xMLStreamWriter.writeCharacters(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(service.activationDate));
+                    xMLStreamWriter.writeEndElement();
+                    xMLStreamWriter.writeCharacters("\n");
+
+                    xMLStreamWriter.writeEndElement();
+                    xMLStreamWriter.writeCharacters("\n");
+                }
                 xMLStreamWriter.writeEndElement();
                 xMLStreamWriter.writeCharacters("\n");
 
                 xMLStreamWriter.writeEndElement();
                 xMLStreamWriter.writeCharacters("\n");
             }
-            xMLStreamWriter.writeEndElement();
-            xMLStreamWriter.writeCharacters("\n");
 
-            xMLStreamWriter.writeEndElement();
-            xMLStreamWriter.writeCharacters("\n");
         }
 
         xMLStreamWriter.writeEndElement();

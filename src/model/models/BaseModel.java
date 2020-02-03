@@ -14,9 +14,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Set;
+import java.util.*;
 
 public class BaseModel implements Model {
     private UserMap userMap;
@@ -142,5 +140,12 @@ public class BaseModel implements Model {
         User user = getUserById(userId);
         Service service = getServiceById(serviceId);
         user.addService(service.getType(), serviceId, date);
+    }
+
+    public User getUserByName(String name) throws UserNotFoundException {
+        for (User user : userMap.users())
+            if (user.getName().equals(name))
+                return user;
+        throw new UserNotFoundException("User with name " + name + " not found");
     }
 }

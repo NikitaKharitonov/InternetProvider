@@ -47,4 +47,5 @@ public interface Model {
 
     void setServiceToUser(long userId, long serviceId, String date) throws ServiceNotFoundException, UserNotFoundException, ParseException;
 
+    User getUserByName(String name) throws UserNotFoundException;
 }

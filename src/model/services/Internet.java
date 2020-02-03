@@ -15,6 +15,14 @@ public class Internet extends Service {
     private boolean antivirus;
     private ConnectionType connectionType;
 
+    public static String[] getConnectionTypes() {
+        ConnectionType[] connectionTypes = ConnectionType.values();
+        String[] strings = new String[connectionTypes.length];
+        for (int i = 0; i < strings.length; ++i)
+            strings[i] = connectionTypes[i].toString();
+        return strings;
+    }
+
     public Internet(
             @MethodParameter(name = "id", type = Long.class)
                     Long id,
@@ -87,39 +95,47 @@ public class Internet extends Service {
     }
 
     public void toXML(XMLStreamWriter xMLStreamWriter) throws XMLStreamException {
+        xMLStreamWriter.writeCharacters("\t");
         xMLStreamWriter.writeStartElement("service");
         xMLStreamWriter.writeCharacters("\n");
 
+        xMLStreamWriter.writeCharacters("\t\t");
         xMLStreamWriter.writeStartElement("type");
         xMLStreamWriter.writeCharacters(getClass().getSimpleName());
         xMLStreamWriter.writeEndElement();
         xMLStreamWriter.writeCharacters("\n");
 
+        xMLStreamWriter.writeCharacters("\t\t");
         xMLStreamWriter.writeStartElement("id");
         xMLStreamWriter.writeCharacters(String.valueOf(id));
         xMLStreamWriter.writeEndElement();
         xMLStreamWriter.writeCharacters("\n");
 
+        xMLStreamWriter.writeCharacters("\t\t");
         xMLStreamWriter.writeStartElement("name");
         xMLStreamWriter.writeCharacters(name);
         xMLStreamWriter.writeEndElement();
         xMLStreamWriter.writeCharacters("\n");
 
+        xMLStreamWriter.writeCharacters("\t\t");
         xMLStreamWriter.writeStartElement("speed");
         xMLStreamWriter.writeCharacters(String.valueOf(speed));
         xMLStreamWriter.writeEndElement();
         xMLStreamWriter.writeCharacters("\n");
 
+        xMLStreamWriter.writeCharacters("\t\t");
         xMLStreamWriter.writeStartElement("antivirus");
         xMLStreamWriter.writeCharacters(String.valueOf(antivirus));
         xMLStreamWriter.writeEndElement();
         xMLStreamWriter.writeCharacters("\n");
 
+        xMLStreamWriter.writeCharacters("\t\t");
         xMLStreamWriter.writeStartElement("connection_type");
         xMLStreamWriter.writeCharacters(connectionType.toString());
         xMLStreamWriter.writeEndElement();
         xMLStreamWriter.writeCharacters("\n");
 
+        xMLStreamWriter.writeCharacters("\t");
         xMLStreamWriter.writeEndElement();
         xMLStreamWriter.writeCharacters("\n");
     }

@@ -70,34 +70,41 @@ public class Phone extends Service {
     }
 
     public void toXML(XMLStreamWriter xMLStreamWriter) throws XMLStreamException {
+        xMLStreamWriter.writeCharacters("\t");
         xMLStreamWriter.writeStartElement("service");
         xMLStreamWriter.writeCharacters("\n");
 
+        xMLStreamWriter.writeCharacters("\t\t");
         xMLStreamWriter.writeStartElement("type");
         xMLStreamWriter.writeCharacters(getClass().getSimpleName());
         xMLStreamWriter.writeEndElement();
         xMLStreamWriter.writeCharacters("\n");
 
+        xMLStreamWriter.writeCharacters("\t\t");
         xMLStreamWriter.writeStartElement("id");
         xMLStreamWriter.writeCharacters(String.valueOf(id));
         xMLStreamWriter.writeEndElement();
         xMLStreamWriter.writeCharacters("\n");
 
+        xMLStreamWriter.writeCharacters("\t\t");
         xMLStreamWriter.writeStartElement("name");
         xMLStreamWriter.writeCharacters(name);
         xMLStreamWriter.writeEndElement();
         xMLStreamWriter.writeCharacters("\n");
 
+        xMLStreamWriter.writeCharacters("\t\t");
         xMLStreamWriter.writeStartElement("number_of_calling_minutes");
         xMLStreamWriter.writeCharacters(String.valueOf(callsMinCount));
         xMLStreamWriter.writeEndElement();
         xMLStreamWriter.writeCharacters("\n");
 
+        xMLStreamWriter.writeCharacters("\t\t");
         xMLStreamWriter.writeStartElement("number_of_sms");
         xMLStreamWriter.writeCharacters(String.valueOf(smsCount));
         xMLStreamWriter.writeEndElement();
         xMLStreamWriter.writeCharacters("\n");
 
+        xMLStreamWriter.writeCharacters("\t");
         xMLStreamWriter.writeEndElement();
         xMLStreamWriter.writeCharacters("\n");
     }

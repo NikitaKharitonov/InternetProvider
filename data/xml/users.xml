@@ -1,30 +1,77 @@
 <?xml version="1.0" ?>
 <users>
-<user>
-<id>1</id>
-<name>Ivan</name>
-<email_address>ivan@mail.ru</email_address>
-<phone_number>123</phone_number>
-<activated_services_count>1</activated_services_count>
-<activated_services>
-<activated_service>
-<type>Television</type>
-<service_count>3</service_count>
-<service_history>
-<service>
-<service_id>1</service_id>
-<activation_date>29/01/2020 16:44:00</activation_date>
-</service>
-<service>
-<service_id>2</service_id>
-<activation_date>29/01/2020 16:45:00</activation_date>
-</service>
-<service>
-<service_id>3</service_id>
-<activation_date>29/01/2020 16:46:00</activation_date>
-</service>
-</service_history>
-</activated_service>
-</activated_services>
-</user>
+	<user>
+		<id>1</id>
+		<name>Nikita</name>
+		<email_address>nikita@mail.ru</email_address>
+		<phone_number>111</phone_number>
+		<activated_services>
+			<Television>
+				<service>
+					<service_id>9</service_id>
+					<activation_date>03/02/2020 22:03:23</activation_date>
+				</service>
+			</Television>
+			<Phone>
+				<service>
+					<service_id>7</service_id>
+					<activation_date>03/02/2020 22:32:00</activation_date>
+				</service>
+			</Phone>
+			<Internet>
+				<service>
+					<service_id>1</service_id>
+					<activation_date>03/02/2020 21:56:37</activation_date>
+				</service>
+			</Internet>
+		</activated_services>
+	</user>
+	<user>
+		<id>2</id>
+		<name>Anna</name>
+		<email_address>anna@mail.ru</email_address>
+		<phone_number>123</phone_number>
+		<activated_services>
+		</activated_services>
+	</user>
+	<user>
+		<id>3</id>
+		<name>Vera</name>
+		<email_address>vera@mail.ru</email_address>
+		<phone_number>245</phone_number>
+		<activated_services>
+		</activated_services>
+	</user>
+	<user>
+		<id>4</id>
+		<name>Boris</name>
+		<email_address>boris@mail.ru</email_address>
+		<phone_number>666</phone_number>
+		<activated_services>
+		</activated_services>
+	</user>
+	<user>
+		<id>5</id>
+		<name>Vika</name>
+		<email_address>vika@mail.ru</email_address>
+		<phone_number>333</phone_number>
+		<activated_services>
+		</activated_services>
+	</user>
+	<user>
+		<id>6</id>
+		<name>Kot</name>
+		<email_address>kot@mail.ru</email_address>
+		<phone_number>999</phone_number>
+		<activated_services>
+		</activated_services>
+	</user>
+	<user>
+		<id>7</id>
+		<name>Igor</name>
+		<email_address>igor@mail.ru</email_address>
+		<phone_number>777</phone_number>
+		<activated_services>
+		</activated_services>
+	</user>
 </users>

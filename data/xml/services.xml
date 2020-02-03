@@ -1,21 +1,82 @@
 <?xml version="1.0" ?>
 <services>
-<service>
-<type>Television</type>
-<id>1</id>
-<name>tele</name>
-<number_of_channels>100</number_of_channels>
-</service>
-<service>
-<type>Television</type>
-<id>2</id>
-<name>tele2</name>
-<number_of_channels>100</number_of_channels>
-</service>
-<service>
-<type>Television</type>
-<id>3</id>
-<name>tele3</name>
-<number_of_channels>100</number_of_channels>
-</service>
+	<service>
+		<type>Internet</type>
+		<id>1</id>
+		<name>Highway 5GB</name>
+		<speed>20</speed>
+		<antivirus>false</antivirus>
+		<connection_type>ADSL</connection_type>
+	</service>
+	<service>
+		<type>Internet</type>
+		<id>2</id>
+		<name>Highway 10GB</name>
+		<speed>20</speed>
+		<antivirus>false</antivirus>
+		<connection_type>ADSL</connection_type>
+	</service>
+	<service>
+		<type>Internet</type>
+		<id>3</id>
+		<name>Internet M</name>
+		<speed>20</speed>
+		<antivirus>false</antivirus>
+		<connection_type>ADSL</connection_type>
+	</service>
+	<service>
+		<type>Internet</type>
+		<id>4</id>
+		<name>Internet S</name>
+		<speed>20</speed>
+		<antivirus>false</antivirus>
+		<connection_type>ADSL</connection_type>
+	</service>
+	<service>
+		<type>Internet</type>
+		<id>5</id>
+		<name>Internet L</name>
+		<speed>20</speed>
+		<antivirus>false</antivirus>
+		<connection_type>ADSL</connection_type>
+	</service>
+	<service>
+		<type>Phone</type>
+		<id>6</id>
+		<name>Супербезлимитище</name>
+		<number_of_calling_minutes>100</number_of_calling_minutes>
+		<number_of_sms>100</number_of_sms>
+	</service>
+	<service>
+		<type>Phone</type>
+		<id>7</id>
+		<name>Null</name>
+		<number_of_calling_minutes>100</number_of_calling_minutes>
+		<number_of_sms>100</number_of_sms>
+	</service>
+	<service>
+		<type>Phone</type>
+		<id>8</id>
+		<name>Всё</name>
+		<number_of_calling_minutes>200</number_of_calling_minutes>
+		<number_of_sms>100</number_of_sms>
+	</service>
+	<service>
+		<type>Television</type>
+		<id>9</id>
+		<name>Базовый</name>
+		<number_of_channels>20</number_of_channels>
+	</service>
+	<service>
+		<type>Television</type>
+		<id>10</id>
+		<name>Максимальный</name>
+		<number_of_channels>1000</number_of_channels>
+	</service>
+	<service>
+		<type>Television</type>
+		<id>11</id>
+		<name>World</name>
+		<number_of_channels>10000</number_of_channels>
+	</service>
 </services>

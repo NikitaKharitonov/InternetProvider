@@ -288,7 +288,7 @@ public class User {
                 xMLStreamWriter.writeCharacters("\t\t\t");
                 xMLStreamWriter.writeStartElement(serviceType);
                 xMLStreamWriter.writeCharacters("\n");
-                
+
                 for (ActivatedService service : activatedServices) {
                     xMLStreamWriter.writeCharacters("\t\t\t\t");
                     xMLStreamWriter.writeStartElement("service");

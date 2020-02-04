@@ -148,4 +148,8 @@ public class BaseModel implements Model {
                 return user;
         throw new UserNotFoundException("User with name " + name + " not found");
     }
+
+    public LinkedList<User.ActivatedService> getUserHistory(long userId, String type) {
+        return userMap.get(userId).getHistory(type);
+    }
 }

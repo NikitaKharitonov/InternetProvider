@@ -8,6 +8,7 @@ import model.users.User;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.LinkedList;
 
 public interface Model {
 
@@ -48,4 +49,6 @@ public interface Model {
     void setServiceToUser(long userId, long serviceId, String date) throws ServiceNotFoundException, UserNotFoundException, ParseException;
 
     User getUserByName(String name) throws UserNotFoundException;
+
+    LinkedList<User.ActivatedService> getUserHistory(long userId, String type);
 }

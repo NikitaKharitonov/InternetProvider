@@ -25,6 +25,15 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+/**
+ * Посмотреть все услуги: Admin -> выбрать тип услуги
+ * Добваить новую услугу: Admin -> выбрать тип услуги -> Create new -> ввести данные -> Create
+ * Посмотреть инофрмацию о пользователе: User -> Log in -> ввести имя пользователя -> Log in
+ * Посмотреть историю подключённых услуг пользователя: ... -> Services -> выбрать тип услуги -> History
+ * Подключить/поменять пользователю услугу: ... -> Services -> выбрать тип услуги -> Add/Change -> выбрать услугу из списка -> Add -> выбрать дату и время подключения -> Add
+ * Добавить нового пользователя: User -> Sign up -> ввести данные -> Sign up
+ * */
+
 public class ProviderApplication extends Application
 {
 
@@ -60,6 +69,8 @@ public class ProviderApplication extends Application
     Scene userInternetScene;
     Scene userTvScene;
     Scene userPhoneScene;
+
+    Scene userHistory;
 
     Scene userPersonalInfoScene;
     Scene changePersonalInfo;
@@ -172,9 +183,14 @@ public class ProviderApplication extends Application
             Label connectionType = new Label("Antivirus: " + service.getConnectionType());
             Label antivirus = new Label("Antivirus: " + service.isAntivirus());
             Button deactivate = new Button("Deactivate");
+            Button history = new Button("History");
+            history.setOnAction(e -> {
+                createUserHistoryScene(primaryStage, Internet.class.getSimpleName());
+                primaryStage.setScene(userHistory);
+            });
             Button change = new Button("Change");
             change.setOnAction(e -> primaryStage.setScene(addInternetScene));
-            userInternetScene = createScene(label, name, speed, connectionType, antivirus, change, back);
+            userInternetScene = createScene(label, name, speed, connectionType, antivirus, history, change, back);
         } catch (ServiceNotFoundException ex) {
             Label label1 = new Label("You have no " + Internet.class.getSimpleName() + " service");
             Button button = new Button("Add");
@@ -192,9 +208,14 @@ public class ProviderApplication extends Application
             Label name = new Label("Name: " + service.getName());
             Label numberOfChannels = new Label("Number of channels: " + service.getNumberOfChannels());
             Button deactivate = new Button("Deactivate");
+            Button history = new Button("History");
+            history.setOnAction(e -> {
+                createUserHistoryScene(primaryStage, Television.class.getSimpleName());
+                primaryStage.setScene(userHistory);
+            });
             Button change = new Button("Change");
             change.setOnAction(e -> primaryStage.setScene(addTvScene));
-            userTvScene = createScene(label, name, numberOfChannels, change, back);
+            userTvScene = createScene(label, name, numberOfChannels, history, change, back);
         } catch (ServiceNotFoundException ex) {
             Label label = new Label("You have no " + Television.class.getSimpleName() + " service");
             Button button = new Button("Add");
@@ -213,15 +234,48 @@ public class ProviderApplication extends Application
             Label callsMinCount = new Label("Number of minutes: " + service.getCallsMinCount());
             Label smsCount = new Label("Number of SMS: " + service.getSmsCount());
             Button deactivate = new Button("Deactivate");
+            Button history = new Button("History");
+            history.setOnAction(e -> {
+                createUserHistoryScene(primaryStage, Phone.class.getSimpleName());
+                primaryStage.setScene(userHistory);
+            });
             Button change = new Button("Change");
             change.setOnAction(e -> primaryStage.setScene(addPhoneScene));
-            userPhoneScene = createScene(label, name, callsMinCount, smsCount, change, back);
+            userPhoneScene = createScene(label, name, callsMinCount, smsCount, history, change, back);
         } catch (ServiceNotFoundException ex) {
             Label label = new Label("You have no " + Phone.class.getSimpleName() + " service");
             Button button = new Button("Add");
             button.setOnAction(e -> primaryStage.setScene(addPhoneScene));
             userPhoneScene = createScene(label, button, back);
         }
+    }
+
+    void createUserHistoryScene(Stage stage, String serviceType) {
+        LinkedList<Node> nodes = new LinkedList<>();
+        nodes.add(new Label(serviceType + " history\n————————————"));
+        LinkedList<User.ActivatedService> activatedServices = user.getHistory(serviceType);
+        for (User.ActivatedService activatedService: activatedServices) {
+            try {
+                nodes.add(new Label(controller.getService(activatedService.getServiceId()).getName()));
+                nodes.add(new Label(activatedService.getActivationDate().toString()));
+                nodes.add(new Label("————————————"));
+            } catch (FailedOperation ex) {
+                //display();
+            }
+        }
+        Button back = new Button("Back");
+        back.setOnAction(e -> {
+            if (serviceType.equals(Internet.class.getSimpleName()))
+                stage.setScene(userInternetScene);
+            else if (serviceType.equals(Phone.class.getSimpleName()))
+                stage.setScene(userPhoneScene);
+            else if (serviceType.equals(Television.class.getSimpleName()))
+                stage.setScene(userTvScene);
+        });
+        nodes.add(back);
+        Node[] nodesArray = new Node[nodes.size()];
+        nodes.toArray(nodesArray);
+        userHistory = createScene(nodesArray);
     }
 
     void createAddInternetScene(Stage stage) throws FailedOperation {

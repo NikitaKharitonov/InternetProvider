@@ -17,7 +17,7 @@ import java.util.*;
 
 public class User {
 
-    private class ActivatedService {
+    public class ActivatedService {
         final long serviceId;
         final Date activationDate;
         boolean activated = true;
@@ -38,6 +38,14 @@ public class User {
         public ActivatedService(long serviceId, Date activationDate) {
             this.serviceId = serviceId;
             this.activationDate = activationDate;
+        }
+
+        public Date getActivationDate() {
+            return activationDate;
+        }
+
+        public long getServiceId() {
+            return serviceId;
         }
     }
 
@@ -70,6 +78,7 @@ public class User {
             return activatedServices.getLast();
         }
 
+
         @Override
         public String toString() {
             StringBuilder builder = new StringBuilder();
@@ -101,6 +110,9 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.emailAddress = emailAddress;
         this.activatedServiceHashMap = new HashMap<>();
+        this.activatedServiceHashMap.put(Internet.class.getSimpleName(), new ServiceHistory());
+        this.activatedServiceHashMap.put(Phone.class.getSimpleName(), new ServiceHistory());
+        this.activatedServiceHashMap.put(Television.class.getSimpleName(), new ServiceHistory());
     }
 
     // FIXME
@@ -228,6 +240,11 @@ public class User {
 //            ids.add(activatedServiceHashMap.get(serviceType).serviceId);
 //        return ids;
 //    }
+
+    public LinkedList<ActivatedService> getHistory(String type) {
+        ServiceHistory serviceHistory = activatedServiceHashMap.get(type);
+        return serviceHistory.activatedServices;
+    }
 
     public String toString() {
         StringBuilder builder = new StringBuilder();

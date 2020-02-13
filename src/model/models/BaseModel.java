@@ -1,50 +1,44 @@
 package model.models;
 
-import javafx.scene.input.DataFormat;
 import model.data_storage_factories.DataStorageFactory;
 import model.data_storage_factories.XMLFileDataStorageFactory;
 import model.exceptions.ServiceNotFoundException;
 import model.exceptions.UserNotFoundException;
-import model.services.ServiceMap;
-import model.users.UserMap;
 import model.services.Service;
 import model.users.User;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class BaseModel implements Model {
-    private UserMap userMap;
-    private ServiceMap serviceMap;
+    private HashMap<Long, User> users;
+    private HashMap<Long, Service> services;
     private DataStorageFactory dataStorageFactory = new XMLFileDataStorageFactory();
 
     public BaseModel() throws IOException {
-       // read();
+        read();
     }
 
-//    public void setDataStorageFactory(DataStorageFactory factory) {
-//        dataStorageFactory = factory;
-//    }
+    public void setDataStorageFactory(DataStorageFactory factory) {
+        dataStorageFactory = factory;
+    }
 
     public void read() throws IOException {
-        if ((userMap = dataStorageFactory.readUsers()) == null)
-            userMap = new UserMap();
-        if ((serviceMap = dataStorageFactory.readServices()) == null)
-            serviceMap = new ServiceMap();
+        if ((users = dataStorageFactory.readUsers()) == null)
+            users = new HashMap<>();
+        if ((services = dataStorageFactory.readServices()) == null)
+            services = new HashMap<>();
     }
 
     @Override
     public void save() throws IOException {
-        dataStorageFactory.writeUsers(userMap);
-        dataStorageFactory.writeServices(serviceMap);
+        dataStorageFactory.writeUsers(users);
+        dataStorageFactory.writeServices(services);
     }
 
     @Override
     public User getUserById(long id) throws UserNotFoundException {
-        User user = userMap.get(id);
+        User user = users.get(id);
         if (user == null)
             throw new UserNotFoundException("User with id " + id + " not found");
         return user;
@@ -52,24 +46,24 @@ public class BaseModel implements Model {
 
     @Override
     public void addUser(User user) {
-        userMap.put(user);
+        users.put(user.getId(), user);
     }
 
     @Override
     public void removeUserById(long id) throws UserNotFoundException {
-        userMap.remove(id);
+        users.remove(id);
     }
 
     @Override
     public int getUserCount() {
-        return userMap.size();
+        return users.size();
     }
 
     @Override
     public long getUserMaxId() {
-        if (userMap.size() == 0)
+        if (users.size() == 0)
             return 0;
-        Set<Long> set = userMap.idSet();
+        Set<Long> set = users.keySet();
         Long[] longs = new Long[set.size()];
         set.toArray(longs);
         Arrays.sort(longs);
@@ -78,12 +72,12 @@ public class BaseModel implements Model {
 
     @Override
     public String getUserData() {
-        return userMap.toString();
+        return users.toString();
     }
 
     @Override
     public Service getServiceById(long id) throws ServiceNotFoundException {
-        Service service = serviceMap.get(id);
+        Service service = services.get(id);
         if (service == null)
             throw new ServiceNotFoundException("Service with id " + id + " not found");
         return service;
@@ -91,7 +85,7 @@ public class BaseModel implements Model {
 
     @Override
     public void addService(Service service) {
-        serviceMap.put(service);
+        services.put(service.getId(), service);
     }
 
     @Override
@@ -104,14 +98,14 @@ public class BaseModel implements Model {
 
     @Override
     public int getServiceCount() {
-        return serviceMap.size();
+        return services.size();
     }
 
     @Override
     public long getServiceMaxId() {
-        if (serviceMap.size() == 0)
+        if (services.size() == 0)
             return 0;
-        Set<Long> set = serviceMap.idSet();
+        Set<Long> set = services.keySet();
         Long[] longs = new Long[set.size()];
         set.toArray(longs);
         Arrays.sort(longs);
@@ -119,7 +113,7 @@ public class BaseModel implements Model {
     }
 
     public String getServiceData() {
-        return serviceMap.toString();
+        return services.toString();
     }
 
     @Override
@@ -128,28 +122,17 @@ public class BaseModel implements Model {
     }
 
     @Override
-    public void setServiceToUser(long userId, long serviceId) throws ServiceNotFoundException, UserNotFoundException {
-        User user = getUserById(userId);
-        Service service = getServiceById(serviceId);
-        user.addService(service.getType(), serviceId);
+    public void addServiceToUserById(long userID, Service service, Date date, User.Status status) throws UserNotFoundException {
+        this.addService(service);
+        this.getUserById(userID).addUserService(service, date, status);
     }
 
-    @Override
-    public void setServiceToUser(long userId, long serviceId, String time) throws ServiceNotFoundException, UserNotFoundException, ParseException {
-        Date date = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(time);
-        User user = getUserById(userId);
-        Service service = getServiceById(serviceId);
-        user.addService(service.getType(), serviceId, date);
-    }
-
+    // fixme
     public User getUserByName(String name) throws UserNotFoundException {
-        for (User user : userMap.users())
+        for (User user : users.values())
             if (user.getName().equals(name))
                 return user;
         throw new UserNotFoundException("User with name " + name + " not found");
     }
 
-    public LinkedList<User.ActivatedService> getUserHistory(long userId, String type) {
-        return userMap.get(userId).getHistory(type);
-    }
 }

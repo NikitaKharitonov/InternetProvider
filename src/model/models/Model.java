@@ -7,12 +7,12 @@ import model.services.Service;
 import model.users.User;
 
 import java.io.IOException;
-import java.text.ParseException;
+import java.util.Date;
 import java.util.LinkedList;
 
 public interface Model {
 
-    //void setDataStorageFactory(DataStorageFactory dataStorageFactory);
+    void setDataStorageFactory(DataStorageFactory dataStorageFactory);
 
     void read() throws IOException;
 
@@ -44,11 +44,7 @@ public interface Model {
 
     Service getUserServiceByType(long userID, String serviceType) throws ServiceNotFoundException, UserNotFoundException;
 
-    void setServiceToUser(long userId, long serviceId) throws ServiceNotFoundException, UserNotFoundException;
-
-    void setServiceToUser(long userId, long serviceId, String date) throws ServiceNotFoundException, UserNotFoundException, ParseException;
+    void addServiceToUserById(long userID, Service service, Date date, User.Status status) throws UserNotFoundException;
 
     User getUserByName(String name) throws UserNotFoundException;
-
-    LinkedList<User.ActivatedService> getUserHistory(long userId, String type);
 }

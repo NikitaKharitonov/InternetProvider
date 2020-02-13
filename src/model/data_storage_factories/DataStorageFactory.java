@@ -1,13 +1,14 @@
 package model.data_storage_factories;
 
-import model.services.ServiceMap;
-import model.users.UserMap;
+import model.services.Service;
+import model.users.User;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 public interface DataStorageFactory {
-    void writeUsers(UserMap userMap) throws IOException;
-    UserMap readUsers() throws IOException;
-    void writeServices(ServiceMap serviceMap) throws IOException;
-    ServiceMap readServices() throws IOException;
+    void writeUsers(HashMap<Long, User> users) throws IOException;
+    HashMap<Long, User> readUsers() throws IOException;
+    void writeServices(HashMap<Long, Service> services) throws IOException;
+    HashMap<Long, Service> readServices() throws IOException;
 }

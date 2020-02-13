@@ -2,158 +2,78 @@ package model.users;
 
 import model.services.Internet;
 import model.services.Phone;
+import model.services.Service;
 import model.services.Television;
-import model.util.ValueParser;
 import model.exceptions.ServiceNotFoundException;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class User {
 
-    public class ActivatedService {
+    public enum Status{PLANNED, ACTIVE, DISCONNECTED, SUSPENDED};
+
+    public static class UserService {
         final long serviceId;
         final Date activationDate;
-        boolean activated = true;
+        Status status;
 
-        public boolean isActivated() {
-            return activated;
-        }
-
-        public void setActivated(boolean activated) {
-            this.activated = activated;
-        }
-
-        public ActivatedService(long serviceId) {
-            this.serviceId = serviceId;
-            activationDate = new Date();
-        }
-
-        public ActivatedService(long serviceId, Date activationDate) {
+        public UserService(long serviceId, Date activationDate, Status status) {
             this.serviceId = serviceId;
             this.activationDate = activationDate;
+            this.status = status;
+        }
+
+        public long getServiceId() {
+            return serviceId;
         }
 
         public Date getActivationDate() {
             return activationDate;
         }
 
-        public long getServiceId() {
-            return serviceId;
-        }
-    }
-
-    private class ServiceHistory {
-
-        private int curServiceIndex = 0;
-        private LinkedList<ActivatedService> activatedServices = new LinkedList<>();
-
-        public void add(ActivatedService activatedService) {
-            for (int i = 0; i < activatedServices.size(); ++i) {
-                if (activatedService.activationDate.before(activatedServices.get(i).activationDate)) {
-                    activatedServices.add(i, activatedService);
-                    return;
-                }
-            }
-            activatedServices.add(activatedService);
+        public Status getStatus() {
+            return status;
         }
 
-        public ActivatedService get() {
-            if (activatedServices.size() == 0)
-                return null;
-            Date curDate = new Date();
-            if (curDate.before(activatedServices.get(0).activationDate))
-                return null;
-            for (int i = 1; i < activatedServices.size(); ++i) {
-                if (curDate.before(activatedServices.get(i).activationDate)) {
-                    return activatedServices.get(i - 1);
-                }
-            }
-            return activatedServices.getLast();
+        public void setStatus(Status status) {
+            this.status = status;
         }
-
 
         @Override
         public String toString() {
-            StringBuilder builder = new StringBuilder();
-            builder.append("size = " + activatedServices.size());
-            for (ActivatedService service: activatedServices) {
-                builder.append("{");
-                builder.append("service_id=" + service.serviceId + ", ");
-                builder.append("activation_date=" + service.activationDate + "}, ");
-            }
-            return "ServiceHistory{" +
-                    "curServiceIndex=" + curServiceIndex +
-                    ", " + builder.toString() +
+            return "UserService{" +
+                    "serviceId=" + serviceId +
+                    ", activationDate=" + activationDate +
+                    ", status=" + status +
                     '}';
         }
-
-
     }
 
     private final long id;
     private String name;
     private String phoneNumber;
     private String emailAddress;
+    private HashMap<String, LinkedList<UserService>> userServiceListHashMap;
 
-    private HashMap<String, ServiceHistory> activatedServiceHashMap;
-
-    public User(long id, String name, String phoneNumber, String emailAddress) {
+    public User(long id, String name, String phoneNumber, String emailAddress, HashMap<String, LinkedList<UserService>> userServiceListHashMap) {
         this.id = id;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.emailAddress = emailAddress;
-        this.activatedServiceHashMap = new HashMap<>();
-        this.activatedServiceHashMap.put(Internet.class.getSimpleName(), new ServiceHistory());
-        this.activatedServiceHashMap.put(Phone.class.getSimpleName(), new ServiceHistory());
-        this.activatedServiceHashMap.put(Television.class.getSimpleName(), new ServiceHistory());
-    }
 
-    // FIXME
-//    public User(String str) {
-//        ValueParser.setString(str);
-//        id = Long.parseLong(ValueParser.getValue("id"));
-//        name = ValueParser.getValue("name");
-//        emailAddress = ValueParser.getValue("email_address");
-//        phoneNumber = ValueParser.getValue("phone_number");
-//        int activatedServiceCount = Integer.parseInt(ValueParser.getValue("activated_services_count"));
-//        activatedServiceHashMap = new HashMap<>();
-//        for (int i = 0; i < activatedServiceCount; ++i) {
-//            String type = ValueParser.getValue("service_type");
-//            long serviceId = Long.parseLong(ValueParser.getValue("service_id"));
-//            long activationDate = Long.parseLong(ValueParser.getValue("activation_date"));
-//            activatedServiceHashMap.put(type, new ActivatedService(serviceId, activationDate));
-//        }
-//    }
-
-    public User(Element eElement) throws ParseException {
-        id = Long.parseLong(eElement.getElementsByTagName("id").item(0).getTextContent());
-        name = eElement.getElementsByTagName("name").item(0).getTextContent();
-        emailAddress = eElement.getElementsByTagName("email_address").item(0).getTextContent();
-        phoneNumber = eElement.getElementsByTagName("phone_number").item(0).getTextContent();
-        Element activatedServicesElement = (Element) eElement.getElementsByTagName("activated_services").item(0);
-        activatedServiceHashMap = new HashMap<>();
-        activatedServiceHashMap.put(Internet.class.getSimpleName(), new ServiceHistory());
-        activatedServiceHashMap.put(Phone.class.getSimpleName(), new ServiceHistory());
-        activatedServiceHashMap.put(Television.class.getSimpleName(), new ServiceHistory());
-        for (String type: activatedServiceHashMap.keySet()) {
-            Element serviceElement = (Element) activatedServicesElement.getElementsByTagName(type).item(0);
-            if (serviceElement != null) {
-                NodeList nodeList = serviceElement.getElementsByTagName("service");
-                for (int j = 0; j < nodeList.getLength(); ++j) {
-                    Element element = (Element) nodeList.item(j);
-                    long serviceId = Long.parseLong(element.getElementsByTagName("service_id").item(0).getTextContent());
-                    Date activationDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(element.getElementsByTagName("activation_date").item(0).getTextContent());
-                    activatedServiceHashMap.get(type).add(new ActivatedService(serviceId, activationDate));
-                }
-            }
-        }
+        if (userServiceListHashMap == null) {
+            this.userServiceListHashMap = new HashMap<>();
+            this.userServiceListHashMap.put(Internet.class.getSimpleName(), new LinkedList<>());
+            this.userServiceListHashMap.put(Phone.class.getSimpleName(), new LinkedList<>());
+            this.userServiceListHashMap.put(Television.class.getSimpleName(), new LinkedList<>());
+        } else
+            this.userServiceListHashMap = userServiceListHashMap;
     }
 
     public long getId() {
@@ -184,161 +104,159 @@ public class User {
         this.emailAddress = emailAddress;
     }
 
-    public long getServiceIdByType(String serviceType) throws ServiceNotFoundException {
-        ServiceHistory serviceHistory = activatedServiceHashMap.get(serviceType);
-        if (serviceHistory == null)
-            throw new ServiceNotFoundException("Service of type " + serviceType + " not found");
-        ActivatedService service = serviceHistory.get();
-        if (service == null)
-            throw new ServiceNotFoundException("Service of type " + serviceType + " not found");
-        return service.serviceId;
+    public UserService getUserService(String type, int index) {
+        return userServiceListHashMap.get(type).get(index);
     }
 
-    // FIXME
-//    public long getActivationDateByType(String serviceType) throws ServiceNotFoundException {
-//        ActivatedService activatedService = activatedServiceHashMap.get(serviceType);
-//        if (activatedService == null)
-//            throw new ServiceNotFoundException("Service of type " + serviceType + " not found");
-//        return activatedService.activationDate;
-//    }
-
-    public void addService(String type, long serviceId) {
-        if(activatedServiceHashMap.get(type) == null)
-            activatedServiceHashMap.put(type, new ServiceHistory());
-        activatedServiceHashMap.get(type).add(new ActivatedService(serviceId));
-    }
-
-    public void addService(String type, long serviceId, Date activationDate) {
-        if(activatedServiceHashMap.get(type) == null)
-            activatedServiceHashMap.put(type, new ServiceHistory());
-        activatedServiceHashMap.get(type).add(new ActivatedService(serviceId, activationDate));
-    }
-
-    // FIXME
-//    public void removeServiceByType(String serviceType) {
-//        activatedServiceHashMap.get(serviceType).get().setActivated(false);
-//    }
-
-    // FIXME
-//    public void removeServiceById(long serviceId) {
-//        for (String serviceType: activatedServiceHashMap.keySet()) {
-//            if (activatedServiceHashMap.get(serviceType).serviceId == serviceId)
-//                activatedServiceHashMap.remove(serviceType);
-//        }
-//    }
-
-    public String[] getServiceTypes() {
-        Set<String> stringSet = activatedServiceHashMap.keySet();
-        String[] strings = new String[stringSet.size()];
-        stringSet.toArray(strings);
-        return strings;
-    }
-
-//    public ArrayList<Long> getServiceIds() {
-//        ArrayList<Long> ids = new ArrayList<>(activatedServiceHashMap.size());
-//        for (String serviceType: activatedServiceHashMap.keySet())
-//            ids.add(activatedServiceHashMap.get(serviceType).serviceId);
-//        return ids;
-//    }
-
-    public LinkedList<ActivatedService> getHistory(String type) {
-        ServiceHistory serviceHistory = activatedServiceHashMap.get(type);
-        return serviceHistory.activatedServices;
-    }
-
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("User {id=" + id + ", ");
-        builder.append("name=" + name + ", ");
-        builder.append("email_address=" + emailAddress + ", ");
-        builder.append("phone_number=" + phoneNumber + ", ");
-        builder.append("activated_services_count=" + activatedServiceHashMap.size() + ", ");
-        builder.append("activated_services={ ");
-        for (String serviceType: activatedServiceHashMap.keySet()) {
-            builder.append("{");
-            builder.append("service_type=" + serviceType + ", ");
-            builder.append(activatedServiceHashMap.get(serviceType).toString());
-            builder.append("} ");
+    public UserService getCurrentUserService(String type) {
+        LinkedList<UserService> userServices = userServiceListHashMap.get(type);
+        if (userServices.size() == 0)
+            return null;
+        Date curDate = new Date();
+        if (curDate.before(userServices.get(0).activationDate))
+            return null;
+        for (int i = 1; i < userServices.size(); ++i) {
+            if (curDate.before(userServices.get(i).activationDate)) {
+                return userServices.get(i - 1);
+            }
         }
-        builder.append("}");
-        return builder.toString();
+        return userServices.getLast();
     }
 
-    public void toXML(XMLStreamWriter xMLStreamWriter) throws XMLStreamException {
-        xMLStreamWriter.writeCharacters("\t");
-        xMLStreamWriter.writeStartElement("user");
-        xMLStreamWriter.writeCharacters("\n");
+    public int getUserServiceCount(String type) {
+        return userServiceListHashMap.get(type).size();
+    }
 
-        xMLStreamWriter.writeCharacters("\t\t");
-        xMLStreamWriter.writeStartElement("id");
-        xMLStreamWriter.writeCharacters(String.valueOf(id));
-        xMLStreamWriter.writeEndElement();
-        xMLStreamWriter.writeCharacters("\n");
+    public void addUserService(Service service, Date date, Status status) {
+        UserService userService = new UserService(service.getId(), date, status);
+        LinkedList<UserService> userServices = userServiceListHashMap.get(service.getType());
+        for (int i = 0; i < userServices.size(); ++i)
+            if (userService.activationDate.before(userServices.get(i).activationDate)) {
+                userServices.add(i, userService);
+                return;
+            }
+        userServices.add(userService);
+    }
 
-        xMLStreamWriter.writeCharacters("\t\t");
-        xMLStreamWriter.writeStartElement("name");
-        xMLStreamWriter.writeCharacters(name);
-        xMLStreamWriter.writeEndElement();
-        xMLStreamWriter.writeCharacters("\n");
+    // todo add remove method
 
-        xMLStreamWriter.writeCharacters("\t\t");
-        xMLStreamWriter.writeStartElement("email_address");
-        xMLStreamWriter.writeCharacters(emailAddress);
-        xMLStreamWriter.writeEndElement();
-        xMLStreamWriter.writeCharacters("\n");
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", emailAddress='" + emailAddress + '\'' +
+                ", userServiceListHashMap=" + userServiceListHashMap +
+                '}';
+    }
 
-        xMLStreamWriter.writeCharacters("\t\t");
-        xMLStreamWriter.writeStartElement("phone_number");
-        xMLStreamWriter.writeCharacters(phoneNumber);
-        xMLStreamWriter.writeEndElement();
-        xMLStreamWriter.writeCharacters("\n");
+    public void toXML(XMLStreamWriter xmlsw) throws XMLStreamException {
+        xmlsw.writeCharacters("\t");
+        xmlsw.writeStartElement("user");
+        xmlsw.writeCharacters("\n");
 
-        xMLStreamWriter.writeCharacters("\t\t");
-        xMLStreamWriter.writeStartElement("activated_services");
-        xMLStreamWriter.writeCharacters("\n");
+        xmlsw.writeCharacters("\t\t");
+        xmlsw.writeStartElement("id");
+        xmlsw.writeCharacters(String.valueOf(id));
+        xmlsw.writeEndElement();
+        xmlsw.writeCharacters("\n");
 
-        for (String serviceType: activatedServiceHashMap.keySet()) {
-            ServiceHistory serviceHistory = activatedServiceHashMap.get(serviceType);
-            LinkedList<ActivatedService> activatedServices = serviceHistory.activatedServices;
+        xmlsw.writeCharacters("\t\t");
+        xmlsw.writeStartElement("name");
+        xmlsw.writeCharacters(name);
+        xmlsw.writeEndElement();
+        xmlsw.writeCharacters("\n");
 
-            if (activatedServices.size() != 0) {
-                xMLStreamWriter.writeCharacters("\t\t\t");
-                xMLStreamWriter.writeStartElement(serviceType);
-                xMLStreamWriter.writeCharacters("\n");
+        xmlsw.writeCharacters("\t\t");
+        xmlsw.writeStartElement("email_address");
+        xmlsw.writeCharacters(emailAddress);
+        xmlsw.writeEndElement();
+        xmlsw.writeCharacters("\n");
 
-                for (ActivatedService service : activatedServices) {
-                    xMLStreamWriter.writeCharacters("\t\t\t\t");
-                    xMLStreamWriter.writeStartElement("service");
-                    xMLStreamWriter.writeCharacters("\n");
+        xmlsw.writeCharacters("\t\t");
+        xmlsw.writeStartElement("phone_number");
+        xmlsw.writeCharacters(phoneNumber);
+        xmlsw.writeEndElement();
+        xmlsw.writeCharacters("\n");
 
-                    xMLStreamWriter.writeCharacters("\t\t\t\t\t");
-                    xMLStreamWriter.writeStartElement("service_id");
-                    xMLStreamWriter.writeCharacters(String.valueOf(service.serviceId));
-                    xMLStreamWriter.writeEndElement();
-                    xMLStreamWriter.writeCharacters("\n");
+        xmlsw.writeCharacters("\t\t");
+        xmlsw.writeStartElement("user_services");
+        xmlsw.writeCharacters("\n");
 
-                    xMLStreamWriter.writeCharacters("\t\t\t\t\t");
-                    xMLStreamWriter.writeStartElement("activation_date");
-                    xMLStreamWriter.writeCharacters(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(service.activationDate));
-                    xMLStreamWriter.writeEndElement();
-                    xMLStreamWriter.writeCharacters("\n");
+        for (String serviceType: userServiceListHashMap.keySet()) {
+            LinkedList<UserService> userServices = userServiceListHashMap.get(serviceType);
 
-                    xMLStreamWriter.writeCharacters("\t\t\t\t");
-                    xMLStreamWriter.writeEndElement();
-                    xMLStreamWriter.writeCharacters("\n");
+            if (userServices.size() != 0) {
+                xmlsw.writeCharacters("\t\t\t");
+                xmlsw.writeStartElement(serviceType);
+                xmlsw.writeCharacters("\n");
+
+                for (UserService service : userServices) {
+                    xmlsw.writeCharacters("\t\t\t\t");
+                    xmlsw.writeStartElement("service");
+                    xmlsw.writeCharacters("\n");
+
+                    xmlsw.writeCharacters("\t\t\t\t\t");
+                    xmlsw.writeStartElement("service_id");
+                    xmlsw.writeCharacters(String.valueOf(service.serviceId));
+                    xmlsw.writeEndElement();
+                    xmlsw.writeCharacters("\n");
+
+                    xmlsw.writeCharacters("\t\t\t\t\t");
+                    xmlsw.writeStartElement("activation_date");
+                    xmlsw.writeCharacters(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(service.activationDate));
+                    xmlsw.writeEndElement();
+                    xmlsw.writeCharacters("\n");
+
+                    xmlsw.writeCharacters("\t\t\t\t\t");
+                    xmlsw.writeStartElement("status");
+                    xmlsw.writeCharacters(String.valueOf(service.getStatus()));
+                    xmlsw.writeEndElement();
+                    xmlsw.writeCharacters("\n");
+
+                    xmlsw.writeCharacters("\t\t\t\t");
+                    xmlsw.writeEndElement();
+                    xmlsw.writeCharacters("\n");
                 }
 
-                xMLStreamWriter.writeCharacters("\t\t\t");
-                xMLStreamWriter.writeEndElement();
-                xMLStreamWriter.writeCharacters("\n");
+                xmlsw.writeCharacters("\t\t\t");
+                xmlsw.writeEndElement();
+                xmlsw.writeCharacters("\n");
             }
         }
 
-        xMLStreamWriter.writeCharacters("\t\t");
-        xMLStreamWriter.writeEndElement();
-        xMLStreamWriter.writeCharacters("\n");
-        xMLStreamWriter.writeCharacters("\t");
-        xMLStreamWriter.writeEndElement();
-        xMLStreamWriter.writeCharacters("\n");
+        xmlsw.writeCharacters("\t\t");
+        xmlsw.writeEndElement();
+        xmlsw.writeCharacters("\n");
+        xmlsw.writeCharacters("\t");
+        xmlsw.writeEndElement();
+        xmlsw.writeCharacters("\n");
+    }
+
+    public static User fromXML(Element eElement) throws ParseException {
+        long id = Long.parseLong(eElement.getElementsByTagName("id").item(0).getTextContent());
+        String name = eElement.getElementsByTagName("name").item(0).getTextContent();
+        String emailAddress = eElement.getElementsByTagName("email_address").item(0).getTextContent();
+        String phoneNumber = eElement.getElementsByTagName("phone_number").item(0).getTextContent();
+        Element activatedServicesElement = (Element) eElement.getElementsByTagName("user_services").item(0);
+        HashMap<String, LinkedList<UserService>> userServiceListHashMap = new HashMap<>();
+        userServiceListHashMap.put(Internet.class.getSimpleName(), new LinkedList<>());
+        userServiceListHashMap.put(Phone.class.getSimpleName(), new LinkedList<>());
+        userServiceListHashMap.put(Television.class.getSimpleName(), new LinkedList<>());
+        for (String type: userServiceListHashMap.keySet()) {
+            Element serviceElement = (Element) activatedServicesElement.getElementsByTagName(type).item(0);
+            if (serviceElement != null) {
+                NodeList nodeList = serviceElement.getElementsByTagName("service");
+                for (int j = 0; j < nodeList.getLength(); ++j) {
+                    Element element = (Element) nodeList.item(j);
+                    long serviceId = Long.parseLong(element.getElementsByTagName("service_id").item(0).getTextContent());
+                    Date activationDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(element.getElementsByTagName("activation_date").item(0).getTextContent());
+                    Status status = Status.valueOf(element.getElementsByTagName("status").item(0).getTextContent());
+                    userServiceListHashMap.get(type).add(new UserService(serviceId, activationDate, status));
+                }
+            }
+        }
+        return new User(id, name, emailAddress, phoneNumber, userServiceListHashMap);
     }
 }

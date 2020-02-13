@@ -79,4 +79,57 @@
 		<name>World</name>
 		<number_of_channels>10000</number_of_channels>
 	</service>
+	<service>
+		<type>Internet</type>
+		<id>12</id>
+		<name>Internet XS</name>
+		<speed>30</speed>
+		<antivirus>false</antivirus>
+		<connection_type>ADSL</connection_type>
+	</service>
+	<service>
+		<type>Internet</type>
+		<id>13</id>
+		<name>int121</name>
+		<speed>40</speed>
+		<antivirus>false</antivirus>
+		<connection_type>ADSL</connection_type>
+	</service>
+	<service>
+		<type>Internet</type>
+		<id>14</id>
+		<name>int131</name>
+		<speed>40</speed>
+		<antivirus>false</antivirus>
+		<connection_type>ADSL</connection_type>
+	</service>
+	<service>
+		<type>Television</type>
+		<id>15</id>
+		<name>tv15</name>
+		<number_of_channels>40</number_of_channels>
+	</service>
+	<service>
+		<type>Phone</type>
+		<id>16</id>
+		<name>phone151</name>
+		<number_of_calling_minutes>30</number_of_calling_minutes>
+		<number_of_sms>100</number_of_sms>
+	</service>
+	<service>
+		<type>Internet</type>
+		<id>17</id>
+		<name>int161</name>
+		<speed>50</speed>
+		<antivirus>true</antivirus>
+		<connection_type>ADSL</connection_type>
+	</service>
+	<service>
+		<type>Internet</type>
+		<id>18</id>
+		<name>int18</name>
+		<speed>50</speed>
+		<antivirus>true</antivirus>
+		<connection_type>ADSL</connection_type>
+	</service>
 </services>

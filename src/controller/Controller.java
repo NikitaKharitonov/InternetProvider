@@ -5,6 +5,7 @@ import model.services.Service;
 import model.users.User;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Interface Controller
@@ -67,7 +68,7 @@ public interface Controller {
      * @throws FailedOperation
      *          If some troubles were happened
      * */
-    void    setServiceToUser(long userID, long serviceId) throws FailedOperation;
+    void    setServiceToUser(long userID, Service service, Date date) throws FailedOperation;
     /**
      * Change user data (E.g. name or email address)
      * @param user

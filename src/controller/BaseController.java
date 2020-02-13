@@ -10,6 +10,7 @@ import model.util.IdGenerator;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class BaseController implements Controller {
 
@@ -78,11 +79,11 @@ public class BaseController implements Controller {
     }
 
     @Override
-    public void setServiceToUser(long userID, long serviceId) throws FailedOperation {
+    public void setServiceToUser(long userID, Service service, Date date) throws FailedOperation {
         try{
-            model.setServiceToUser(userID, serviceId);
+            model.addServiceToUserById(userID, service, date, User.Status.ACTIVE);
         }
-        catch (UserNotFoundException | ServiceNotFoundException ex){
+        catch (UserNotFoundException ex){
             throw new FailedOperation(ex);
         }
         saveChanges();

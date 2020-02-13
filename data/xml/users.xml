@@ -3,75 +3,129 @@
 	<user>
 		<id>1</id>
 		<name>Nikita</name>
-		<email_address>nikita@mail.ru</email_address>
-		<phone_number>111</phone_number>
-		<activated_services>
+		<email_address>111</email_address>
+		<phone_number>nikita@mail.ru</phone_number>
+		<user_services>
 			<Television>
 				<service>
 					<service_id>9</service_id>
 					<activation_date>03/02/2020 22:03:23</activation_date>
+					<status>ACTIVE</status>
 				</service>
 			</Television>
 			<Phone>
 				<service>
 					<service_id>7</service_id>
 					<activation_date>03/02/2020 22:32:00</activation_date>
+					<status>ACTIVE</status>
 				</service>
 			</Phone>
 			<Internet>
 				<service>
 					<service_id>1</service_id>
 					<activation_date>03/02/2020 21:56:37</activation_date>
+					<status>ACTIVE</status>
+				</service>
+				<service>
+					<service_id>3</service_id>
+					<activation_date>07/02/2020 16:08:00</activation_date>
+					<status>ACTIVE</status>
+				</service>
+				<service>
+					<service_id>12</service_id>
+					<activation_date>12/02/2020 01:43:34</activation_date>
+					<status>ACTIVE</status>
 				</service>
 			</Internet>
-		</activated_services>
+		</user_services>
 	</user>
 	<user>
 		<id>2</id>
 		<name>Anna</name>
-		<email_address>anna@mail.ru</email_address>
-		<phone_number>123</phone_number>
-		<activated_services>
-		</activated_services>
+		<email_address>123</email_address>
+		<phone_number>anna@mail.ru</phone_number>
+		<user_services>
+		</user_services>
 	</user>
 	<user>
 		<id>3</id>
 		<name>Vera</name>
-		<email_address>vera@mail.ru</email_address>
-		<phone_number>245</phone_number>
-		<activated_services>
-		</activated_services>
+		<email_address>245</email_address>
+		<phone_number>vera@mail.ru</phone_number>
+		<user_services>
+			<Television>
+				<service>
+					<service_id>15</service_id>
+					<activation_date>14/02/2020 01:21:43</activation_date>
+					<status>ACTIVE</status>
+				</service>
+			</Television>
+			<Phone>
+				<service>
+					<service_id>16</service_id>
+					<activation_date>14/02/2020 01:22:11</activation_date>
+					<status>ACTIVE</status>
+				</service>
+			</Phone>
+			<Internet>
+				<service>
+					<service_id>14</service_id>
+					<activation_date>14/02/2020 01:21:19</activation_date>
+					<status>ACTIVE</status>
+				</service>
+				<service>
+					<service_id>17</service_id>
+					<activation_date>14/02/2020 01:22:49</activation_date>
+					<status>ACTIVE</status>
+				</service>
+			</Internet>
+		</user_services>
 	</user>
 	<user>
 		<id>4</id>
 		<name>Boris</name>
-		<email_address>boris@mail.ru</email_address>
-		<phone_number>666</phone_number>
-		<activated_services>
-		</activated_services>
+		<email_address>666</email_address>
+		<phone_number>boris@mail.ru</phone_number>
+		<user_services>
+		</user_services>
 	</user>
 	<user>
 		<id>5</id>
 		<name>Vika</name>
-		<email_address>vika@mail.ru</email_address>
-		<phone_number>333</phone_number>
-		<activated_services>
-		</activated_services>
+		<email_address>333</email_address>
+		<phone_number>vika@mail.ru</phone_number>
+		<user_services>
+		</user_services>
 	</user>
 	<user>
 		<id>6</id>
 		<name>Kot</name>
-		<email_address>kot@mail.ru</email_address>
-		<phone_number>999</phone_number>
-		<activated_services>
-		</activated_services>
+		<email_address>999</email_address>
+		<phone_number>kot@mail.ru</phone_number>
+		<user_services>
+		</user_services>
 	</user>
 	<user>
 		<id>7</id>
 		<name>Igor</name>
-		<email_address>igor@mail.ru</email_address>
-		<phone_number>777</phone_number>
-		<activated_services>
-		</activated_services>
+		<email_address>777</email_address>
+		<phone_number>igor@mail.ru</phone_number>
+		<user_services>
+		</user_services>
+	</user>
+	<user>
+		<id>8</id>
+		<name>Zakhar</name>
+		<email_address>989</email_address>
+		<phone_number>zakhar@mail.ru</phone_number>
+		<user_services>
+			<Internet>
+				<service>
+					<service_id>18</service_id>
+					<activation_date>14/02/2020 02:14:14</activation_date>
+					<status>ACTIVE</status>
+				</service>
+			</Internet>
+		</user_services>
 	</user>
 </users>

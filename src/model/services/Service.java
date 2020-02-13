@@ -17,17 +17,6 @@ public abstract class Service implements Serializable, Cloneable {
         this.name = name;
     }
 
-    Service(String str) {
-        ValueParser.setString(str);
-        this.id = Long.parseLong(ValueParser.getValue("id"));
-        this.name = ValueParser.getValue("name");
-    }
-
-    Service(Element element) {
-        this.id = Long.parseLong(element.getElementsByTagName("id").item(0).getTextContent());
-        this.name = element.getElementsByTagName("name").item(0).getTextContent();
-    }
-
     public String getName() {
         return name;
     }

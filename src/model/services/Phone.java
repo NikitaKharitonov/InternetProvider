@@ -26,18 +26,6 @@ public class Phone extends Service {
         this.smsCount = smsCount;
     }
 
-    public Phone(String str) {
-        super(str);
-        callsMinCount = Integer.parseInt(ValueParser.getValue("callsMinCount"));
-        smsCount = Integer.parseInt(ValueParser.getValue("smsCount"));
-    }
-
-    public Phone(Element element) {
-        super(element);
-        callsMinCount = Integer.parseInt(element.getElementsByTagName("number_of_calling_minutes").item(0).getTextContent());
-        smsCount = Integer.parseInt(element.getElementsByTagName("number_of_sms").item(0).getTextContent());
-    }
-
     public int getCallsMinCount() {
         return callsMinCount;
     }

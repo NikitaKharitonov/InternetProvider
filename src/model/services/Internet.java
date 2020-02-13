@@ -40,20 +40,6 @@ public class Internet extends Service {
         this.connectionType = connectionType;
     }
 
-    public Internet(String str) {
-        super(str);
-        speed = Integer.parseInt(ValueParser.getValue("speed"));
-        antivirus = Boolean.parseBoolean(ValueParser.getValue("antivirus"));
-        connectionType = ConnectionType.valueOf(ValueParser.getValue("connectionType"));
-    }
-
-    public Internet(Element element) {
-        super(element);
-        this.speed = Integer.parseInt(element.getElementsByTagName("speed").item(0).getTextContent());
-        this.antivirus = Boolean.parseBoolean(element.getElementsByTagName("antivirus").item(0).getTextContent());
-        this.connectionType = ConnectionType.valueOf(element.getElementsByTagName("connection_type").item(0).getTextContent());
-    }
-
     public int getSpeed() {
         return speed;
     }

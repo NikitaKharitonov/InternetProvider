@@ -22,16 +22,6 @@ public class Television extends Service {
         this.numberOfChannels = numberOfChannels;
     }
 
-    public Television(String str) {
-        super(str);
-        numberOfChannels = Integer.parseInt(ValueParser.getValue("numberOfChannels"));
-    }
-
-    public Television(Element element) {
-        super(element);
-        numberOfChannels = Integer.parseInt(element.getElementsByTagName("number_of_channels").item(0).getTextContent());
-    }
-
     public int getNumberOfChannels() {
         return numberOfChannels;
     }

@@ -4,7 +4,6 @@ import model.services.Internet;
 import model.services.Phone;
 import model.services.Service;
 import model.services.Television;
-import model.exceptions.ServiceNotFoundException;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -47,23 +46,23 @@ public class User {
 
         @Override
         public String toString() {
-            return "UserService{" +
-                    "serviceId=" + serviceId +
-                    ", activationDate=" + activationDate +
-                    ", status=" + status +
-                    '}';
+            return "ActivationDate: " + activationDate + "\n" +
+                    "Status: " + status;
         }
     }
 
     private final long id;
-    private String name;
+    private String username;
+    private String firstName;
+    private String surname;
     private String phoneNumber;
     private String emailAddress;
     private HashMap<String, LinkedList<UserService>> userServiceListHashMap;
 
-    public User(long id, String name, String phoneNumber, String emailAddress, HashMap<String, LinkedList<UserService>> userServiceListHashMap) {
+    public User(long id, String username, String firstName, String phoneNumber, String emailAddress, HashMap<String, LinkedList<UserService>> userServiceListHashMap) {
         this.id = id;
-        this.name = name;
+        this.username = username;
+        this.firstName = firstName;
         this.phoneNumber = phoneNumber;
         this.emailAddress = emailAddress;
 
@@ -80,12 +79,28 @@ public class User {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
     public String getPhoneNumber() {
@@ -142,13 +157,11 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", emailAddress='" + emailAddress + '\'' +
-                ", userServiceListHashMap=" + userServiceListHashMap +
-                '}';
+        return "Username: " +  username + "\n" +
+                "First name: " + firstName + "\n" +
+                "Surname: " + surname + "\n" +
+                "Phone number: " + phoneNumber + "\n" +
+                "Email address: " + emailAddress;
     }
 
     public void toXML(XMLStreamWriter xmlsw) throws XMLStreamException {
@@ -163,8 +176,14 @@ public class User {
         xmlsw.writeCharacters("\n");
 
         xmlsw.writeCharacters("\t\t");
-        xmlsw.writeStartElement("name");
-        xmlsw.writeCharacters(name);
+        xmlsw.writeStartElement("username");
+        xmlsw.writeCharacters(username);
+        xmlsw.writeEndElement();
+        xmlsw.writeCharacters("\n");
+
+        xmlsw.writeCharacters("\t\t");
+        xmlsw.writeStartElement("first_name");
+        xmlsw.writeCharacters(firstName);
         xmlsw.writeEndElement();
         xmlsw.writeCharacters("\n");
 
@@ -236,7 +255,8 @@ public class User {
 
     public static User fromXML(Element eElement) throws ParseException {
         long id = Long.parseLong(eElement.getElementsByTagName("id").item(0).getTextContent());
-        String name = eElement.getElementsByTagName("name").item(0).getTextContent();
+        String username = eElement.getElementsByTagName("username").item(0).getTextContent();
+        String firstName = eElement.getElementsByTagName("first_name").item(0).getTextContent();
         String emailAddress = eElement.getElementsByTagName("email_address").item(0).getTextContent();
         String phoneNumber = eElement.getElementsByTagName("phone_number").item(0).getTextContent();
         Element activatedServicesElement = (Element) eElement.getElementsByTagName("user_services").item(0);
@@ -257,6 +277,6 @@ public class User {
                 }
             }
         }
-        return new User(id, name, emailAddress, phoneNumber, userServiceListHashMap);
+        return new User(id, username, firstName, emailAddress, phoneNumber, userServiceListHashMap);
     }
 }

@@ -10,13 +10,12 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import model.exceptions.ServiceNotFoundException;
 import model.exceptions.UserNotFoundException;
 import model.models.BaseModel;
 import model.models.Model;
 import model.services.Internet;
 import model.services.Phone;
-import model.services.Service;
+import model.services.Services;
 import model.services.Television;
 import model.users.User;
 
@@ -30,11 +29,11 @@ import java.util.LinkedList;
 public class ProviderApplication2 extends Application
 {
 
-    static void display(String title, String message) {
+    static void display(String message) {
         Stage stage = new Stage();
 
         stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setTitle(title);
+        stage.setTitle("Error");
         stage.setMinWidth(250);
         stage.setMinHeight(200);
 
@@ -78,7 +77,7 @@ public class ProviderApplication2 extends Application
 
     void createUserScene(Stage primaryStage) {
         Label label = new Label();
-        label.setText("Hello, " + user.getName() + "!");
+        label.setText("Hello, " + user.getUsername() + "!");
         Button personalInfo = new Button("Personal info");
         personalInfo.setOnAction(e -> primaryStage.setScene(userPersonalInfoScene));
         Button services = new Button("Services");
@@ -89,23 +88,20 @@ public class ProviderApplication2 extends Application
     }
 
     void createUserPersonalInfoScene(Stage stage) {
-        Label label = new Label("Personal info");
-        Label name = new Label("Name: " + user.getName());
-        Label phone = new Label("Phone number: " + user.getPhoneNumber());
-        Label email = new Label("Email address: " + user.getEmailAddress());
-        Button change = new Button("Change");
+        Label label = new Label("Personal info:\n" + user.toString());
+       Button change = new Button("Change");
         change.setOnAction(e -> {
             createChangePersonalInfo(stage);
             stage.setScene(changePersonalInfo);
         });
         Button back = new Button("Back");
         back.setOnAction(e -> stage.setScene(userScene));
-        userPersonalInfoScene = createScene(label, name, phone, email, change, back);
+        userPersonalInfoScene = createScene(label, change, back);
     }
 
     void createChangePersonalInfo(Stage stage) {
         Label label = new Label("Name");
-        TextField name = new TextField(user.getName());
+        TextField name = new TextField(user.getUsername());
         Label label1 = new Label("Phone number");
         TextField phone = new TextField(user.getPhoneNumber());
         Label label2 = new Label("Email address");
@@ -115,14 +111,14 @@ public class ProviderApplication2 extends Application
             try {
                 if (name.getText().equals(""))
                     throw new IllegalArgumentException("Enter name");
-                user.setName(name.getText());
+                user.setUsername(name.getText());
                 user.setPhoneNumber(phone.getText());
                 user.setEmailAddress(address.getText());
                 createLoginScene(stage);
                 createAllUserScenes(stage);
                 stage.setScene(userPersonalInfoScene);
             } catch (IllegalArgumentException ex) {
-                display("Error", ex.getMessage());
+                display(ex.getMessage());
             }
         });
         Button back = new Button("Back");
@@ -131,125 +127,63 @@ public class ProviderApplication2 extends Application
     }
 
     void createUserServicesScene(Stage primaryStage) {
-        Label label = new Label("Your services");
-        Button internet = new Button("Internet");
-        internet.setOnAction(e -> {
-            createAllUserScenes(primaryStage);
-            primaryStage.setScene(userInternetScene);
-        });
-        Button tv = new Button("Television");
-        tv.setOnAction(e -> {
-            createAllUserScenes(primaryStage);
-            primaryStage.setScene(userTvScene);
-        });
-        Button phone = new Button("Phone");
-        phone.setOnAction(e -> {
-            createAllUserScenes(primaryStage);
-            primaryStage.setScene(userPhoneScene);
-        });
+        String[] serviceTypes = Services.serviceTypes;
+        ArrayList<Node> nodeArrayList = new ArrayList<>();
+        nodeArrayList.add(new Label("Your services"));
+        for (int i = 0; i < serviceTypes.length; ++i) {
+            Button button = new Button(serviceTypes[i]);
+            int finalI = i;
+            button.setOnAction(e -> {
+                try {
+                    primaryStage.setScene(getServiceScene(primaryStage, serviceTypes[finalI]));
+                } catch (FailedOperation ex) {
+                    display(ex.getMessage());
+                }
+            });
+            nodeArrayList.add(button);
+        }
         Button back = new Button("Back");
         back.setOnAction(e -> primaryStage.setScene(userScene));
-        userServicesScene = createScene(label, internet, tv, phone, back);
+        nodeArrayList.add(back);
+        Node[] nodes = new Node[nodeArrayList.size()];
+        nodeArrayList.toArray(nodes);
+        userServicesScene = createScene(nodes);
     }
 
-    void createUserInternetScene(Stage primaryStage) throws FailedOperation {
+    private Scene getServiceScene(Stage primaryStage, String serviceType) throws FailedOperation {
         Button back = new Button("Back");
         back.setOnAction(e -> primaryStage.setScene(userServicesScene));
-        Label label = new Label("Your Internet\n————————————");
+        Label label = new Label("Your " + serviceType + "\n————————————");
         LinkedList<Node> nodes = new LinkedList<>();
         nodes.add(label);
-        String serviceType = Internet.class.getSimpleName();
         int count = user.getUserServiceCount(serviceType);
         for (int i = 0; i < count; ++i) {
-            Internet service = (Internet) controller.getService(user.getUserService(serviceType, i).getServiceId());
-            Label name = new Label("Name: " + service.getName());
-            Label status = new Label("Status: " + user.getUserService(serviceType, i).getStatus());
-            Label activationDate = new Label("Activation date: " + user.getUserService(serviceType, i).getActivationDate());
-            Label speed = new Label("Speed: " + service.getSpeed());
-            Label connectionType = new Label("Connection Type: " + service.getConnectionType());
-            Label antivirus = new Label("Antivirus: " + service.isAntivirus());
-            Button deactivate = new Button("Deactivate");
-            nodes.add(name);
-            nodes.add(status);
-            nodes.add(activationDate);
-            nodes.add(speed);
-            nodes.add(connectionType);
-            nodes.add(antivirus);
+            Label serviceString = new Label(Services.serviceToString(controller.getService(user.getUserService(serviceType, i).getServiceId())) + "\n" +
+                    user.getUserService(serviceType, i).toString());
+     //      Button deactivate = new Button("Deactivate");
+            nodes.add(serviceString);
             nodes.add(new Label("————————————"));
         }
-
         Button add = new Button("Add");
-        add.setOnAction(e -> primaryStage.setScene(addInternetScene));
+        add.setOnAction(e -> {
+            if (serviceType.equals(Internet.class.getSimpleName())) {
+                createAddInternetScene(primaryStage);
+                primaryStage.setScene(addInternetScene);
+            }
+            else if (serviceType.equals(Phone.class.getSimpleName())) {
+                createAddPhoneScene(primaryStage);
+                primaryStage.setScene(addPhoneScene);
+            }
+            else if (serviceType.equals(Television.class.getSimpleName())) {
+                createAddTvScene(primaryStage);
+                primaryStage.setScene(addTvScene);
+            }
+        });
         nodes.add(add);
         nodes.add(back);
         Node[] nodesArray = new Node[nodes.size()];
         nodes.toArray(nodesArray);
-        userInternetScene = createScene(nodesArray);
-    }
-
-    void createUserTelevisionScene(Stage primaryStage) throws FailedOperation {
-        Button back = new Button("Back");
-        back.setOnAction(e -> primaryStage.setScene(userServicesScene));
-        Label label = new Label("Your Television\n————————————");
-        LinkedList<Node> nodes = new LinkedList<>();
-        String serviceType = Television.class.getSimpleName();
-        int count = user.getUserServiceCount(serviceType);
-        nodes.add(label);
-        for (int i = 0; i < count; ++i) {
-            Television service = (Television) controller.getService(user.getUserService(serviceType, i).getServiceId());
-            Label name = new Label("Name: " + service.getName());
-            Label status = new Label("Status: " + user.getUserService(serviceType, i).getStatus());
-            Label activationDate = new Label("Activation date: " + user.getUserService(serviceType, i).getActivationDate());
-            Label numberOfChannels = new Label("Number of channels: " + service.getNumberOfChannels());
-            Button deactivate = new Button("Deactivate");
-            nodes.add(name);
-            nodes.add(status);
-            nodes.add(activationDate);
-            nodes.add(numberOfChannels);
-            nodes.add(new Label("————————————"));
-        }
-
-        Button add = new Button("Add");
-        add.setOnAction(e -> primaryStage.setScene(addTvScene));
-        nodes.add(add);
-        nodes.add(back);
-        Node[] nodesArray = new Node[nodes.size()];
-        nodes.toArray(nodesArray);
-        userTvScene = createScene(nodesArray);
-    }
-
-    // todo get rid of duplicated code by implementing toString method in services
-    void createUserPhoneScene(Stage primaryStage) throws FailedOperation {
-        Button back = new Button("Back");
-        back.setOnAction(e -> primaryStage.setScene(userServicesScene));
-        Label label = new Label("Your Phone\n————————————");
-        LinkedList<Node> nodes = new LinkedList<>();
-        String serviceType = Phone.class.getSimpleName();
-        int count = user.getUserServiceCount(serviceType);
-        nodes.add(label);
-        for (int i = 0; i < count; ++i) {
-            Phone service = (Phone) controller.getService(user.getUserService(serviceType, i).getServiceId());
-            Label name = new Label("Name: " + service.getName());
-            Label status = new Label("Status: " + user.getUserService(serviceType, i).getStatus());
-            Label activationDate = new Label("Activation date: " + user.getUserService(serviceType, i).getActivationDate());
-            Label callsMinCount = new Label("Number of minutes: " + service.getCallsMinCount());
-            Label smsCount = new Label("Number of SMS: " + service.getSmsCount());
-            Button deactivate = new Button("Deactivate");
-            nodes.add(name);
-            nodes.add(status);
-            nodes.add(activationDate);
-            nodes.add(callsMinCount);
-            nodes.add(smsCount);
-            nodes.add(new Label("————————————"));
-        }
-
-        Button add = new Button("Add");
-        add.setOnAction(e -> primaryStage.setScene(addPhoneScene));
-        nodes.add(add);
-        nodes.add(back);
-        Node[] nodesArray = new Node[nodes.size()];
-        nodes.toArray(nodesArray);
-        userPhoneScene = createScene(nodesArray);
+        return createScene(nodesArray);
     }
 
     void createAddInternetScene(Stage stage) {
@@ -290,10 +224,9 @@ public class ProviderApplication2 extends Application
                 controller.setServiceToUser(user.getId(),
                         new Internet(controller.getNextServiceId(), name, speed, bAntivirus, Internet.ConnectionType.valueOf(connectionType.getValue())),
                         date);
-                createAllUserScenes(stage);
-                stage.setScene(userInternetScene);
+                stage.setScene(getServiceScene(stage, Internet.class.getSimpleName()));
             } catch (FailedOperation | IllegalArgumentException | ParseException ex) {
-                display("Error", ex.getMessage());
+                display(ex.getMessage());
             }
         });
         addInternetScene = createScene(nameLabel, nameTextField, speedLabel, textFieldSpeed, connectionTypeLabel, connectionType, antivirus, new Label("Activation date and time"), dateTimePicker, add, back);
@@ -326,10 +259,9 @@ public class ProviderApplication2 extends Application
                 controller.setServiceToUser(user.getId(),
                         new Phone(controller.getNextServiceId(), nameText, Integer.parseInt(callsMinCountText), Integer.parseInt(smsCountText)),
                         date);
-                createAllUserScenes(stage);
-                stage.setScene(userPhoneScene);
+                stage.setScene(getServiceScene(stage, Phone.class.getSimpleName()));
             } catch (FailedOperation | IllegalArgumentException | ParseException ex) {
-                display("Error", ex.getMessage());
+                display(ex.getMessage());
             }
         });
         addPhoneScene = createScene(new Label("Name:"), name, new Label("Number of minutes:"), callsMinCount, new Label("Number of SMS:"), smsCount, new Label("Activation date and time:"), dateTimePicker, add, back);
@@ -357,10 +289,9 @@ public class ProviderApplication2 extends Application
                 controller.setServiceToUser(user.getId(),
                         new Television(controller.getNextServiceId(), name.getText(), Integer.parseInt(numberOfChannels.getText())),
                         date);
-                createAllUserScenes(stage);
-                stage.setScene(userTvScene);
+                stage.setScene(getServiceScene(stage, Television.class.getSimpleName()));
             } catch (FailedOperation | IllegalArgumentException | ParseException ex) {
-                display("Error", ex.getMessage());
+                display(ex.getMessage());
             }
         });
         addTvScene = createScene(new Label("Name:"), name, new Label("Number of channels:"), numberOfChannels, new Label("Activation date and time:"), dateTimePicker, add, back);
@@ -371,36 +302,25 @@ public class ProviderApplication2 extends Application
         createUserScene(primaryStage);
         createUserServicesScene(primaryStage);
         createUserPersonalInfoScene(primaryStage);
-        try {
-            createUserInternetScene(primaryStage);
-            createUserPhoneScene(primaryStage);
-            createUserTelevisionScene(primaryStage);
-
-            createAddInternetScene(primaryStage);
-            createAddPhoneScene(primaryStage);
-            createAddTvScene(primaryStage);
-        } catch (FailedOperation e) {
-            display("Error", e.getMessage());
-        }
     }
 
     void createLoginScene(Stage primaryStage) {
         TextField username = new TextField();
         username.setPromptText("Username");
         ComboBox<String> comboBox = new ComboBox<>();
-        comboBox.setPromptText("Name");
+        comboBox.setPromptText("username");
         comboBox.setEditable(true);
         for (int i = 0; i <= model.getUserMaxId(); ++i) {
             try {
                 User user = model.getUserById(i);
-                comboBox.getItems().add(user.getName());
+                comboBox.getItems().add(user.getUsername());
             } catch (UserNotFoundException e) {
                 //comboBox.getItems().add(String.valueOf(i));
             }
         }
         TextField password = new TextField();
-        password.setPromptText("Password");
-        CheckBox checkBox = new CheckBox("Remember me");
+        password.setPromptText("password");
+        //CheckBox checkBox = new CheckBox("Remember me");
         Button login = new Button("Log in");
         login.setOnAction(e -> {
             try {
@@ -408,43 +328,41 @@ public class ProviderApplication2 extends Application
                 String value = comboBox.getValue();
                 if (value.equals(""))
                     throw new IllegalArgumentException("Enter name");
-                user = model.getUserByName(comboBox.getValue());
+                user = model.getUserByUsername(comboBox.getValue());
                 createAllUserScenes(primaryStage);
                 primaryStage.setScene(userScene);
             } catch (UserNotFoundException | IllegalArgumentException ex) {
-                display("Error", ex.getMessage());
+                display(ex.getMessage());
             }
         });
         Button back = new Button("Back");
         back.setOnAction(e -> primaryStage.setScene(mainScene));
-        loginScene = createScene(comboBox, password, checkBox, login, back);
+        loginScene = createScene(comboBox, password, login, back);
     }
 
-    void createSignupScene(Stage stage)
+    void createSignUpScene(Stage stage)
     {
-        Label label = new Label("Name");
-        TextField name = new TextField();
-        Label label1 = new Label("Phone number");
+        TextField username = new TextField();
+        TextField firstName = new TextField();
         TextField phone = new TextField();
-        Label label2 = new Label("Email address");
         TextField address = new TextField();
-        Button signup = new Button("Sign up");
-        signup.setOnAction(e -> {
+        Button signUp = new Button("Sign up");
+        signUp.setOnAction(e -> {
             try {
-                if (name.getText().equals(""))
-                    throw new IllegalArgumentException("Enter name");
-                user = new User(controller.getNextUserId(), name.getText(), phone.getText(), address.getText(), null);
+                if (username.getText().equals(""))
+                    throw new IllegalArgumentException("Enter username");
+                user = new User(controller.getNextUserId(), username.getText(), firstName.getText(), phone.getText(), address.getText(), null);
                 controller.createUser(user);
                 createLoginScene(stage);
                 createAllUserScenes(stage);
                 stage.setScene(userScene);
             } catch (FailedOperation | IllegalArgumentException ex) {
-                display("Error", ex.getMessage());
+                display(ex.getMessage());
             }
         });
         Button back = new Button("Back");
         back.setOnAction(e -> stage.setScene(mainScene));
-        signUpScene = createScene(label, name, label1, phone, label2, address, signup, back);
+        signUpScene = createScene(new Label("Username:"), username, new Label("First name:"), firstName, new Label("Phone number:"), phone, new Label("Email address:"), address, signUp, back);
     }
 
     Controller controller;
@@ -474,7 +392,7 @@ public class ProviderApplication2 extends Application
             login.setOnAction(e -> primaryStage.setScene(loginScene));
             Button signup = new Button("Sign up");
             signup.setOnAction(e -> {
-                createSignupScene(primaryStage);
+                createSignUpScene(primaryStage);
                 primaryStage.setScene(signUpScene);
             });
             mainScene = createScene(login, signup);

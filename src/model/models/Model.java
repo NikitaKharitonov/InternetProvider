@@ -46,5 +46,5 @@ public interface Model {
 
     void addServiceToUserById(long userID, Service service, Date date, User.Status status) throws UserNotFoundException;
 
-    User getUserByName(String name) throws UserNotFoundException;
+    User getUserByUsername(String name) throws UserNotFoundException;
 }

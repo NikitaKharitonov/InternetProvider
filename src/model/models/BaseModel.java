@@ -128,11 +128,11 @@ public class BaseModel implements Model {
     }
 
     // fixme
-    public User getUserByName(String name) throws UserNotFoundException {
+    public User getUserByUsername(String username) throws UserNotFoundException {
         for (User user : users.values())
-            if (user.getName().equals(name))
+            if (user.getUsername().equals(username))
                 return user;
-        throw new UserNotFoundException("User with name " + name + " not found");
+        throw new UserNotFoundException("Username " + username + " not found");
     }
 
 }

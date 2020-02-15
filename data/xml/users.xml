@@ -2,7 +2,8 @@
 <users>
 	<user>
 		<id>1</id>
-		<name>Nikita</name>
+		<username>Nikita</username>
+		<first_name></first_name>
 		<email_address>111</email_address>
 		<phone_number>nikita@mail.ru</phone_number>
 		<user_services>
@@ -10,6 +11,11 @@
 				<service>
 					<service_id>9</service_id>
 					<activation_date>03/02/2020 22:03:23</activation_date>
+					<status>ACTIVE</status>
+				</service>
+				<service>
+					<service_id>22</service_id>
+					<activation_date>15/02/2020 21:55:54</activation_date>
 					<status>ACTIVE</status>
 				</service>
 			</Television>
@@ -36,12 +42,23 @@
 					<activation_date>12/02/2020 01:43:34</activation_date>
 					<status>ACTIVE</status>
 				</service>
+				<service>
+					<service_id>20</service_id>
+					<activation_date>15/02/2020 20:11:17</activation_date>
+					<status>ACTIVE</status>
+				</service>
+				<service>
+					<service_id>21</service_id>
+					<activation_date>15/02/2020 21:53:04</activation_date>
+					<status>ACTIVE</status>
+				</service>
 			</Internet>
 		</user_services>
 	</user>
 	<user>
 		<id>2</id>
-		<name>Anna</name>
+		<username>Anna</username>
+		<first_name></first_name>
 		<email_address>123</email_address>
 		<phone_number>anna@mail.ru</phone_number>
 		<user_services>
@@ -49,7 +66,8 @@
 	</user>
 	<user>
 		<id>3</id>
-		<name>Vera</name>
+		<username>Vera</username>
+		<first_name></first_name>
 		<email_address>245</email_address>
 		<phone_number>vera@mail.ru</phone_number>
 		<user_services>
@@ -83,7 +101,8 @@
 	</user>
 	<user>
 		<id>4</id>
-		<name>Boris</name>
+		<username>Boris</username>
+		<first_name></first_name>
 		<email_address>666</email_address>
 		<phone_number>boris@mail.ru</phone_number>
 		<user_services>
@@ -91,7 +110,8 @@
 	</user>
 	<user>
 		<id>5</id>
-		<name>Vika</name>
+		<username>Vika</username>
+		<first_name></first_name>
 		<email_address>333</email_address>
 		<phone_number>vika@mail.ru</phone_number>
 		<user_services>
@@ -99,7 +119,8 @@
 	</user>
 	<user>
 		<id>6</id>
-		<name>Kot</name>
+		<username>Kot</username>
+		<first_name></first_name>
 		<email_address>999</email_address>
 		<phone_number>kot@mail.ru</phone_number>
 		<user_services>
@@ -107,7 +128,8 @@
 	</user>
 	<user>
 		<id>7</id>
-		<name>Igor</name>
+		<username>Igor</username>
+		<first_name></first_name>
 		<email_address>777</email_address>
 		<phone_number>igor@mail.ru</phone_number>
 		<user_services>
@@ -115,7 +137,8 @@
 	</user>
 	<user>
 		<id>8</id>
-		<name>Zakhar</name>
+		<username>Zakhar</username>
+		<first_name></first_name>
 		<email_address>989</email_address>
 		<phone_number>zakhar@mail.ru</phone_number>
 		<user_services>
@@ -123,6 +146,22 @@
 				<service>
 					<service_id>18</service_id>
 					<activation_date>14/02/2020 02:14:14</activation_date>
+					<status>ACTIVE</status>
+				</service>
+			</Internet>
+		</user_services>
+	</user>
+	<user>
+		<id>9</id>
+		<username>Vlad</username>
+		<first_name></first_name>
+		<email_address>vlad@mail.ru</email_address>
+		<phone_number>459</phone_number>
+		<user_services>
+			<Internet>
+				<service>
+					<service_id>19</service_id>
+					<activation_date>15/02/2020 20:05:13</activation_date>
 					<status>ACTIVE</status>
 				</service>
 			</Internet>

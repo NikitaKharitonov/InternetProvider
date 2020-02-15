@@ -132,4 +132,34 @@
 		<antivirus>true</antivirus>
 		<connection_type>ADSL</connection_type>
 	</service>
+	<service>
+		<type>Internet</type>
+		<id>19</id>
+		<name>int19</name>
+		<speed>50</speed>
+		<antivirus>false</antivirus>
+		<connection_type>ADSL</connection_type>
+	</service>
+	<service>
+		<type>Internet</type>
+		<id>20</id>
+		<name>int20</name>
+		<speed>100</speed>
+		<antivirus>false</antivirus>
+		<connection_type>ADSL</connection_type>
+	</service>
+	<service>
+		<type>Internet</type>
+		<id>21</id>
+		<name>int21</name>
+		<speed>120</speed>
+		<antivirus>false</antivirus>
+		<connection_type>ADSL</connection_type>
+	</service>
+	<service>
+		<type>Television</type>
+		<id>22</id>
+		<name>tv22</name>
+		<number_of_channels>40</number_of_channels>
+	</service>
 </services>

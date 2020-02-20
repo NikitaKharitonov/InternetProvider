@@ -154,6 +154,9 @@ public class User {
     }
 
     // todo add remove method
+    public void removeUserService(String type) {
+        userServiceListHashMap.remove(type);
+    }
 
     @Override
     public String toString() {

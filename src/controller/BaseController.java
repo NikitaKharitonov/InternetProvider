@@ -38,7 +38,7 @@ public class BaseController implements Controller {
     }
 
     @Override
-    public User getUser(int userID) throws FailedOperation {
+    public User getUserById(int userID) throws FailedOperation {
         try {
             return model.getUserById(userID);
         } catch (UserNotFoundException ex) {
@@ -47,6 +47,7 @@ public class BaseController implements Controller {
     }
 
     @Override
+    //TODO: replace ot 'getServicesByUser'
     public String[] getProvidedServices() {
         return SERVICES_NAME;
     }
@@ -79,6 +80,7 @@ public class BaseController implements Controller {
     }
 
     @Override
+    //TODO: remove
     public void setServiceToUser(long userID, Service service, Date date) throws FailedOperation {
         try{
             model.addServiceToUserById(userID, service, date, User.Status.ACTIVE);
@@ -102,7 +104,7 @@ public class BaseController implements Controller {
     }
 
     @Override
-    public void changeService(Service service) throws FailedOperation {
+    public void updateService(Service service) throws FailedOperation {
         try{
             model.removeServiceById(service.getId());
             model.addService(service);
@@ -136,6 +138,7 @@ public class BaseController implements Controller {
     }
 
     @Override
+    //todo: remove
     public void deleteService(long serviceID) throws FailedOperation {
         try {
             model.removeServiceById(serviceID);
@@ -146,11 +149,13 @@ public class BaseController implements Controller {
     }
 
     @Override
+    //todo: remove
     public long getNextServiceId() {
         return serviceIdGenerator.next();
     }
 
     @Override
+    //todo: remove
     public long getNextUserId() {
         return userIdGenerator.next();
     }
@@ -168,6 +173,7 @@ public class BaseController implements Controller {
         return model.getServiceData();
     }
 
+    //todo: remove
     private void saveChanges() throws FailedOperation {
         try{
             model.save();

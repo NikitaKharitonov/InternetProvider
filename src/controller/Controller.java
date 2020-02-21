@@ -37,7 +37,7 @@ public interface Controller {
      *          If some troubles were happened
      * @return Created Service object
      * */
-    User      getUser(int userID) throws FailedOperation;
+    User getUserById(int userID) throws FailedOperation;
     /**
      * Return all supported services names
      * @return array of supported services names
@@ -84,7 +84,7 @@ public interface Controller {
      * @throws FailedOperation
      *          If some troubles were happened
      * */
-    void    changeService(Service service) throws FailedOperation;
+    void updateService(Service service) throws FailedOperation;
     /**
      * Disable {@code serviceName} for user with such id
      * @param userID

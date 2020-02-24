@@ -19,3 +19,15 @@
 //        }
 //    }
 //}
+
+import model.exceptions.UserNotFoundException;
+import model.models.DBModel;
+import model.users.User;
+
+public class Main {
+    public static void main(String[] args) throws UserNotFoundException {
+        DBModel model = new DBModel();
+        User user = model.getUserById(1);
+        System.out.println(user.toString());
+    }
+}

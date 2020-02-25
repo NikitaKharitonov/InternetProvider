@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="300.0" spacing="8.0" xmlns="http://javafx.com/javafx/10.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.UserScene">
+   <padding>
+      <Insets bottom="32.0" left="32.0" right="32.0" top="32.0" />
+   </padding>
+   <children>
+      <Label fx:id="idLabel" text="id" />
+      <Label fx:id="nameLabel" text="name" />
+      <Label fx:id="phoneLabel" text="phone" />
+      <Label fx:id="emailLabel" text="email" />
+      <Button mnemonicParsing="false" onAction="#updatePersonalDataButtonClicked" text="Update personal data" />
+      <Button mnemonicParsing="false" onAction="#internetButtonClicked" text="Internet" />
+      <Button mnemonicParsing="false" onAction="#phoneButtonClicked" text="Phone" />
+      <Button mnemonicParsing="false" onAction="#televisionButtonClicked" text="Television" />
+      <Button mnemonicParsing="false" onAction="#backButtonClicked" text="Back" />
+   </children>
+</VBox>

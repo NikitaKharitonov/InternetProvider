@@ -1,6 +1,6 @@
 //import controller.BaseController;
 //import controller.FailedOperation;
-//import model.models.Model;
+//import model.Model;
 //import view.ConsoleView;
 //import view.View;
 //import model.models.BaseModel;
@@ -21,13 +21,13 @@
 //}
 
 import model.exceptions.UserNotFoundException;
-import model.models.DBModel;
-import model.users.User;
+import model.DBModel;
+import model.User;
 
 public class Main {
     public static void main(String[] args) throws UserNotFoundException {
         DBModel model = new DBModel();
-        User user = model.getUserById(1);
+        User user = model.getUser(1);
         System.out.println(user.toString());
     }
 }

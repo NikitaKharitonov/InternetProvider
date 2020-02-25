@@ -2,7 +2,7 @@ package controller;
 
 import model.services.Internet;
 import model.services.Service;
-import model.users.User;
+import model.User;
 
 import java.util.ArrayList;
 import java.util.Date;

@@ -1,24 +1,13 @@
 package model.services;
 
-import model.util.ValueParser;
-import org.w3c.dom.Element;
-import util.Annotations.MethodParameter;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
+import java.util.Date;
 
 public class Television extends Service {
 
     private int numberOfChannels;
 
-    public Television(
-            @MethodParameter(name = "id", type = Long.class)
-                    Long id,
-            @MethodParameter(name = "name", type = String.class)
-                    String name,
-            @MethodParameter(name = "numberOfChannels", type = Integer.class)
-                    Integer numberOfChannels ) {
-        super(id, name);
+    public Television(Long id, Date activationDate, Status status, Integer numberOfChannels ) {
+        super(id, activationDate, status);
         this.numberOfChannels = numberOfChannels;
     }
 
@@ -37,45 +26,12 @@ public class Television extends Service {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() +
-                " {id=" + id +
-                ", name=" + name +
-                ", numberOfChannels=" + numberOfChannels +
+        return "Television{" +
+                "numberOfChannels=" + numberOfChannels +
+                ", id=" + id +
+                ", activationDate=" + activationDate +
+                ", status=" + status +
                 '}';
-    }
-
-    public void toXML(XMLStreamWriter xMLStreamWriter) throws XMLStreamException {
-        xMLStreamWriter.writeCharacters("\t");
-        xMLStreamWriter.writeStartElement("service");
-        xMLStreamWriter.writeCharacters("\n");
-
-        xMLStreamWriter.writeCharacters("\t\t");
-        xMLStreamWriter.writeStartElement("type");
-        xMLStreamWriter.writeCharacters(getClass().getSimpleName());
-        xMLStreamWriter.writeEndElement();
-        xMLStreamWriter.writeCharacters("\n");
-
-        xMLStreamWriter.writeCharacters("\t\t");
-        xMLStreamWriter.writeStartElement("id");
-        xMLStreamWriter.writeCharacters(String.valueOf(id));
-        xMLStreamWriter.writeEndElement();
-        xMLStreamWriter.writeCharacters("\n");
-
-        xMLStreamWriter.writeCharacters("\t\t");
-        xMLStreamWriter.writeStartElement("name");
-        xMLStreamWriter.writeCharacters(name);
-        xMLStreamWriter.writeEndElement();
-        xMLStreamWriter.writeCharacters("\n");
-
-        xMLStreamWriter.writeCharacters("\t\t");
-        xMLStreamWriter.writeStartElement("number_of_channels");
-        xMLStreamWriter.writeCharacters(String.valueOf(numberOfChannels));
-        xMLStreamWriter.writeEndElement();
-        xMLStreamWriter.writeCharacters("\n");
-
-        xMLStreamWriter.writeCharacters("\t");
-        xMLStreamWriter.writeEndElement();
-        xMLStreamWriter.writeCharacters("\n");
     }
 
     @Override

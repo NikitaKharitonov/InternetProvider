@@ -1,36 +1,40 @@
 package model.services;
 
-import model.util.ValueParser;
-import org.w3c.dom.Element;
-
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.Serializable;
+import java.util.Date;
 
 public abstract class Service implements Serializable, Cloneable {
 
+    public enum Status{PLANNED, ACTIVE, DISCONNECTED, SUSPENDED};
+
     final long id;
-    String name;
+    final Date activationDate;
+    Status status;
 
-    Service(long id, String name) {
+    Service(long id, Date activationDate, Status status) {
         this.id = id;
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+        this.activationDate = activationDate;
+        this.status = status;
     }
 
     public long getId() {
         return id;
     }
 
-    public abstract String getType();
+    public Date getActivationDate() {
+        return activationDate;
+    }
 
-    public abstract void toXML(XMLStreamWriter xmlStreamWriter) throws XMLStreamException;
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public abstract String getType();
 
 }

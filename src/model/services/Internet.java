@@ -1,11 +1,6 @@
 package model.services;
 
-import model.util.ValueParser;
-import org.w3c.dom.Element;
-import util.Annotations.MethodParameter;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
+import java.util.Date;
 
 
 public class Internet extends Service {
@@ -23,18 +18,8 @@ public class Internet extends Service {
         return strings;
     }
 
-    public Internet(
-            @MethodParameter(name = "id", type = Long.class)
-                    Long id,
-            @MethodParameter(name = "name", type = String.class)
-                    String name,
-            @MethodParameter(name = "speed", type = Integer.class)
-                    Integer speed,
-            @MethodParameter(name = "antivirus", type = Boolean.class)
-                    Boolean antivirus,
-            @MethodParameter(name = "connectionType", type = ConnectionType.class)
-                    ConnectionType connectionType ) {
-        super(id, name);
+    public Internet(Long id, Date activationDate, Status status, Integer speed, Boolean antivirus, ConnectionType connectionType ) {
+        super(id, activationDate, status);
         this.speed = speed;
         this.antivirus = antivirus;
         this.connectionType = connectionType;
@@ -71,59 +56,14 @@ public class Internet extends Service {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() +
-                " {id=" + id +
-                ", name=" + name +
-                ", speed=" + speed +
+        return "Internet{" +
+                "speed=" + speed +
                 ", antivirus=" + antivirus +
                 ", connectionType=" + connectionType +
+                ", id=" + id +
+                ", activationDate=" + activationDate +
+                ", status=" + status +
                 '}';
-    }
-
-    public void toXML(XMLStreamWriter xMLStreamWriter) throws XMLStreamException {
-        xMLStreamWriter.writeCharacters("\t");
-        xMLStreamWriter.writeStartElement("service");
-        xMLStreamWriter.writeCharacters("\n");
-
-        xMLStreamWriter.writeCharacters("\t\t");
-        xMLStreamWriter.writeStartElement("type");
-        xMLStreamWriter.writeCharacters(getClass().getSimpleName());
-        xMLStreamWriter.writeEndElement();
-        xMLStreamWriter.writeCharacters("\n");
-
-        xMLStreamWriter.writeCharacters("\t\t");
-        xMLStreamWriter.writeStartElement("id");
-        xMLStreamWriter.writeCharacters(String.valueOf(id));
-        xMLStreamWriter.writeEndElement();
-        xMLStreamWriter.writeCharacters("\n");
-
-        xMLStreamWriter.writeCharacters("\t\t");
-        xMLStreamWriter.writeStartElement("name");
-        xMLStreamWriter.writeCharacters(name);
-        xMLStreamWriter.writeEndElement();
-        xMLStreamWriter.writeCharacters("\n");
-
-        xMLStreamWriter.writeCharacters("\t\t");
-        xMLStreamWriter.writeStartElement("speed");
-        xMLStreamWriter.writeCharacters(String.valueOf(speed));
-        xMLStreamWriter.writeEndElement();
-        xMLStreamWriter.writeCharacters("\n");
-
-        xMLStreamWriter.writeCharacters("\t\t");
-        xMLStreamWriter.writeStartElement("antivirus");
-        xMLStreamWriter.writeCharacters(String.valueOf(antivirus));
-        xMLStreamWriter.writeEndElement();
-        xMLStreamWriter.writeCharacters("\n");
-
-        xMLStreamWriter.writeCharacters("\t\t");
-        xMLStreamWriter.writeStartElement("connection_type");
-        xMLStreamWriter.writeCharacters(connectionType.toString());
-        xMLStreamWriter.writeEndElement();
-        xMLStreamWriter.writeCharacters("\n");
-
-        xMLStreamWriter.writeCharacters("\t");
-        xMLStreamWriter.writeEndElement();
-        xMLStreamWriter.writeCharacters("\n");
     }
 
     @Override

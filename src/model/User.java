@@ -14,6 +14,13 @@ public class User {
         this.email = email;
     }
 
+    public User(String name, String phone, String email) {
+        this.id = 0;
+        this.name = name;
+        this.phone = phone;
+        this.email = email;
+    }
+
     public long getId() {
         return id;
     }

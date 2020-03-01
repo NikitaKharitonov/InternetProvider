@@ -20,14 +20,22 @@
 //    }
 //}
 
+import model.exceptions.ServiceNotFoundException;
 import model.exceptions.UserNotFoundException;
 import model.DBModel;
 import model.User;
+import model.services.Internet;
+import model.services.Service;
 
 public class Main {
-    public static void main(String[] args) throws UserNotFoundException {
+    public static void main(String[] args) throws UserNotFoundException, ServiceNotFoundException {
         DBModel model = new DBModel();
-        User user = model.getUser(1);
-        System.out.println(user.toString());
+        Service[] services = model.getUserServicesByType(4, "Internet");
+        for (Service service : services) {
+            if (service instanceof Internet) {
+                Internet internet = (Internet) service;
+                System.out.println(internet.toString());
+            }
+        }
     }
 }

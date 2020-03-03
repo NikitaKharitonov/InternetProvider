@@ -21,14 +21,14 @@
 //}
 
 import model.exceptions.ServiceNotFoundException;
-import model.exceptions.UserNotFoundException;
+import model.exceptions.ClientNotFoundException;
 import model.DBModel;
 import model.User;
 import model.services.Internet;
 import model.services.Service;
 
 public class Main {
-    public static void main(String[] args) throws UserNotFoundException, ServiceNotFoundException {
+    public static void main(String[] args) throws ClientNotFoundException, ServiceNotFoundException {
         DBModel model = new DBModel();
         Service[] services = model.getUserServicesByType(4, "Internet");
         for (Service service : services) {

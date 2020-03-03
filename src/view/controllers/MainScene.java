@@ -1,8 +1,7 @@
 package view.controllers;
 
-import controller.FailedOperation;
 import model.User;
-import model.exceptions.UserNotFoundException;
+import model.exceptions.ClientNotFoundException;
 import view.UserApplication;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -28,7 +27,7 @@ public class MainScene {
             Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
             Parent parent = FXMLLoader.load(getClass().getResource("fxml/user_scene.fxml"));
             stage.setScene(new Scene(parent));
-        } catch (UserNotFoundException | NumberFormatException e) {
+        } catch (ClientNotFoundException | NumberFormatException e) {
             AlertBox.display(e.getMessage());
         }
     }

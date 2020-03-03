@@ -4,21 +4,29 @@ import java.util.Date;
 
 public class Phone extends Service {
 
-    private int callsMinCount;
+    private int minsCount;
     private int smsCount;
 
-    public Phone(Long id, Date activationDate, Status status, Integer callsMinCount, Integer smsCount ) {
-        super(id, activationDate, status);
-        this.callsMinCount = callsMinCount;
+    public Phone(
+            Long id,
+            Date activationDate,
+            Date dateBegin,
+            Date dateEnd,
+            Status status,
+            Integer minsCount,
+            Integer smsCount
+    ) {
+        super(id, activationDate, dateBegin, dateEnd, status);
+        this.minsCount = minsCount;
         this.smsCount = smsCount;
     }
 
-    public int getCallsMinCount() {
-        return callsMinCount;
+    public int getMinsCount() {
+        return minsCount;
     }
 
-    public void setCallsMinCount(Integer callsMinCount) {
-        this.callsMinCount = callsMinCount;
+    public void setMinsCount(Integer minsCount) {
+        this.minsCount = minsCount;
     }
 
     public int getSmsCount() {
@@ -31,16 +39,18 @@ public class Phone extends Service {
 
     @Override
     public String getType() {
-        return getClass().getSimpleName();
+        return "Phone";
     }
 
     @Override
     public String toString() {
         return "Phone{" +
-                "callsMinCount=" + callsMinCount +
+                "minsCount=" + minsCount +
                 ", smsCount=" + smsCount +
                 ", id=" + id +
                 ", activationDate=" + activationDate +
+                ", dateBegin=" + dateBegin +
+                ", dateEnd=" + dateEnd +
                 ", status=" + status +
                 '}';
     }
@@ -51,7 +61,7 @@ public class Phone extends Service {
             return false;
         if (!(obj instanceof Phone))
             return false;
-        return this.callsMinCount == ((Phone) obj).callsMinCount
+        return this.minsCount == ((Phone) obj).minsCount
                 && this.smsCount == ((Phone) obj).smsCount;
     }
 }

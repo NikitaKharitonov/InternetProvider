@@ -1,21 +1,23 @@
 package model;
 
+import model.exceptions.InvalidModelException;
 import model.exceptions.ServiceNotFoundException;
-import model.exceptions.UserNotFoundException;
+import model.exceptions.ClientNotFoundException;
 import model.services.Service;
 
 public interface Model {
 
-    User getUser(long id) throws UserNotFoundException;
+    Client getClient(long id) throws ClientNotFoundException, InvalidModelException;
 
-    void addUser(User user);
+    void addClient(Client client) throws InvalidModelException;
 
-    void removeUser(long id) throws UserNotFoundException;
+    void removeClient(long id) throws ClientNotFoundException, InvalidModelException;
 
-    int getUserCount();
+    int getClientsCount() throws InvalidModelException;
 
-    Service[] getUserServicesByType(long userID, String serviceType) throws ServiceNotFoundException, UserNotFoundException;
+    Service[] getClientServicesByType(long clientID, String serviceType)
+            throws ServiceNotFoundException, ClientNotFoundException, InvalidModelException;
 
-    void addServiceToUser(long userID, Service service) throws UserNotFoundException;
+    void addServiceToClient(long clientID, Service service) throws ClientNotFoundException, InvalidModelException;
 
 }

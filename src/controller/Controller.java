@@ -2,7 +2,7 @@ package controller;
 
 import model.services.Internet;
 import model.services.Service;
-import model.User;
+import model.Client;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,13 +14,13 @@ import java.util.Date;
  * */
 public interface Controller {
     /**
-     * Creates new user with such parameters {@code params}
-     * @param user
-     *          User object
+     * Creates new client with such parameters {@code params}
+     * @param client
+     *          Client object
      * @throws FailedOperation
      *          If some troubles were happened
      * */
-    void      createUser(User user) throws FailedOperation;
+    void      createClient(Client client) throws FailedOperation;
     /**
      * Creates new tariff based on {@code service}
      * @param service
@@ -30,14 +30,14 @@ public interface Controller {
      * */
     void    createService(Service service) throws FailedOperation;
     /**
-     * Search user by his id
+     * Search client by his id
      * @param userID
-     *          user id
+     *          client id
      * @throws FailedOperation
      *          If some troubles were happened
      * @return Created Service object
      * */
-    User getUserById(int userID) throws FailedOperation;
+    Client getClientById(int userID) throws FailedOperation;
     /**
      * Return all supported services names
      * @return array of supported services names
@@ -62,21 +62,21 @@ public interface Controller {
      * */
     ArrayList<Service>  getAllServices(String serviceType) throws FailedOperation;
     /**
-     * Set {@code service} to user by his id
+     * Set {@code service} to client by his id
      * @param userID
-     *          User id
+     *          Client id
      * @throws FailedOperation
      *          If some troubles were happened
      * */
-    void    setServiceToUser(long userID, Service service, Date date) throws FailedOperation;
+    void    setServiceToClient(long userID, Service service, Date date) throws FailedOperation;
     /**
-     * Change user data (E.g. name or email address)
-     * @param user
-     *          User object wich will be set up by userID
+     * Change client data (E.g. name or email address)
+     * @param client
+     *          Client object wich will be set up by userID
      * @throws FailedOperation
      *          If some troubles were happened
      * */
-    void      changeUserData(User user) throws FailedOperation;
+    void      changeClientData(Client client) throws FailedOperation;
     /**
      * Change tariff parameters
      * @param service
@@ -86,23 +86,23 @@ public interface Controller {
      * */
     void updateService(Service service) throws FailedOperation;
     /**
-     * Disable {@code serviceName} for user with such id
+     * Disable {@code serviceName} for client with such id
      * @param userID
-     *          User id
+     *          Client id
      * @param serviceType
      *          Service type (e.g. Internet or Television)
      * @throws FailedOperation
      *          If some troubles were happened
      * */
-    void    removeServiceFromUser(long userID, String serviceType) throws FailedOperation;
+    void    removeServiceFromClient(long userID, String serviceType) throws FailedOperation;
     /**
-     * Delete user
+     * Delete client
      * @param userID
-     *          User id
+     *          Client id
      * @throws FailedOperation
      *          If some troubles were happened
      * */
-    void      deleteUser(long userID) throws FailedOperation;
+    void      deleteClient(long userID) throws FailedOperation;
     /**
      * Delete tariff and instantly save changes in a storage
      * @param serviceID
@@ -111,8 +111,8 @@ public interface Controller {
     void    deleteService(long serviceID) throws FailedOperation;
 
     long getNextServiceId();
-    long getNextUserId();
+    long getNextClientId();
     Internet.ConnectionType getConnectionType(String connectionType);
-    String getUsersData();
+    String getClientsData();
     String getServicesData();
 }

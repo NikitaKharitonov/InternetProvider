@@ -18,8 +18,17 @@ public class Internet extends Service {
         return strings;
     }
 
-    public Internet(Long id, Date activationDate, Status status, Integer speed, Boolean antivirus, ConnectionType connectionType ) {
-        super(id, activationDate, status);
+    public Internet(
+            Long id,
+            Date activationDate,
+            Date dateBegin,
+            Date dateEnd,
+            Status status,
+            Integer speed,
+            Boolean antivirus,
+            ConnectionType connectionType
+    ) {
+        super(id, activationDate, dateBegin, dateEnd, status);
         this.speed = speed;
         this.antivirus = antivirus;
         this.connectionType = connectionType;
@@ -51,7 +60,7 @@ public class Internet extends Service {
 
     @Override
     public String getType() {
-        return getClass().getSimpleName();
+        return "Internet";
     }
 
     @Override
@@ -62,6 +71,8 @@ public class Internet extends Service {
                 ", connectionType=" + connectionType +
                 ", id=" + id +
                 ", activationDate=" + activationDate +
+                ", dateBegin=" + dateBegin +
+                ", dateEnd=" + dateEnd +
                 ", status=" + status +
                 '}';
     }

@@ -1,6 +1,5 @@
 package view;
 
-import controller.FailedOperation;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -9,7 +8,6 @@ import javafx.stage.Stage;
 import model.DBModel;
 import model.Model;
 import model.User;
-import model.exceptions.UserNotFoundException;
 
 import java.io.IOException;
 

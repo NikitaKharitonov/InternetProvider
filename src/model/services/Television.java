@@ -4,19 +4,26 @@ import java.util.Date;
 
 public class Television extends Service {
 
-    private int numberOfChannels;
+    private int channelsCount;
 
-    public Television(Long id, Date activationDate, Status status, Integer numberOfChannels ) {
-        super(id, activationDate, status);
-        this.numberOfChannels = numberOfChannels;
+    public Television(
+            Long id,
+            Date activationDate,
+            Date dateBegin,
+            Date dateEnd,
+            Status status,
+            Integer channelsCount
+    ) {
+        super(id, activationDate, dateBegin, dateEnd, status);
+        this.channelsCount = channelsCount;
     }
 
-    public int getNumberOfChannels() {
-        return numberOfChannels;
+    public int setChannelsCount() {
+        return channelsCount;
     }
 
-    public void setNumberOfChannels(Integer numberOfChannels) {
-        this.numberOfChannels = numberOfChannels;
+    public void setChannelsCount(Integer channelsCount) {
+        this.channelsCount = channelsCount;
     }
 
     @Override
@@ -27,9 +34,11 @@ public class Television extends Service {
     @Override
     public String toString() {
         return "Television{" +
-                "numberOfChannels=" + numberOfChannels +
+                "channelsCount=" + channelsCount +
                 ", id=" + id +
                 ", activationDate=" + activationDate +
+                ", dateBegin=" + dateBegin +
+                ", dateEnd=" + dateEnd +
                 ", status=" + status +
                 '}';
     }
@@ -40,6 +49,6 @@ public class Television extends Service {
             return false;
         if (!(obj instanceof Television))
             return false;
-        return this.numberOfChannels == ((Television) obj).numberOfChannels;
+        return this.channelsCount == ((Television) obj).channelsCount;
     }
 }

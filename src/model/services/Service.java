@@ -11,11 +11,15 @@ public abstract class Service implements Serializable, Cloneable {
 
     final long id;
     final Date activationDate;
+    final Date dateBegin;
+    final Date dateEnd;
     Status status;
 
-    Service(long id, Date activationDate, Status status) {
+    Service(long id, Date activationDate, Date dateBegin, Date dateEnd, Status status) {
         this.id = id;
         this.activationDate = activationDate;
+        this.dateBegin = dateBegin;
+        this.dateEnd = dateEnd;
         this.status = status;
     }
 
@@ -25,6 +29,14 @@ public abstract class Service implements Serializable, Cloneable {
 
     public Date getActivationDate() {
         return activationDate;
+    }
+
+    public Date getDateBegin() {
+        return dateBegin;
+    }
+
+    public Date getDateEnd() {
+        return dateEnd;
     }
 
     public Status getStatus() {

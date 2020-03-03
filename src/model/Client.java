@@ -1,20 +1,20 @@
 package model;
 
-public class User {
+public class Client {
 
     private final long id;
     private String name;
     private String phone;
     private String email;
 
-    public User(long id, String name, String phone, String email) {
+    public Client(long id, String name, String phone, String email) {
         this.id = id;
         this.name = name;
         this.phone = phone;
         this.email = email;
     }
 
-    public User(String name, String phone, String email) {
+    public Client(String name, String phone, String email) {
         this.id = 0;
         this.name = name;
         this.phone = phone;
@@ -51,7 +51,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
+        return "Client{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", phoneNumber='" + phone + '\'' +

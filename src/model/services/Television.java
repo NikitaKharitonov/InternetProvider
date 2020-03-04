@@ -18,6 +18,17 @@ public class Television extends Service {
         this.channelsCount = channelsCount;
     }
 
+    public Television(
+            Date activationDate,
+            Date dateBegin,
+            Date dateEnd,
+            Status status,
+            Integer channelsCount
+    ) {
+        super(activationDate, dateBegin, dateEnd, status);
+        this.channelsCount = channelsCount;
+    }
+
     public int setChannelsCount() {
         return channelsCount;
     }

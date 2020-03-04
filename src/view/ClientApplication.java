@@ -7,15 +7,16 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import model.DBModel;
 import model.Model;
-import model.User;
+import model.Client;
+import model.exceptions.InvalidModelException;
 
 import java.io.IOException;
 
-public class UserApplication extends Application {
-    public static User selectedUser;
+public class ClientApplication extends Application {
+    public static Client selectedClient;
     public static Model model = new DBModel();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InvalidModelException {
         Model model = new DBModel();
         launch(args);
     }

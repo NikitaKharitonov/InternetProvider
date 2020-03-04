@@ -34,6 +34,21 @@ public class Internet extends Service {
         this.connectionType = connectionType;
     }
 
+    public Internet(
+            Date activationDate,
+            Date dateBegin,
+            Date dateEnd,
+            Status status,
+            Integer speed,
+            Boolean antivirus,
+            ConnectionType connectionType
+    ) {
+        super(activationDate, dateBegin, dateEnd, status);
+        this.speed = speed;
+        this.antivirus = antivirus;
+        this.connectionType = connectionType;
+    }
+
     public int getSpeed() {
         return speed;
     }

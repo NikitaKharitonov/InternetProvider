@@ -23,6 +23,14 @@ public abstract class Service implements Serializable, Cloneable {
         this.status = status;
     }
 
+    Service(Date activationDate, Date dateBegin, Date dateEnd, Status status) {
+        this.id = 0;
+        this.activationDate = activationDate;
+        this.dateBegin = dateBegin;
+        this.dateEnd = dateEnd;
+        this.status = status;
+    }
+
     public long getId() {
         return id;
     }

@@ -21,6 +21,19 @@ public class Phone extends Service {
         this.smsCount = smsCount;
     }
 
+    public Phone(
+            Date activationDate,
+            Date dateBegin,
+            Date dateEnd,
+            Status status,
+            Integer minsCount,
+            Integer smsCount
+    ) {
+        super(activationDate, dateBegin, dateEnd, status);
+        this.minsCount = minsCount;
+        this.smsCount = smsCount;
+    }
+
     public int getMinsCount() {
         return minsCount;
     }

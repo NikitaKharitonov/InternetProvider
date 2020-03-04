@@ -1,7 +1,7 @@
 package view.controllers;
 
-import controller.FailedOperation;
-import view.UserApplication;
+import model.exceptions.InvalidModelException;
+import view.ClientApplication;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -9,13 +9,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import model.User;
-import model.User;
-import view.UserApplication;
+import model.Client;
 
 import java.io.IOException;
 
-public class CreateUserScene {
+public class CreateClientScene {
     public TextField idField;
     @FXML public TextField nameField;
     @FXML private TextField phoneField;
@@ -28,9 +26,11 @@ public class CreateUserScene {
             if (name.equals(""))
                 throw new IllegalArgumentException("Enter name");
             long id = Long.parseLong(idField.getText());
-            UserApplication.model.addUser(new User(id, name, phoneField.getText(), emailField.getText()));
+            ClientApplication.model.addClient(new Client(id, name, phoneField.getText(), emailField.getText()));
         } catch (IllegalArgumentException e) {
             AlertBox.display(e.getMessage());
+        } catch (InvalidModelException e) {
+
         }
     }
 

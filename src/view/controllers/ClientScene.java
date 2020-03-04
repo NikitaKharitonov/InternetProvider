@@ -1,7 +1,7 @@
 package view.controllers;
 
-import model.User;
-import view.UserApplication;
+import model.Client;
+import view.ClientApplication;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class UserScene implements Initializable {
+public class ClientScene implements Initializable {
     public Label idLabel;
     public Label nameLabel;
     public Label phoneLabel;
@@ -59,9 +59,9 @@ public class UserScene implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        idLabel.setText("ID: " + UserApplication.selectedUser.getId());
-        nameLabel.setText("Name: " + UserApplication.selectedUser.getName());
-        phoneLabel.setText("Phone: " + UserApplication.selectedUser.getPhone());
-        emailLabel.setText("Email: " + UserApplication.selectedUser.getEmail());
+        idLabel.setText("ID: " + ClientApplication.selectedClient.getId());
+        nameLabel.setText("Name: " + ClientApplication.selectedClient.getName());
+        phoneLabel.setText("Phone: " + ClientApplication.selectedClient.getPhone());
+        emailLabel.setText("Email: " + ClientApplication.selectedClient.getEmail());
     }
 }

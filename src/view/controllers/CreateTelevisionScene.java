@@ -1,6 +1,5 @@
 package view.controllers;
 
-import view.UserApplication;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

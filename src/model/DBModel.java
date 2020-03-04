@@ -18,18 +18,8 @@ public class DBModel implements Model {
     private static final String LOGIN = "postgres";
     private static final String PASSWORD = "root";
 
-    private final Connection connection;
-
-    public DBModel() throws InvalidModelException {
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
-            this.connection = connection;
-        } catch (SQLException e) {
-            throw new InvalidModelException("Failed to get database connection");
-        }
-    }
-
     public Client getClient(long id) throws ClientNotFoundException, InvalidModelException {
-        try (connection) {
+        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
             PreparedStatement pstmt = connection.prepareStatement(
                     "SELECT * FROM client WHERE id = ?"
             );
@@ -50,7 +40,7 @@ public class DBModel implements Model {
 
     @Override
     public void addClient(Client client) throws InvalidModelException {
-        try (connection) {
+        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
             PreparedStatement pstmt = connection.prepareStatement(
                     "INSERT INTO client (name, phone_number, email_address) VALUES (?, ?, ?)"
             );
@@ -67,7 +57,7 @@ public class DBModel implements Model {
 
     @Override
     public void removeClient(long id) throws ClientNotFoundException, InvalidModelException {
-        try (connection) {
+        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
             PreparedStatement pstmt = connection.prepareStatement(
                     "DELETE FROM client WHERE id = ?"
             );
@@ -120,7 +110,7 @@ public class DBModel implements Model {
         }
     }
 
-    private Internet[] getClientInternets(long clientID)
+    private Internet[] getClientInternets(Connection connection, long clientID)
             throws ServiceNotFoundException, SQLException {
         PreparedStatement pstmt = connection.prepareStatement(
                 "SELECT internet.id, " +
@@ -140,8 +130,8 @@ public class DBModel implements Model {
         ResultSet rs = pstmt.executeQuery();
         Set<Internet> internets = new HashSet<>();
         while (rs.next()) {
-            long internetID = rs.getLong("id_internet");
-            Date activationDate = rs.getDate("activationDate");
+            long internetID = rs.getLong("id");
+            Date activationDate = rs.getDate("activation_date");
             Date dateBegin = rs.getDate("date_begin");
             Date dateEnd = rs.getDate("date_end");
             Service.Status status = getStatusFromString(rs.getString("status"));
@@ -159,7 +149,7 @@ public class DBModel implements Model {
         return internets.toArray(new Internet[0]);
     }
 
-    private Phone[] getClientPhones(long clientID)
+    private Phone[] getClientPhones(Connection connection, long clientID)
             throws ServiceNotFoundException, SQLException {
         PreparedStatement pstmt = connection.prepareStatement(
                 "SELECT phone.id, " +
@@ -178,8 +168,8 @@ public class DBModel implements Model {
         ResultSet rs = pstmt.executeQuery();
         Set<Phone> phones = new HashSet<>();
         while (rs.next()) {
-            long phoneID = rs.getLong("id_internet");
-            Date activationDate = rs.getDate("activationDate");
+            long phoneID = rs.getLong("id");
+            Date activationDate = rs.getDate("activation_date");
             Date dateBegin = rs.getDate("date_begin");
             Date dateEnd = rs.getDate("date_end");
             Service.Status status = getStatusFromString(rs.getString("status"));
@@ -193,7 +183,7 @@ public class DBModel implements Model {
         return phones.toArray(new Phone[0]);
     }
 
-    private Television[] getClientTelevisions(long clientID)
+    private Television[] getClientTelevisions(Connection connection, long clientID)
             throws ServiceNotFoundException, SQLException {
         PreparedStatement pstmt = connection.prepareStatement(
                 "SELECT television.id, " +
@@ -211,8 +201,8 @@ public class DBModel implements Model {
         ResultSet rs = pstmt.executeQuery();
         Set<Television> televisions = new HashSet<>();
         while (rs.next()) {
-            long televisionID = rs.getLong("id_television");
-            Date activationDate = rs.getDate("activationDate");
+            long televisionID = rs.getLong("id");
+            Date activationDate = rs.getDate("activation_date");
             Date dateBegin = rs.getDate("date_begin");
             Date dateEnd = rs.getDate("date_end");
             Service.Status status = getStatusFromString(rs.getString("status"));
@@ -229,7 +219,7 @@ public class DBModel implements Model {
     @Override
     public Service[] getClientServicesByType(long clientID, String serviceType)
             throws ServiceNotFoundException, ClientNotFoundException, InvalidModelException {
-        try (connection) {
+        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
             PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM client WHERE id = ?");
             pstmt.setLong(1, clientID);
             ResultSet rs = pstmt.executeQuery();
@@ -238,42 +228,73 @@ public class DBModel implements Model {
             }
             switch (serviceType) {
                 case "Internet":
-                    return getClientInternets(clientID);
+                    return getClientInternets(connection, clientID);
                 case "Phone":
-                    return getClientPhones(clientID);
+                    return getClientPhones(connection, clientID);
                 default:
-                    return getClientTelevisions(clientID);
+                    return getClientTelevisions(connection, clientID);
             }
         } catch (SQLException e) {
             throw new InvalidModelException("Failed to get client services from database");
         }
     }
 
-    private void addInternetToClient(long clientID, Internet internet) throws SQLException {
+    private void addInternetToClient(Connection connection, long clientID, Internet internet) throws SQLException {
+        PreparedStatement pstmt1 = connection.prepareStatement(
+                "INSERT INTO internet (id_client, activation_date) VALUES (?, ?) RETURNING id"
+        );
+        pstmt1.setLong(1, clientID);
+        pstmt1.setDate(2, new Date(internet.getActivationDate().getTime()));
+        //pstmt1.setDate(1, (Date) internet.getActivationDate());
+        ResultSet rs = pstmt1.executeQuery();
+        rs.next();
+        long internetID = rs.getLong("id");
+        PreparedStatement pstmt2 = connection.prepareStatement(
+                "INSERT INTO internet_history (id_internet, date_begin, date_end, status, " +
+                        "speed, antivirus, connection_type) VALUES (?, ?, ?, ?, ?, ?, ?)"
+        );
+        pstmt2.setLong(1, internetID);
+        //pstmt2.setObject(2, internet.getDateBegin().toInstant());
+        pstmt2.setDate(2, new Date(internet.getDateBegin().getTime()));
+        //pstmt2.setObject(3, internet.getDateEnd().toInstant());
+        pstmt2.setDate(3, new Date(internet.getDateEnd().getTime()));
+        pstmt2.setString(4, internet.getStatus().toString());
+        pstmt2.setInt(5, internet.getSpeed());
+        pstmt2.setBoolean(6, internet.isAntivirus());
+        pstmt2.setString(7, internet.getConnectionType().toString());
+        if (pstmt2.executeUpdate() == 0) {
+            System.out.println("Gabella");
+        }
+    }
+
+    private void addPhoneToClient(Connection connection, long clientID, Phone phone) throws SQLException {
         //todo
     }
 
-    private void addPhoneToClient(long clientID, Phone phone) throws SQLException {
-        //todo
-    }
-
-    private void addTelevisionToClient(long clientID, Television television) throws SQLException {
+    private void addTelevisionToClient(Connection connection, long clientID, Television television)
+            throws SQLException {
         //todo
     }
 
     @Override
     public void addServiceToClient(long clientID, Service service)
             throws ClientNotFoundException, InvalidModelException {
-        try (connection) {
+        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+            PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM client WHERE id = ?");
+            pstmt.setLong(1, clientID);
+            ResultSet rs = pstmt.executeQuery();
+            if (!rs.next()) {
+                throw new ClientNotFoundException("Client not found");
+            }
             if (service instanceof Internet) {
-                addInternetToClient(clientID, (Internet) service);
+                addInternetToClient(connection, clientID, (Internet) service);
             } else if (service instanceof Phone) {
-                addPhoneToClient(clientID, (Phone) service);
+                addPhoneToClient(connection, clientID, (Phone) service);
             } else {
-                addTelevisionToClient(clientID, (Television) service);
+                addTelevisionToClient(connection, clientID, (Television) service);
             }
         } catch (SQLException e) {
-            throw new InvalidModelException("Failed add client service to database");
+            throw new InvalidModelException("Failed to add client service to database");
         }
     }
 

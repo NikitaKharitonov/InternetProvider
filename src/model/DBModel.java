@@ -10,8 +10,8 @@ import model.services.Service;
 import model.services.Television;
 
 import java.sql.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
 public class DBModel implements Model {
     private static final String URL = "jdbc:postgresql://localhost:5432/provider_db";
@@ -33,6 +33,24 @@ public class DBModel implements Model {
             } else {
                 throw new ClientNotFoundException("Client not found");
             }
+        } catch (SQLException e) {
+            throw new InvalidModelException(e);
+        }
+    }
+
+    public List<Client> getClients() throws InvalidModelException {
+        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM client");
+            List<Client> clients = new LinkedList<>();
+            while (rs.next()) {
+                long id = rs.getLong("id");
+                String name = rs.getString("name");
+                String phoneNumber = rs.getString("phone_number");
+                String emailAddress = rs.getString("email_address");
+                clients.add(new Client(id, name, phoneNumber, emailAddress));
+            }
+            return clients;
         } catch (SQLException e) {
             throw new InvalidModelException(e);
         }
@@ -110,7 +128,7 @@ public class DBModel implements Model {
         }
     }
 
-    private Internet[] getClientInternets(Connection connection, long clientID)
+    private List<Service> getClientInternets(Connection connection, long clientID)
             throws ServiceNotFoundException, SQLException {
         PreparedStatement pstmt = connection.prepareStatement(
                 "SELECT internet.id, " +
@@ -128,7 +146,7 @@ public class DBModel implements Model {
         );
         pstmt.setLong(1, clientID);
         ResultSet rs = pstmt.executeQuery();
-        Set<Internet> internets = new HashSet<>();
+        List<Service> internets = new LinkedList<>();
         while (rs.next()) {
             long internetID = rs.getLong("id");
             Date activationDate = rs.getDate("activation_date");
@@ -146,10 +164,10 @@ public class DBModel implements Model {
         if (internets.size() == 0) {
             throw new ServiceNotFoundException("Services \"Internet\" not found");
         }
-        return internets.toArray(new Internet[0]);
+        return internets;
     }
 
-    private Phone[] getClientPhones(Connection connection, long clientID)
+    private List<Service> getClientPhones(Connection connection, long clientID)
             throws ServiceNotFoundException, SQLException {
         PreparedStatement pstmt = connection.prepareStatement(
                 "SELECT phone.id, " +
@@ -166,7 +184,7 @@ public class DBModel implements Model {
         );
         pstmt.setLong(1, clientID);
         ResultSet rs = pstmt.executeQuery();
-        Set<Phone> phones = new HashSet<>();
+        List<Service> phones = new LinkedList<>();
         while (rs.next()) {
             long phoneID = rs.getLong("id");
             Date activationDate = rs.getDate("activation_date");
@@ -180,10 +198,10 @@ public class DBModel implements Model {
         if (phones.size() == 0) {
             throw new ServiceNotFoundException("Services \"Phone\" not found");
         }
-        return phones.toArray(new Phone[0]);
+        return phones;
     }
 
-    private Television[] getClientTelevisions(Connection connection, long clientID)
+    private List<Service> getClientTelevisions(Connection connection, long clientID)
             throws ServiceNotFoundException, SQLException {
         PreparedStatement pstmt = connection.prepareStatement(
                 "SELECT television.id, " +
@@ -199,7 +217,7 @@ public class DBModel implements Model {
         );
         pstmt.setLong(1, clientID);
         ResultSet rs = pstmt.executeQuery();
-        Set<Television> televisions = new HashSet<>();
+        List<Service> televisions = new LinkedList<>();
         while (rs.next()) {
             long televisionID = rs.getLong("id");
             Date activationDate = rs.getDate("activation_date");
@@ -213,11 +231,11 @@ public class DBModel implements Model {
         if (televisions.size() == 0) {
             throw new ServiceNotFoundException("Services \"Television\" not found");
         }
-        return televisions.toArray(new Television[0]);
+        return televisions;
     }
 
     @Override
-    public Service[] getClientServicesByType(long clientID, String serviceType)
+    public List<Service> getClientServicesByType(long clientID, String serviceType)
             throws ServiceNotFoundException, ClientNotFoundException, InvalidModelException {
         try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
             PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM client WHERE id = ?");

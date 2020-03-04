@@ -5,9 +5,13 @@ import model.exceptions.ServiceNotFoundException;
 import model.exceptions.ClientNotFoundException;
 import model.services.Service;
 
+import java.util.List;
+
 public interface Model {
 
     Client getClient(long id) throws ClientNotFoundException, InvalidModelException;
+
+    List<Client> getClients() throws InvalidModelException;
 
     void addClient(Client client) throws InvalidModelException;
 
@@ -15,7 +19,7 @@ public interface Model {
 
     int getClientsCount() throws InvalidModelException;
 
-    Service[] getClientServicesByType(long clientID, String serviceType)
+    List<Service> getClientServicesByType(long clientID, String serviceType)
             throws ServiceNotFoundException, ClientNotFoundException, InvalidModelException;
 
     void addServiceToClient(long clientID, Service service) throws ClientNotFoundException, InvalidModelException;

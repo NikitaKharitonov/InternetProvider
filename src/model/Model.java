@@ -22,6 +22,9 @@ public interface Model {
     List<Service> getClientServicesByType(long clientID, String serviceType)
             throws ServiceNotFoundException, ClientNotFoundException, InvalidModelException;
 
+    List<Service> getServiceHistoryByType(long serviceID, String serviceType)
+            throws ServiceNotFoundException, InvalidModelException;
+
     void addServiceToClient(long clientID, Service service) throws ClientNotFoundException, InvalidModelException;
 
 }

@@ -257,6 +257,110 @@ public class DBModel implements Model {
         }
     }
 
+    private List<Service> getInternetHistory(Connection connection, long id, Date activationDate)
+            throws SQLException {
+        PreparedStatement pstmt = connection.prepareStatement(
+                "SELECT * FROM internet_history WHERE id_internet = ? ORDER BY date_begin;"
+        );
+        pstmt.setLong(1, id);
+        ResultSet rs = pstmt.executeQuery();
+        List<Service> internets = new LinkedList<>();
+        while (rs.next()) {
+            Date dateBegin = rs.getDate("date_begin");
+            Date dateEnd = rs.getDate("date_end");
+            Service.Status status = getStatusFromString(rs.getString("status"));
+            int speed = rs.getInt("speed");
+            boolean antivirus = rs.getBoolean("antivirus");
+            Internet.ConnectionType connectionType = getConnectionTypeFromString(
+                    rs.getString("connection_type")
+            );
+            internets.add(new Internet(id, activationDate, dateBegin, dateEnd,
+                    status, speed, antivirus, connectionType));
+        }
+        return internets;
+    }
+
+    private List<Service> getPhoneHistory(Connection connection, long id, Date activationDate)
+            throws SQLException {
+        PreparedStatement pstmt = connection.prepareStatement(
+                "SELECT * FROM phone_history WHERE id_phone = ? ORDER BY date_begin;"
+        );
+        pstmt.setLong(1, id);
+        ResultSet rs = pstmt.executeQuery();
+        List<Service> phones = new LinkedList<>();
+        while (rs.next()) {
+            Date dateBegin = rs.getDate("date_begin");
+            Date dateEnd = rs.getDate("date_end");
+            Service.Status status = getStatusFromString(rs.getString("status"));
+            int minsCount = rs.getInt("mins_count");
+            int smsCount = rs.getInt("sms_count");
+            phones.add(new Phone(id, activationDate, dateBegin, dateEnd, status, minsCount, smsCount));
+        }
+        return phones;
+    }
+
+    private List<Service> getTelevisionHistory(Connection connection, long id, Date activationDate)
+            throws SQLException {
+        PreparedStatement pstmt = connection.prepareStatement(
+                "SELECT * FROM television_history WHERE id_television = ? ORDER BY date_begin;"
+        );
+        pstmt.setLong(1, id);
+        ResultSet rs = pstmt.executeQuery();
+        List<Service> televisions = new LinkedList<>();
+        while (rs.next()) {
+            Date dateBegin = rs.getDate("date_begin");
+            Date dateEnd = rs.getDate("date_end");
+            Service.Status status = getStatusFromString(rs.getString("status"));
+            int channelsCount = rs.getInt("channels_count");
+            televisions.add(new Television(id, activationDate, dateBegin, dateEnd, status, channelsCount));
+        }
+        return televisions;
+    }
+
+    @Override
+    public List<Service> getServiceHistoryByType(long serviceID, String serviceType)
+            throws ServiceNotFoundException, InvalidModelException {
+        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+            switch (serviceType) {
+                case "Internet": {
+                    PreparedStatement pstmt = connection.prepareStatement(
+                            "SELECT activation_date FROM internet WHERE id = ?;"
+                    );
+                    pstmt.setLong(1, serviceID);
+                    ResultSet rs = pstmt.executeQuery();
+                    if (rs.next()) {
+                        return getInternetHistory(connection, serviceID,
+                                rs.getDate("activation_date"));
+                    }
+                }
+                case "Phone": {
+                    PreparedStatement pstmt = connection.prepareStatement(
+                            "SELECT activation_date FROM phone WHERE id = ?;"
+                    );
+                    pstmt.setLong(1, serviceID);
+                    ResultSet rs = pstmt.executeQuery();
+                    if (rs.next()) {
+                        return getPhoneHistory(connection, serviceID, rs.getDate("activation_date"));
+                    }
+                }
+                case "Television": {
+                    PreparedStatement pstmt = connection.prepareStatement(
+                            "SELECT activation_date FROM television WHERE id = ?;"
+                    );
+                    pstmt.setLong(1, serviceID);
+                    ResultSet rs = pstmt.executeQuery();
+                    if (rs.next()) {
+                        return getTelevisionHistory(connection, serviceID,
+                                rs.getDate("activation_date"));
+                    }
+                }
+            }
+            throw new ServiceNotFoundException("Service not found");
+        } catch (SQLException e) {
+            throw new InvalidModelException(e);
+        }
+    }
+
     private void addInternetToClient(Connection connection, long clientID, Internet internet) throws SQLException {
         PreparedStatement pstmt1 = connection.prepareStatement(
                 "INSERT INTO internet (id_client, activation_date) VALUES (?, ?) RETURNING id"

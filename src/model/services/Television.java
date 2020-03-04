@@ -29,7 +29,7 @@ public class Television extends Service {
         this.channelsCount = channelsCount;
     }
 
-    public int setChannelsCount() {
+    public int getChannelsCount() {
         return channelsCount;
     }
 

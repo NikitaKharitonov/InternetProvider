@@ -27,14 +27,14 @@ public class DBModel implements Model {
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 String name = rs.getString("name");
-                String email = rs.getString("email");
-                String phoneNumber = rs.getString("phone");
+                String email = rs.getString("email_address");
+                String phoneNumber = rs.getString("phone_number");
                 return new Client(id, name, phoneNumber, email);
             } else {
                 throw new ClientNotFoundException("Client not found");
             }
         } catch (SQLException e) {
-            throw new InvalidModelException("Failed to get client from database");
+            throw new InvalidModelException(e);
         }
     }
 
@@ -51,7 +51,7 @@ public class DBModel implements Model {
                 throw new InvalidClientDataException();
             }
         } catch (SQLException e) {
-            throw new InvalidModelException("Failed to add client to database");
+            throw new InvalidModelException(e);
         }
     }
 
@@ -66,7 +66,7 @@ public class DBModel implements Model {
                 throw new ClientNotFoundException("Client not found");
             }
         } catch (SQLException e) {
-            throw new InvalidModelException("Failed to remove client from database");
+            throw new InvalidModelException(e);
         }
     }
 
@@ -78,7 +78,7 @@ public class DBModel implements Model {
             rs.next();
             return rs.getInt(1);
         } catch (SQLException e) {
-            throw new InvalidModelException("Failed to get count of client from database");
+            throw new InvalidModelException(e);
         }
     }
 
@@ -235,7 +235,7 @@ public class DBModel implements Model {
                     return getClientTelevisions(connection, clientID);
             }
         } catch (SQLException e) {
-            throw new InvalidModelException("Failed to get client services from database");
+            throw new InvalidModelException(e);
         }
     }
 
@@ -244,36 +244,75 @@ public class DBModel implements Model {
                 "INSERT INTO internet (id_client, activation_date) VALUES (?, ?) RETURNING id"
         );
         pstmt1.setLong(1, clientID);
-        pstmt1.setDate(2, new Date(internet.getActivationDate().getTime()));
-        //pstmt1.setDate(1, (Date) internet.getActivationDate());
+        pstmt1.setTimestamp(2, new Timestamp(internet.getActivationDate().getTime()));
         ResultSet rs = pstmt1.executeQuery();
         rs.next();
         long internetID = rs.getLong("id");
+
         PreparedStatement pstmt2 = connection.prepareStatement(
                 "INSERT INTO internet_history (id_internet, date_begin, date_end, status, " +
-                        "speed, antivirus, connection_type) VALUES (?, ?, ?, ?, ?, ?, ?)"
+                        "speed, antivirus, connection_type) VALUES (?, ?, ?, ?::status, ?, ?, ?::connection_type)"
         );
         pstmt2.setLong(1, internetID);
-        //pstmt2.setObject(2, internet.getDateBegin().toInstant());
-        pstmt2.setDate(2, new Date(internet.getDateBegin().getTime()));
-        //pstmt2.setObject(3, internet.getDateEnd().toInstant());
-        pstmt2.setDate(3, new Date(internet.getDateEnd().getTime()));
+        pstmt2.setTimestamp(2, new Timestamp(internet.getDateBegin().getTime()));
+        pstmt2.setTimestamp(3, new Timestamp(internet.getDateEnd().getTime()));
         pstmt2.setString(4, internet.getStatus().toString());
         pstmt2.setInt(5, internet.getSpeed());
         pstmt2.setBoolean(6, internet.isAntivirus());
         pstmt2.setString(7, internet.getConnectionType().toString());
         if (pstmt2.executeUpdate() == 0) {
-            System.out.println("Gabella");
+            throw new SQLException("Failed insert to database");
         }
     }
 
     private void addPhoneToClient(Connection connection, long clientID, Phone phone) throws SQLException {
-        //todo
+        PreparedStatement pstmt1 = connection.prepareStatement(
+                "INSERT INTO phone (id_client, activation_date) VALUES (?, ?) RETURNING id"
+        );
+        pstmt1.setLong(1, clientID);
+        pstmt1.setTimestamp(2, new Timestamp(phone.getActivationDate().getTime()));
+        ResultSet rs = pstmt1.executeQuery();
+        rs.next();
+        long phoneID = rs.getLong("id");
+
+        PreparedStatement pstmt2 = connection.prepareStatement(
+                "INSERT INTO phone_history (id_phone, date_begin, date_end, status, " +
+                        "mins_count, sms_count) VALUES (?, ?, ?, ?::status, ?, ?)"
+        );
+        pstmt2.setLong(1, phoneID);
+        pstmt2.setTimestamp(2, new Timestamp(phone.getDateBegin().getTime()));
+        pstmt2.setTimestamp(3, new Timestamp(phone.getDateEnd().getTime()));
+        pstmt2.setString(4, phone.getStatus().toString());
+        pstmt2.setInt(5, phone.getMinsCount());
+        pstmt2.setInt(6, phone.getSmsCount());
+        if (pstmt2.executeUpdate() == 0) {
+            throw new SQLException("Failed insert to database");
+        }
     }
 
     private void addTelevisionToClient(Connection connection, long clientID, Television television)
             throws SQLException {
-        //todo
+        PreparedStatement pstmt1 = connection.prepareStatement(
+                "INSERT INTO television (id_client, activation_date) VALUES (?, ?) RETURNING id"
+        );
+        pstmt1.setLong(1, clientID);
+        pstmt1.setTimestamp(2, new Timestamp(television.getActivationDate().getTime()));
+        ResultSet rs = pstmt1.executeQuery();
+        rs.next();
+        long televisionID = rs.getLong("id");
+
+        PreparedStatement pstmt2 = connection.prepareStatement(
+                "INSERT INTO television_history (id_television, date_begin, date_end, status, " +
+                        "channels_count) VALUES (?, ?, ?, ?::status, ?)"
+        );
+        pstmt2.setLong(1, televisionID);
+        pstmt2.setTimestamp(2, new Timestamp(television.getDateBegin().getTime()));
+        pstmt2.setTimestamp(3, new Timestamp(television.getDateEnd().getTime()));
+        pstmt2.setString(4, television.getStatus().toString());
+        pstmt2.setInt(5, television.getChannelsCount());
+        if (pstmt2.executeUpdate() == 0) {
+            throw new SQLException("Failed insert to database");
+        }
     }
 
     @Override
@@ -294,7 +333,7 @@ public class DBModel implements Model {
                 addTelevisionToClient(connection, clientID, (Television) service);
             }
         } catch (SQLException e) {
-            throw new InvalidModelException("Failed to add client service to database");
+            throw new InvalidModelException(e);
         }
     }
 

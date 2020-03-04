@@ -26,29 +26,45 @@ import model.exceptions.ServiceNotFoundException;
 import model.exceptions.ClientNotFoundException;
 import model.DBModel;
 import model.services.Internet;
+import model.services.Phone;
 import model.services.Service;
+import model.services.Television;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Main {
     public static void main(String[] args)
-            throws ClientNotFoundException, ServiceNotFoundException, InvalidModelException {
+            throws ClientNotFoundException, InvalidModelException {
         Model model = new DBModel();
-        Service internet = new Internet(
-                new Date(),
-                new Date(),
-                new Date(),
-                //new Date(2020, 4, 1, 0, 0, 0),
-                Service.Status.ACTIVE,
-                100,
-                true,
-                Internet.ConnectionType.Cable
-        );
-        model.addServiceToClient(5, internet);
 
-//        Service[] services = model.getClientServicesByType(4, "Internet");
-//        for (Service service : services) {
-//            System.out.println(service.toString());
-//        }
+        Date activationDate = new Date();
+        Date date_begin = new Date();
+        Date date_end;
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+            date_end = format.parse("01.05.2020 23:59:59");
+        } catch (ParseException e) {
+            date_end = null;
+        }
+        Service.Status status = Service.Status.ACTIVE;
+
+        int speed = 100;
+        boolean antivirus = true;
+        Internet.ConnectionType connectionType = Internet.ConnectionType.Cable;
+
+        int minsCount = 300;
+        int smsCount = 100;
+
+        int channelsCount = 500;
+
+        Service internet = new Internet(activationDate, date_begin, date_end, status, speed, antivirus, connectionType);
+        Service phone = new Phone(activationDate, date_begin, date_end, status, minsCount, smsCount);
+        Service television = new Television(activationDate, date_begin, date_end, status, channelsCount);
+
+        model.addServiceToClient(5, internet);
+        model.addServiceToClient(5, phone);
+        model.addServiceToClient(5, television);
     }
 }

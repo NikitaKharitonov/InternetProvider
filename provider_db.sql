@@ -36,7 +36,7 @@ CREATE TABLE internet_history (
 	date_end TIMESTAMP(0) WITHOUT TIME ZONE,
 	status status NOT NULL,
 	speed INT NOT NULL,
-	antivirus BOOLEAN,
+	antivirus BOOLEAN NOT NULL,
 	connection_type connection_type NOT NULL
 );
 

@@ -1,49 +1,16 @@
 package model.services;
 
-import java.util.Date;
+public class Internet implements Service {
 
-
-public class Internet extends Service {
-    public enum ConnectionType{ADSL, Dial_up, ISDN, Cable, Fiber}
-
-    private int speed;
-    private boolean antivirus;
-    private ConnectionType connectionType;
-
-    public static String[] getConnectionTypes() {
-        ConnectionType[] connectionTypes = ConnectionType.values();
-        String[] strings = new String[connectionTypes.length];
-        for (int i = 0; i < strings.length; ++i)
-            strings[i] = connectionTypes[i].toString();
-        return strings;
+    public enum ConnectionType {
+        ADSL, DialUp, ISDN, Cable, Fiber
     }
 
-    public Internet(
-            Long id,
-            Date activationDate,
-            Date dateBegin,
-            Date dateEnd,
-            Status status,
-            Integer speed,
-            Boolean antivirus,
-            ConnectionType connectionType
-    ) {
-        super(id, activationDate, dateBegin, dateEnd, status);
-        this.speed = speed;
-        this.antivirus = antivirus;
-        this.connectionType = connectionType;
-    }
+    private final int speed;
+    private final boolean antivirus;
+    private final ConnectionType connectionType;
 
-    public Internet(
-            Date activationDate,
-            Date dateBegin,
-            Date dateEnd,
-            Status status,
-            Integer speed,
-            Boolean antivirus,
-            ConnectionType connectionType
-    ) {
-        super(activationDate, dateBegin, dateEnd, status);
+    public Internet(int speed, boolean antivirus, ConnectionType connectionType) {
         this.speed = speed;
         this.antivirus = antivirus;
         this.connectionType = connectionType;
@@ -53,29 +20,12 @@ public class Internet extends Service {
         return speed;
     }
 
-    public void setSpeed(Integer speed) {
-        this.speed = speed;
-    }
-
     public boolean isAntivirus() {
         return antivirus;
     }
 
-    public void setAntivirus(Boolean antivirus) {
-        this.antivirus = antivirus;
-    }
-
     public ConnectionType getConnectionType() {
         return connectionType;
-    }
-
-    public void setConnectionType(ConnectionType connectionType) {
-        this.connectionType = connectionType;
-    }
-
-    @Override
-    public String getType() {
-        return "Internet";
     }
 
     @Override
@@ -84,22 +34,6 @@ public class Internet extends Service {
                 "speed=" + speed +
                 ", antivirus=" + antivirus +
                 ", connectionType=" + connectionType +
-                ", id=" + id +
-                ", activationDate=" + activationDate +
-                ", dateBegin=" + dateBegin +
-                ", dateEnd=" + dateEnd +
-                ", status=" + status +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if(!super.equals(obj))
-            return false;
-        if (!(obj instanceof Internet))
-            return false;
-        return this.connectionType == ((Internet) obj).connectionType
-                && this.antivirus == ((Internet) obj).antivirus
-                && this.speed == ((Internet) obj).speed;
     }
 }

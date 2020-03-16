@@ -1,10 +1,11 @@
 package model;
 
+import model.exceptions.ClientNotFoundException;
 import model.exceptions.InvalidModelException;
 import model.exceptions.ServiceNotFoundException;
-import model.exceptions.ClientNotFoundException;
-import model.services.Service;
+import model.services.*;
 
+import java.util.Date;
 import java.util.List;
 
 public interface Model {
@@ -17,14 +18,30 @@ public interface Model {
 
     void removeClient(long id) throws ClientNotFoundException, InvalidModelException;
 
-    int getClientsCount() throws InvalidModelException;
+    List<ClientService<Internet>> getClientInternets(long id)
+            throws ClientNotFoundException, InvalidModelException;
 
-    List<Service> getClientServicesByType(long clientID, String serviceType)
-            throws ServiceNotFoundException, ClientNotFoundException, InvalidModelException;
+    List<ClientService<Phone>> getClientPhones(long id)
+            throws ClientNotFoundException, InvalidModelException;
 
-    List<Service> getServiceHistoryByType(long serviceID, String serviceType)
+    List<ClientService<Television>> getClientTelevisions(long id)
+            throws ClientNotFoundException, InvalidModelException;
+
+    List<Condition<Internet>> getInternetHistory(long internetId)
             throws ServiceNotFoundException, InvalidModelException;
 
-    void addServiceToClient(long clientID, Service service) throws ClientNotFoundException, InvalidModelException;
+    void addInternetToClient(long clientId, Internet internet)
+            throws ClientNotFoundException, InvalidModelException;
+
+    void extendInternet(long internetId, Date date_end)
+            throws ServiceNotFoundException, InvalidModelException;
+
+//    List<Service> getClientServicesByType(long clientID, String serviceType)
+//            throws ServiceNotFoundException, ClientNotFoundException, InvalidModelException;
+//
+//    List<Service> getServiceHistoryByType(long serviceID, String serviceType)
+//            throws ServiceNotFoundException, InvalidModelException;
+//
+//    void addServiceToClient(long clientID, Service service) throws ClientNotFoundException, InvalidModelException;
 
 }

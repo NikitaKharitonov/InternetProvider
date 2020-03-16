@@ -1,35 +1,11 @@
 package model.services;
 
-import java.util.Date;
+public class Phone implements Service {
 
-public class Phone extends Service {
+    private final int minsCount;
+    private final int smsCount;
 
-    private int minsCount;
-    private int smsCount;
-
-    public Phone(
-            Long id,
-            Date activationDate,
-            Date dateBegin,
-            Date dateEnd,
-            Status status,
-            Integer minsCount,
-            Integer smsCount
-    ) {
-        super(id, activationDate, dateBegin, dateEnd, status);
-        this.minsCount = minsCount;
-        this.smsCount = smsCount;
-    }
-
-    public Phone(
-            Date activationDate,
-            Date dateBegin,
-            Date dateEnd,
-            Status status,
-            Integer minsCount,
-            Integer smsCount
-    ) {
-        super(activationDate, dateBegin, dateEnd, status);
+    public Phone(int minsCount, int smsCount) {
         this.minsCount = minsCount;
         this.smsCount = smsCount;
     }
@@ -38,21 +14,8 @@ public class Phone extends Service {
         return minsCount;
     }
 
-    public void setMinsCount(Integer minsCount) {
-        this.minsCount = minsCount;
-    }
-
     public int getSmsCount() {
         return smsCount;
-    }
-
-    public void setSmsCount(Integer smsCount) {
-        this.smsCount = smsCount;
-    }
-
-    @Override
-    public String getType() {
-        return "Phone";
     }
 
     @Override
@@ -60,21 +23,6 @@ public class Phone extends Service {
         return "Phone{" +
                 "minsCount=" + minsCount +
                 ", smsCount=" + smsCount +
-                ", id=" + id +
-                ", activationDate=" + activationDate +
-                ", dateBegin=" + dateBegin +
-                ", dateEnd=" + dateEnd +
-                ", status=" + status +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if(!super.equals(obj))
-            return false;
-        if (!(obj instanceof Phone))
-            return false;
-        return this.minsCount == ((Phone) obj).minsCount
-                && this.smsCount == ((Phone) obj).smsCount;
     }
 }

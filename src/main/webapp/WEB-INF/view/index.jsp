@@ -1,11 +1,37 @@
+
+<%@ page import="java.io.IOException" %>
+<%@ page import="ru.internetprovider.model.Client" %>
+<%@ page import="java.util.List" %>
+<%@ page import="ru.internetprovider.model.DBModel" %>
+<%@ page import="ru.internetprovider.model.exceptions.InvalidModelException" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-    <head>
-        <title>InternetProvider</title>
-    </head>
-    <body>
-        <h2>All clients</h2>
+<head>
+    <title>Result</title>
+    <style>
+        <%@ include file="../css/style.css"%>
+    </style>
+</head>
+<body>
+
+<%
+    try {
+        Class.forName("org.postgresql.Driver");
+    } catch (ClassNotFoundException e) {
+        e.printStackTrace();
+    }
+
+    DBModel dbModel = new DBModel();
+    List<Client> clientList = new ArrayList<>();
+    try {
+        clientList = dbModel.getClients();
+    } catch (InvalidModelException e) {
+        e.printStackTrace();
+    }
+%>
+<div class="container-table">
 
         <table>
             <thead>
@@ -38,5 +64,7 @@
             </tbody>
         </table>
 
-    </body>
+</div>
+
+</body>
 </html>

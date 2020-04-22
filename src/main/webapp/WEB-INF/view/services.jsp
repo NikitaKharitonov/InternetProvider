@@ -30,82 +30,90 @@
                 e.printStackTrace();
             }
         %>
-        <div class="container-table">
-            <div class="greeting">
-                <label>Client <%=clientId%></label>
-            </div>
-            <table>
-                <caption>
-                    Internet
-                </caption>
-                <thead>
+        <form method="post">
+            <div class="container-table">
+                <div class="greeting">
+                    <label>Client <%=clientId%></label>
+                </div>
+                <table>
+                    <caption>
+                        Internet
+                    </caption>
+                    <thead>
                     <tr>
                         <th>ID</th>
                         <th>Activation Date</th>
                         <th></th>
+                        <th></th>
                     </tr>
-                </thead>
-                <tbody>
+                    </thead>
+                    <tbody>
                     <% for (ClientService<Internet> clientService: internetList) { %>
                     <tr>
                         <td><%=clientService.getId()%></td>
                         <td><%=clientService.getActivationDate()%></td>
                         <td><button class="btn">Get history</button></td>
+                        <td><button class="btn">Delete</button> </td>
                     </tr>
                     <% } %>
-                </tbody>
-            </table>
-            <div class="add">
-                <button class="btn">Add</button>
+                    </tbody>
+                </table>
+                <div class="add">
+                    <button class="btn" name="button" value="internet">Add...</button>
+                </div>
+                <table>
+                    <caption>
+                        Phone
+                    </caption>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Activation Date</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <% for (ClientService<Phone> clientService: phoneList) { %>
+                    <tr>
+                        <td><%=clientService.getId()%></td>
+                        <td><%=clientService.getActivationDate()%></td>
+                        <td><button class="btn">Get history</button></td>
+                        <td><button class="btn">Delete</button> </td>
+                    </tr>
+                    <% } %>
+                    </tbody>
+                </table>
+                <div class="add">
+                    <button class="btn" name="button" value="phone">Add...</button>
+                </div>
+                <table>
+                    <caption>
+                        Television
+                    </caption>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Activation Date</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <% for (ClientService<Television> clientService: televisionList) { %>
+                    <tr>
+                        <td><%=clientService.getId()%></td>
+                        <td><%=clientService.getActivationDate()%></td>
+                        <td><button class="btn">Get history</button></td>
+                        <td><button class="btn">Delete</button> </td>
+                    </tr>
+                    <% } %>
+                    </tbody>
+                </table>
+                <div class="add">
+                    <button class="btn" name="button" value="television">Add...</button>
+                </div>
             </div>
-            <table>
-                <caption>
-                    Phone
-                </caption>
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Activation Date</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <% for (ClientService<Phone> clientService: phoneList) { %>
-                <tr>
-                    <td><%=clientService.getId()%></td>
-                    <td><%=clientService.getActivationDate()%></td>
-                    <td><button class="btn">Get history</button></td>
-                </tr>
-                <% } %>
-                </tbody>
-            </table>
-            <div class="add">
-                <button class="btn">Add</button>
-            </div>
-            <table>
-                <caption>
-                    Television
-                </caption>
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Activation Date</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <% for (ClientService<Television> clientService: televisionList) { %>
-                <tr>
-                    <td><%=clientService.getId()%></td>
-                    <td><%=clientService.getActivationDate()%></td>
-                    <td><button class="btn">Get history</button></td>
-                </tr>
-                <% } %>
-                </tbody>
-            </table>
-            <div class="add">
-                <button class="btn">Add</button>
-            </div>
-        </div>
+        </form>
     </body>
 </html>

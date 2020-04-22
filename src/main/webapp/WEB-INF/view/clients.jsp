@@ -4,6 +4,8 @@
 <%@ page import="ru.internetprovider.model.DBModel" %>
 <%@ page import="ru.internetprovider.model.exceptions.InvalidModelException" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="ru.internetprovider.servlets.Clients" %>
+<%@ page import="ru.internetprovider.servlets.AddClient" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
@@ -31,6 +33,9 @@
         %>
         <form method="post">
             <div class="container-table">
+                <div class="greeting">
+                    Client list
+                </div>
                 <table>
                     <thead>
                     <tr>
@@ -38,6 +43,7 @@
                         <th>Name</th>
                         <th>Phone</th>
                         <th>Email</th>
+                        <th></th>
                         <th></th>
                     </tr>
                     </thead>
@@ -49,12 +55,13 @@
                             <td><%=client.getPhone()%></td>
                             <td><%=client.getEmail()%></td>
                             <td><button class="btn" name="button" value="<%=client.getId()%>">Get info</button></td>
+                            <td><button class="btn" name="button" value="delete">Delete</button></td>
                         </tr>
                         <% } %>
                     </tbody>
                 </table>
                 <div class="add">
-                    <button class="btn">Add</button>
+                    <button class="btn" name="button" value="add">Add...</button>
                 </div>
             </div>
         </form>

@@ -1,11 +1,12 @@
-package ru.internetprovider.controller;
+package ru.internetprovider.servlets;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import java.io.IOException;
 
-public class IndexServlet extends javax.servlet.http.HttpServlet {
+public class Clients extends javax.servlet.http.HttpServlet {
 
-    private static final String url = "WEB-INF/view/index.jsp";
+    private static final String url = "/WEB-INF/view/clients.jsp";
 
     @Override
     public void init() throws ServletException {
@@ -14,10 +15,13 @@ public class IndexServlet extends javax.servlet.http.HttpServlet {
 
     protected void doPost(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
         String clientIdString = request.getParameter("button");
-        try {
+        if (clientIdString.equals("add")) {
+            response.sendRedirect("/provider/addclient");
+        }
+        else try {
             long clientId = Long.parseLong(clientIdString);
             request.getSession().setAttribute("client_id", clientId);
-            response.sendRedirect("/services");
+            response.sendRedirect("/provider/services");
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }

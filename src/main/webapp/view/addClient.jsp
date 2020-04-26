@@ -3,11 +3,11 @@
 <head>
     <title>Add client</title>
     <style>
-        <%@ include file="../css/style.css"%>
+        <%@ include file="../resources/css/style.css"%>
     </style>
 </head>
 <body>
-    <form method="post" class="form-container">
+    <form method="post" action="${pageContext.request.contextPath}/addClient" class="form-container">
         <h1>Add client</h1>
         <input name="name" type="text" placeholder="Name"/>
         <input name="phone" type="number" placeholder="Phone number"/>

@@ -11,23 +11,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "AddClient", urlPatterns = "/addClient")
-public class AddClient extends HttpServlet {
-
+@WebServlet(name = "UpdateClient", urlPatterns = "/updateClient")
+public class UpdateClient extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         DBModel dbModel = new DBModel();
+        long clientId = (long) request.getSession().getAttribute("clientId");
         String name = request.getParameter("name");
         String phone = request.getParameter("phone");
         String email = request.getParameter("email");
-        try {
-            dbModel.addClient(new Client(name, phone, email));
-            response.sendRedirect(request.getContextPath() + "/");
-        } catch (InvalidModelException e) {
-            throw new ServletException(e.getMessage());
-        }
+        // todo update client
+        response.sendRedirect(request.getContextPath() + "/");
     }
 
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("view/addClient.jsp").forward(request, response);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String clientId = request.getParameter("clientId");
+        request.getSession().setAttribute("clientId", clientId);
+        request.getRequestDispatcher("view/updateClient.jsp").forward(request, response);
     }
 }

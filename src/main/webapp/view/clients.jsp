@@ -12,26 +12,14 @@
     <head>
         <title>Index</title>
         <style>
-            <%@ include file="../css/style.css"%>
+            <%@ include file="../resources/css/style.css"%>
         </style>
     </head>
     <body>
         <%
-            try {
-                Class.forName("org.postgresql.Driver");
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-
-            DBModel dbModel = new DBModel();
-            List<Client> clientList = new ArrayList<>();
-            try {
-                clientList = dbModel.getClients();
-            } catch (InvalidModelException e) {
-                e.printStackTrace();
-            }
+            List<Client> clientList = (List<Client>) request.getAttribute("clientList");
         %>
-        <form method="post">
+<%--        <form method="post">--%>
             <div class="container-table">
                 <div class="greeting">
                     Client list
@@ -45,6 +33,7 @@
                         <th>Email</th>
                         <th></th>
                         <th></th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -54,16 +43,31 @@
                             <td><%=client.getName()%></td>
                             <td><%=client.getPhone()%></td>
                             <td><%=client.getEmail()%></td>
-                            <td><button class="btn" name="button" value="<%=client.getId()%>">Get info</button></td>
-                            <td><button class="btn" name="button" value="delete">Delete</button></td>
+                            <td>
+                                <form action="${pageContext.request.contextPath}/services">
+                                    <button class="btn" name="clientId" value="<%=client.getId()%>">Get services</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form method="get" action="${pageContext.request.contextPath}/updateClient">
+                                    <button class="btn" name="clientId" value="<%=client.getId()%>">Update</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form>
+                                    <button class="btn" name="clientId" value="delete" style="color: red">Delete</button>
+                                </form>
+                            </td>
                         </tr>
                         <% } %>
                     </tbody>
                 </table>
                 <div class="add">
-                    <button class="btn" name="button" value="add">Add...</button>
+                    <form action="${pageContext.request.contextPath}/addClient">
+                        <button class="btn" name="button" value="add">Add...</button>
+                    </form>
                 </div>
             </div>
-        </form>
+<%--        </form>--%>
     </body>
 </html>

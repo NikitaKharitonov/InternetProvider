@@ -12,25 +12,18 @@
     <head>
         <title>Services</title>
         <style>
-            <%@ include file="../css/style.css"%>
+            <%@ include file="../resources/css/style.css"%>
         </style>
     </head>
     <body>
         <%
-            long clientId = (long)session.getAttribute("client_id");
-            DBModel dbModel = new DBModel();
-            List<ClientService<Internet>> internetList = new ArrayList<>();
-            List<ClientService<Phone>> phoneList = new ArrayList<>();
-            List<ClientService<Television>> televisionList = new ArrayList<>();
-            try {
-                internetList = dbModel.getClientInternets(clientId);
-                phoneList = dbModel.getClientPhones(clientId);
-                televisionList = dbModel.getClientTelevisions(clientId);
-            } catch (ClientNotFoundException | InvalidModelException e) {
-                e.printStackTrace();
-            }
+            long clientId = (long) request.getSession().getAttribute("clientId");
+            List<ClientService<Internet>> internetList = (List<ClientService<Internet>>) request.getAttribute("internetList");
+            List<ClientService<Phone>> phoneList = (List<ClientService<Phone>>) request.getAttribute("phoneList");
+            List<ClientService<Television>> televisionList = (List<ClientService<Television>>) request.getAttribute("televisionList");
+
         %>
-        <form method="post">
+<%--        <form method="post">--%>
             <div class="container-table">
                 <div class="greeting">
                     <label>Client <%=clientId%></label>
@@ -45,6 +38,7 @@
                         <th>Activation Date</th>
                         <th></th>
                         <th></th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -52,15 +46,31 @@
                     <tr>
                         <td><%=clientService.getId()%></td>
                         <td><%=clientService.getActivationDate()%></td>
-                        <td><button class="btn">Get history</button></td>
-                        <td><button class="btn">Delete</button> </td>
+                        <td>
+                            <form>
+                                <button class="btn">Get history</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="${pageContext.request.contextPath}/updateInternet">
+                                <button name="internetId" value="<%=clientService.getId()%>" class="btn">Update</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form>
+                                <button class="btn">Delete</button>
+                            </form>
+                        </td>
                     </tr>
                     <% } %>
                     </tbody>
                 </table>
                 <div class="add">
+                    <form action="${pageContext.request.contextPath}/addInternet">
                     <button class="btn" name="button" value="internet">Add...</button>
+                    </form>
                 </div>
+
                 <table>
                     <caption>
                         Phone
@@ -71,6 +81,7 @@
                         <th>Activation Date</th>
                         <th></th>
                         <th></th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -78,14 +89,29 @@
                     <tr>
                         <td><%=clientService.getId()%></td>
                         <td><%=clientService.getActivationDate()%></td>
-                        <td><button class="btn">Get history</button></td>
-                        <td><button class="btn">Delete</button> </td>
+                        <td>
+                            <form>
+                                <button class="btn">Get history</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="${pageContext.request.contextPath}/updatePhone">
+                                <button name="phoneId" value="<%=clientService.getId()%>" class="btn">Update</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form>
+                                <button class="btn">Delete</button>
+                            </form>
+                        </td>
                     </tr>
                     <% } %>
                     </tbody>
                 </table>
                 <div class="add">
+                    <form action="${pageContext.request.contextPath}/addPhone">
                     <button class="btn" name="button" value="phone">Add...</button>
+                    </form>
                 </div>
                 <table>
                     <caption>
@@ -97,6 +123,7 @@
                         <th>Activation Date</th>
                         <th></th>
                         <th></th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -104,16 +131,32 @@
                     <tr>
                         <td><%=clientService.getId()%></td>
                         <td><%=clientService.getActivationDate()%></td>
-                        <td><button class="btn">Get history</button></td>
-                        <td><button class="btn">Delete</button> </td>
+                        <td>
+                            <form>
+                                <button class="btn">Get history</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="${pageContext.request.contextPath}/updateTelevision">
+                                <button name="televisionId" value="<%=clientService.getId()%>" class="btn">Update</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form>
+                                <button class="btn">Delete</button>
+                            </form>
+                        </td>
                     </tr>
                     <% } %>
                     </tbody>
                 </table>
                 <div class="add">
-                    <button class="btn" name="button" value="television">Add...</button>
+                    <form action="${pageContext.request.contextPath}/addTelevision">
+                            <button class="btn" name="button" value="television">Add...</button>
+                    </form>
                 </div>
+
             </div>
-        </form>
+<%--        </form>--%>
     </body>
 </html>

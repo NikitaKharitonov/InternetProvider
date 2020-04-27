@@ -22,7 +22,7 @@ public class UpdateTelevision extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String televisionId = request.getParameter("televisionId");
         request.getSession().setAttribute("televisionId", televisionId);
-        request.getRequestDispatcher("/updateTelevision.jsp").forward(request, response);
+        request.getRequestDispatcher("view/updateTelevision.jsp").forward(request, response);
 
     }
 }

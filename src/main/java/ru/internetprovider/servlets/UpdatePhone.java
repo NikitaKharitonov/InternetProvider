@@ -25,6 +25,6 @@ public class UpdatePhone extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String phoneId = request.getParameter("phoneId");
         request.getSession().setAttribute("phoneId", phoneId);
-        request.getRequestDispatcher("/updatePhone.jsp").forward(request, response);
+        request.getRequestDispatcher("view/updatePhone.jsp").forward(request, response);
     }
 }

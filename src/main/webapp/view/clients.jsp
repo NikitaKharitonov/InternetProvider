@@ -19,55 +19,53 @@
         <%
             List<Client> clientList = (List<Client>) request.getAttribute("clientList");
         %>
-<%--        <form method="post">--%>
-            <div class="container-table">
-                <div class="greeting">
-                    Client list
-                </div>
-                <table>
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Phone</th>
-                        <th>Email</th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        <% for (Client client: clientList) { %>
-                        <tr>
-                            <td><%=client.getId()%></td>
-                            <td><%=client.getName()%></td>
-                            <td><%=client.getPhone()%></td>
-                            <td><%=client.getEmail()%></td>
-                            <td>
-                                <form action="${pageContext.request.contextPath}/services">
-                                    <button class="btn" name="clientId" value="<%=client.getId()%>">Get services</button>
-                                </form>
-                            </td>
-                            <td>
-                                <form method="get" action="${pageContext.request.contextPath}/updateClient">
-                                    <button class="btn" name="clientId" value="<%=client.getId()%>">Update</button>
-                                </form>
-                            </td>
-                            <td>
-                                <form>
-                                    <button class="btn" name="clientId" value="delete" style="color: red">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                        <% } %>
-                    </tbody>
-                </table>
-                <div class="add">
-                    <form action="${pageContext.request.contextPath}/addClient">
-                        <button class="btn" name="button" value="add">Add...</button>
-                    </form>
-                </div>
+        <div class="container-table">
+            <div class="greeting">
+                Client list
             </div>
-<%--        </form>--%>
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                    <% for (Client client: clientList) { %>
+                    <tr>
+                        <td><%=client.getId()%></td>
+                        <td><%=client.getName()%></td>
+                        <td><%=client.getPhone()%></td>
+                        <td><%=client.getEmail()%></td>
+                        <td>
+                            <form action="${pageContext.request.contextPath}/services">
+                                <button class="btn" name="clientId" value="<%=client.getId()%>">Get services</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="${pageContext.request.contextPath}/updateClient">
+                                <button class="btn" name="clientId" value="<%=client.getId()%>">Update</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form method="post" action="${pageContext.request.contextPath}/deleteClient">
+                                <button class="btn" name="clientId" value="<%=client.getId()%>" style="color: red">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+            <div class="add">
+                <form action="${pageContext.request.contextPath}/addClient">
+                    <button class="btn" name="button" value="add">Add...</button>
+                </form>
+            </div>
+        </div>
     </body>
 </html>

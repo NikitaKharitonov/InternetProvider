@@ -31,6 +31,6 @@ public class UpdateInternet extends HttpServlet {
         List<Internet.ConnectionType> connectionTypeList = new ArrayList<>(Arrays.asList(connectionTypeArray));
         request.getSession().setAttribute("connectionTypeList", connectionTypeList);
         request.getSession().setAttribute("internetId", internetId);
-        request.getRequestDispatcher("/updateInternet.jsp").forward(request, response);
+        request.getRequestDispatcher("view/updateInternet.jsp").forward(request, response);
     }
 }

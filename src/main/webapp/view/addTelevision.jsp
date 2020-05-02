@@ -9,7 +9,7 @@
 <body>
     <form method="post" action="${pageContext.request.contextPath}/addTelevision" class="form-container">
         <h1>Add television to client #<%=request.getSession().getAttribute("clientId")%></h1>
-        <input name="channelsCount" type="number" placeholder="Number of channels"/>
+        <input name="channelsCount" type="number" min="1" placeholder="Number of channels" required/>
         <input type="submit" value="Add" class="btn">
     </form>
 </body>

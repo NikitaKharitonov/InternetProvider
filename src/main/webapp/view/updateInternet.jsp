@@ -9,15 +9,18 @@
     </style>
 </head>
 <body>
+    <%
+        Internet internet = (Internet) request.getAttribute("internet");
+    %>
     <form method="post" action="${pageContext.request.contextPath}/updateInternet" class="form-container">
         <h1>Update internet #<%=request.getSession().getAttribute("internetId")%></h1>
-        <!--todo add current values-->
-        <input name="speed" type="number" placeholder="Speed"/>
+        <input name="speed" type="number" min="1" value="<%=internet.getSpeed()%>" required/>
         <label>Antivirus:
-            <input name="antivirus" type="checkbox">
+            <input name="antivirus" type="checkbox" <%=internet.isAntivirus() ? "checked" : ""%>>
         </label>
         <label>Connection Type:
             <select name="connectionType">
+                <option selected><%=internet.getConnectionType()%></option>
                 <%List<Internet.ConnectionType> connectionTypeList = (List<Internet.ConnectionType>) request.getSession().getAttribute("connectionTypeList");%>
                 <%for(Internet.ConnectionType connectionType: connectionTypeList) {%>
                 <option><%=connectionType.toString()%></option>

@@ -1,3 +1,4 @@
+<%@ page import="ru.internetprovider.model.services.Phone" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -7,11 +8,13 @@
     </style>
 </head>
 <body>
+    <%
+        Phone phone = (Phone) request.getAttribute("phone");
+    %>
     <form method="post" action="${pageContext.request.contextPath}/updatePhone" class="form-container">
-        <h1>Update phone <%=request.getSession().getAttribute("phoneId")%></h1>
-        <!--todo add current values-->
-        <input name="minsCount" type="number" placeholder="Number of calling minutes"/>
-        <input name="smsCount" type="number" placeholder="Number of SMS"/>
+        <h1>Update phone #<%=request.getSession().getAttribute("phoneId")%></h1>
+        <input name="minsCount" type="number" min="1" value="<%=phone.getMinsCount()%>" required/>
+        <input name="smsCount" type="number" min="1" value="<%=phone.getSmsCount()%>" required/>
         <input type="submit" value="Update" class="btn">
     </form>
 </body>

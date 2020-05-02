@@ -1,8 +1,8 @@
 <%@ page import="ru.internetprovider.model.services.Internet" %>
 <%@ page import="ru.internetprovider.model.services.ClientService" %>
-<%@ page import="ru.internetprovider.model.services.Condition" %>
 <%@ page import="java.util.List" %>
 <%@ page import="ru.internetprovider.model.services.Television" %>
+<%@ page import="java.text.SimpleDateFormat" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -13,8 +13,9 @@
 </head>
 <body>
     <%
-        List<Condition<Television>> televisionHistoryList = (List<Condition<Television>>) request.getAttribute("televisionHistoryList");
+        List<Television> televisionList = (List<Television>) request.getAttribute("televisionList");
         long televisionId = (long) request.getAttribute("televisionId");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     %>
     <div class="container-table">
         <div class="greeting">
@@ -25,17 +26,15 @@
             <tr>
                 <th>Begin date</th>
                 <th>End date</th>
-                <th>Status</th>
                 <th>Number of channels</th>
             </tr>
             </thead>
             <tbody>
-            <% for (Condition<Television> condition: televisionHistoryList) { %>
+            <% for (Television television: televisionList) { %>
             <tr>
-                <td><%=condition.getDateBegin()%></td>
-                <td><%=condition.getDateEnd()%></td>
-                <td><%=condition.getStatus()%></td>
-                <td><%=condition.getService().getChannelsCount()%></td>
+                <td><%=television.getBeginDate() != null ? formatter.format(television.getBeginDate()) : ""%></td>
+                <td><%=television.getEndDate() != null ? formatter.format(television.getEndDate()) : ""%></td>
+                <td><%=television.getChannelsCount()%></td>
             </tr>
             <% } %>
             </tbody>

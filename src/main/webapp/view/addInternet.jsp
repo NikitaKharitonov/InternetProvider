@@ -11,7 +11,7 @@
 <body>
     <form method="post" action="${pageContext.request.contextPath}/addInternet" class="form-container">
         <h1>Add internet to client #<%=request.getSession().getAttribute("clientId")%></h1>
-        <input name="speed" type="number" placeholder="Speed"/>
+        <input name="speed" type="number" min="1" placeholder="Speed" required/>
         <label>Antivirus:
             <input name="antivirus" type="checkbox">
         </label>
@@ -19,7 +19,7 @@
             <select name="connectionType">
                 <%List<Internet.ConnectionType> connectionTypeList = (List<Internet.ConnectionType>) request.getSession().getAttribute("connectionTypeList");%>
                 <%for(Internet.ConnectionType connectionType: connectionTypeList) {%>
-                <option><%=connectionType.toString()%></option>
+                <option selected><%=connectionType.toString()%></option>
                 <%}%>
             </select>
         </label>

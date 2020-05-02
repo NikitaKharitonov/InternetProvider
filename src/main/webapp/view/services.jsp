@@ -7,6 +7,7 @@
 <%@ page import="ru.internetprovider.model.exceptions.ClientNotFoundException" %>
 <%@ page import="ru.internetprovider.model.services.Phone" %>
 <%@ page import="ru.internetprovider.model.services.Television" %>
+<%@ page import="java.text.SimpleDateFormat" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
     <head>
@@ -17,15 +18,15 @@
     </head>
     <body>
         <%
-            long clientId = (long) request.getSession().getAttribute("clientId");
+            long clientId = Long.parseLong(request.getSession().getAttribute("clientId").toString());
             List<ClientService<Internet>> internetList = (List<ClientService<Internet>>) request.getAttribute("internetList");
             List<ClientService<Phone>> phoneList = (List<ClientService<Phone>>) request.getAttribute("phoneList");
             List<ClientService<Television>> televisionList = (List<ClientService<Television>>) request.getAttribute("televisionList");
-
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         %>
         <div class="container-table">
             <div class="greeting">
-                <label>Client <%=clientId%></label>
+                <label>Services of client #<%=clientId%></label>
             </div>
             <table>
                 <caption>
@@ -35,16 +36,24 @@
                 <tr>
                     <th>ID</th>
                     <th>Activation Date</th>
+                    <th>Status</th>
+                    <th>Speed, Mbps</th>
+                    <th>Antivirus</th>
+                    <th>Connection Type</th>
                     <th></th>
                     <th></th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody>
-                <% for (ClientService<Internet> clientService: internetList) { %>
+                <% if (internetList != null) for (ClientService<Internet> clientService: internetList) { %>
                 <tr>
                     <td><%=clientService.getId()%></td>
-                    <td><%=clientService.getActivationDate()%></td>
+                    <td><%=formatter.format(clientService.getActivationDate())%></td>
+                    <td><%=clientService.getStatus()%></td>
+                    <td><%=clientService.getServiceList().get(clientService.getServiceList().size() - 1).getSpeed()%></td>
+                    <td><%=clientService.getServiceList().get(clientService.getServiceList().size() - 1).isAntivirus()%></td>
+                    <td><%=clientService.getServiceList().get(clientService.getServiceList().size() - 1).getConnectionType()%></td>
                     <td>
                         <form action="${pageContext.request.contextPath}/internetHistory">
                             <button class="btn" name="internetId" value="<%=clientService.getId()%>">Get history</button>
@@ -78,16 +87,22 @@
                 <tr>
                     <th>ID</th>
                     <th>Activation Date</th>
+                    <th>Status</th>
+                    <th>Number of minutes</th>
+                    <th>Number of SMS</th>
                     <th></th>
                     <th></th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody>
-                <% for (ClientService<Phone> clientService: phoneList) { %>
+                <% if (phoneList != null) for (ClientService<Phone> clientService: phoneList) { %>
                 <tr>
                     <td><%=clientService.getId()%></td>
-                    <td><%=clientService.getActivationDate()%></td>
+                    <td><%=formatter.format(clientService.getActivationDate())%></td>
+                    <td><%=clientService.getStatus()%></td>
+                    <td><%=clientService.getServiceList().get(clientService.getServiceList().size() - 1).getMinsCount()%></td>
+                    <td><%=clientService.getServiceList().get(clientService.getServiceList().size() - 1).getSmsCount()%></td>
                     <td>
                         <form action="${pageContext.request.contextPath}/phoneHistory">
                             <button name="phoneId" value="<%=clientService.getId()%>" class="btn">Get history</button>
@@ -112,6 +127,7 @@
                 <button class="btn" name="button" value="phone">Add...</button>
                 </form>
             </div>
+
             <table>
                 <caption>
                     Television
@@ -120,19 +136,23 @@
                 <tr>
                     <th>ID</th>
                     <th>Activation Date</th>
+                    <th>Status</th>
+                    <th>Number of channels</th>
                     <th></th>
                     <th></th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody>
-                <% for (ClientService<Television> clientService: televisionList) { %>
+                <%if (televisionList != null) for (ClientService<Television> clientService: televisionList) { %>
                 <tr>
                     <td><%=clientService.getId()%></td>
-                    <td><%=clientService.getActivationDate()%></td>
+                    <td><%=formatter.format(clientService.getActivationDate())%></td>
+                    <td><%=clientService.getStatus()%></td>
+                    <td><%=clientService.getServiceList().get(clientService.getServiceList().size() - 1).getChannelsCount()%></td>
                     <td>
                         <form action="${pageContext.request.contextPath}/televisionHistory">
-                            <button class="btn">Get history</button>
+                            <button name="televisionId" value="<%=clientService.getId()%>" class="btn">Get history</button>
                         </form>
                     </td>
                     <td>
@@ -142,7 +162,7 @@
                     </td>
                     <td>
                         <form>
-                            <button name="televisionId" value="<%=clientService.getId()%>" class="btn">Disconnect</button>
+                            <button value="<%=clientService.getId()%>" class="btn">Disconnect</button>
                         </form>
                     </td>
                 </tr>

@@ -9,8 +9,8 @@
 <body>
     <form method="post" action="${pageContext.request.contextPath}/addPhone" class="form-container">
         <h1>Add phone to client #<%=request.getSession().getAttribute("clientId")%></h1>
-        <input name="minsCount" type="number" placeholder="Number of calling minutes"/>
-        <input name="smsCount" type="number" placeholder="Number of SMS"/>
+        <input name="minsCount" type="number" min="1" placeholder="Number of calling minutes" required/>
+        <input name="smsCount" type="number" min="1" placeholder="Number of SMS" required/>
         <input type="submit" value="Add" class="btn">
     </form>
 </body>

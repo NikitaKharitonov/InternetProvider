@@ -1,7 +1,7 @@
 <%@ page import="ru.internetprovider.model.services.Internet" %>
 <%@ page import="ru.internetprovider.model.services.ClientService" %>
-<%@ page import="ru.internetprovider.model.services.Condition" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.text.SimpleDateFormat" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -12,8 +12,9 @@
 </head>
 <body>
     <%
-        List<Condition<Internet>> internetHistoryList = (List<Condition<Internet>>) request.getAttribute("internetHistoryList");
+        List<Internet> internetList = (List<Internet>) request.getAttribute("internetList");
         long internetId = (long) request.getAttribute("internetId");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     %>
     <div class="container-table">
         <div class="greeting">
@@ -24,21 +25,19 @@
             <tr>
                 <th>Begin date</th>
                 <th>End date</th>
-                <th>Status</th>
                 <th>Speed, Mbps</th>
                 <th>Antivirus</th>
                 <th>Connection Type</th>
             </tr>
             </thead>
             <tbody>
-            <% for (Condition<Internet> condition: internetHistoryList) { %>
+            <% for (Internet internet: internetList) { %>
             <tr>
-                <td><%=condition.getDateBegin()%></td>
-                <td><%=condition.getDateEnd()%></td>
-                <td><%=condition.getStatus()%></td>
-                <td><%=condition.getService().getSpeed()%></td>
-                <td><%=condition.getService().isAntivirus()%></td>
-                <td><%=condition.getService().getConnectionType()%></td>
+                <td><%=internet.getBeginDate() != null ? formatter.format(internet.getBeginDate()) : ""%></td>
+                <td><%=internet.getEndDate() != null ? formatter.format(internet.getEndDate()) : ""%></td>
+                <td><%=internet.getSpeed()%></td>
+                <td><%=internet.isAntivirus()%></td>
+                <td><%=internet.getConnectionType()%></td>
             </tr>
             <% } %>
             </tbody>

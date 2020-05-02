@@ -1,5 +1,6 @@
 <%@ page import="java.util.List" %>
 <%@ page import="ru.internetprovider.model.services.*" %>
+<%@ page import="java.text.SimpleDateFormat" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -10,8 +11,9 @@
 </head>
 <body>
     <%
-        List<Condition<Phone>> phoneHistoryList = (List<Condition<Phone>>) request.getAttribute("phoneHistoryList");
+        List<Phone> phoneList = (List<Phone>) request.getAttribute("phoneList");
         long phoneId = (long) request.getAttribute("phoneId");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     %>
     <div class="container-table">
         <div class="greeting">
@@ -22,19 +24,17 @@
             <tr>
                 <th>Begin date</th>
                 <th>End date</th>
-                <th>Status</th>
                 <th>Number of minutes</th>
                 <th>Number of SMS</th>
             </tr>
             </thead>
             <tbody>
-            <% for (Condition<Phone> condition: phoneHistoryList) { %>
+            <% for (Phone phone: phoneList) { %>
             <tr>
-                <td><%=condition.getDateBegin()%></td>
-                <td><%=condition.getDateEnd()%></td>
-                <td><%=condition.getStatus()%></td>
-                <td><%=condition.getService().getMinsCount()%></td>
-                <td><%=condition.getService().getSmsCount()%></td>
+                <td><%=phone.getBeginDate() != null ? formatter.format(phone.getBeginDate()) : ""%></td>
+                <td><%=phone.getEndDate() != null ? formatter.format(phone.getEndDate()) : ""%></td>
+                <td><%=phone.getMinsCount()%></td>
+                <td><%=phone.getSmsCount()%></td>
             </tr>
             <% } %>
             </tbody>

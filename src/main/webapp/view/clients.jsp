@@ -36,7 +36,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                    <% for (Client client: clientList) { %>
+                    <%for (Client client: clientList) {%>
                     <tr>
                         <td><%=client.getId()%></td>
                         <td><%=client.getName()%></td>
@@ -58,7 +58,7 @@
                             </form>
                         </td>
                     </tr>
-                    <% } %>
+                    <%}%>
                 </tbody>
             </table>
             <div class="add">

@@ -1,17 +1,24 @@
 package ru.internetprovider.model.services;
 
 import java.util.Date;
+import java.util.List;
 
 public class ClientService<T extends Service> {
 
+    public enum Status {
+        SUSPENDED, ACTIVE, DISCONNECTED
+    }
+
     private final long id;
     private final Date activationDate;
-    private final Condition<T> actualCondition;
+    private Status status;
+    private List<T> serviceList; // history
 
-    public ClientService(long id, Date activationDate, Condition<T> actualCondition) {
+
+    public ClientService(long id, Date activationDate, Status status) {
         this.id = id;
         this.activationDate = activationDate;
-        this.actualCondition = actualCondition;
+        this.status = status;
     }
 
     public long getId() {
@@ -22,8 +29,20 @@ public class ClientService<T extends Service> {
         return activationDate;
     }
 
-    public Condition<T> getActualCondition() {
-        return actualCondition;
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public List<T> getServiceList() {
+        return serviceList;
+    }
+
+    public void setServiceList(List<T> serviceList) {
+        this.serviceList = serviceList;
     }
 
     @Override
@@ -31,7 +50,8 @@ public class ClientService<T extends Service> {
         return "ClientService{" +
                 "id=" + id +
                 ", activationDate=" + activationDate +
-                ", actualCondition=" + actualCondition.toString() +
+                ", status=" + status +
+                ", serviceList=" + serviceList +
                 '}';
     }
 }

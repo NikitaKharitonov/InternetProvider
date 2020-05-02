@@ -1,11 +1,21 @@
 package ru.internetprovider.model;
 
+import ru.internetprovider.model.services.ClientService;
+import ru.internetprovider.model.services.Internet;
+import ru.internetprovider.model.services.Phone;
+import ru.internetprovider.model.services.Television;
+
+import java.util.List;
+
 public class Client {
 
     private final long id;
     private String name;
     private String phone;
     private String email;
+    private List<ClientService<Internet>> internetClientServiceList;
+    private List<ClientService<Phone>> phoneClientServiceList;
+    private List<ClientService<Television>> televisionClientServiceList;
 
     public Client(long id, String name, String phone, String email) {
         this.id = id;
@@ -47,6 +57,30 @@ public class Client {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<ClientService<Internet>> getInternetClientServiceList() {
+        return internetClientServiceList;
+    }
+
+    public void setInternetClientServiceList(List<ClientService<Internet>> internetClientServiceList) {
+        this.internetClientServiceList = internetClientServiceList;
+    }
+
+    public List<ClientService<Phone>> getPhoneClientServiceList() {
+        return phoneClientServiceList;
+    }
+
+    public void setPhoneClientServiceList(List<ClientService<Phone>> phoneClientServiceList) {
+        this.phoneClientServiceList = phoneClientServiceList;
+    }
+
+    public List<ClientService<Television>> getTelevisionClientServiceList() {
+        return televisionClientServiceList;
+    }
+
+    public void setTelevisionClientServiceList(List<ClientService<Television>> televisionClientServiceList) {
+        this.televisionClientServiceList = televisionClientServiceList;
     }
 
     @Override

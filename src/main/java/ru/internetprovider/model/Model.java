@@ -5,43 +5,75 @@ import ru.internetprovider.model.exceptions.InvalidModelException;
 import ru.internetprovider.model.exceptions.ServiceNotFoundException;
 import ru.internetprovider.model.services.*;
 
-import java.util.Date;
+import java.sql.SQLException;
 import java.util.List;
 
 public interface Model {
 
-    Client getClient(long id) throws ClientNotFoundException, InvalidModelException;
+    /*
+    Client
+    * */
 
-    List<Client> getClients() throws InvalidModelException;
+    Client getClient(long id) throws ClientNotFoundException, InvalidModelException, SQLException;
 
-    void addClient(Client client) throws InvalidModelException;
+    List<Client> getClientList() throws InvalidModelException, SQLException;
 
-    void removeClient(long id) throws ClientNotFoundException, InvalidModelException;
+    void updateClient(long id, Client client) throws SQLException;
 
-    List<ClientService<Internet>> getClientInternets(long id)
-            throws ClientNotFoundException, InvalidModelException;
+    void addClient(Client client) throws InvalidModelException, SQLException;
 
-    List<ClientService<Phone>> getClientPhones(long id)
-            throws ClientNotFoundException, InvalidModelException;
+    void removeClient(long id) throws ClientNotFoundException, InvalidModelException, SQLException;
 
-    List<ClientService<Television>> getClientTelevisions(long id)
-            throws ClientNotFoundException, InvalidModelException;
+    /*
+    Internet
+    * */
 
-    List<Condition<Internet>> getInternetHistory(long internetId)
-            throws ServiceNotFoundException, InvalidModelException;
+    ClientService<Internet> getInternet(long internetId) throws ClientNotFoundException, SQLException, ServiceNotFoundException;
 
-    void addInternetToClient(long clientId, Internet internet)
-            throws ClientNotFoundException, InvalidModelException;
+    List<ClientService<Internet>> getInternetList(long clientId)
+            throws ClientNotFoundException, InvalidModelException, SQLException, ServiceNotFoundException;
 
-    void extendInternet(long internetId, Date date_end)
-            throws ServiceNotFoundException, InvalidModelException;
+    void updateInternet(long internetId, Internet internet) throws SQLException;
 
-//    List<Service> getClientServicesByType(long clientID, String serviceType)
-//            throws ServiceNotFoundException, ClientNotFoundException, InvalidModelException;
-//
-//    List<Service> getServiceHistoryByType(long serviceID, String serviceType)
-//            throws ServiceNotFoundException, InvalidModelException;
-//
-//    void addServiceToClient(long clientID, Service service) throws ClientNotFoundException, InvalidModelException;
+    void addInternet(long clientId, Internet internet) throws ClientNotFoundException, SQLException;
+
+    void removeInternet(long internetId) throws SQLException, ClientNotFoundException;
+
+    List<Internet> getInternetHistory(long internetId)
+            throws ServiceNotFoundException, InvalidModelException, SQLException;
+
+    /*
+    Phone
+    * */
+
+    ClientService<Phone> getPhone(long phoneId) throws SQLException, ClientNotFoundException, ServiceNotFoundException;
+
+    List<ClientService<Phone>> getPhoneList(long clientId)
+            throws ClientNotFoundException, InvalidModelException, SQLException, ServiceNotFoundException;
+
+    void updatePhone(long phoneId, Phone phone) throws SQLException;
+
+    void addPhone(long clientId, Phone phone) throws SQLException, ClientNotFoundException;
+
+    void removePhone(long phoneId) throws SQLException;
+
+    List<Phone> getPhoneHistory(long phoneId) throws ServiceNotFoundException, InvalidModelException, SQLException;
+
+    /*
+    Television
+    * */
+
+    ClientService<Television> getTelevision(long televisionId) throws ClientNotFoundException, SQLException, ServiceNotFoundException;
+
+    List<ClientService<Television>> getTelevisionList(long clientId)
+            throws ClientNotFoundException, InvalidModelException, SQLException, ServiceNotFoundException;
+
+    void updateTelevision(long televisionId, Television television) throws SQLException;
+
+    void addTelevision(long clientId, Television television) throws SQLException, ClientNotFoundException;
+
+    void removeTelevision(long televisionId) throws SQLException;
+
+    List<Television> getTelevisionHistory(long televisionId) throws ServiceNotFoundException, InvalidModelException, SQLException;
 
 }

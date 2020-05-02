@@ -1,11 +1,14 @@
 package ru.internetprovider.model.services;
 
-public class Phone implements Service {
+import java.util.Date;
+
+public class Phone extends Service {
 
     private final int minsCount;
     private final int smsCount;
 
-    public Phone(int minsCount, int smsCount) {
+    public Phone(Date dateBegin, Date dateEnd, int minsCount, int smsCount) {
+        super(dateBegin, dateEnd);
         this.minsCount = minsCount;
         this.smsCount = smsCount;
     }

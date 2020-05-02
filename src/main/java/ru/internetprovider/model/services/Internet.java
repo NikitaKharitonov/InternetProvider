@@ -1,6 +1,8 @@
 package ru.internetprovider.model.services;
 
-public class Internet implements Service {
+import java.util.Date;
+
+public class Internet extends Service {
 
     public enum ConnectionType {
         ADSL, DialUp, ISDN, Cable, Fiber
@@ -10,7 +12,8 @@ public class Internet implements Service {
     private final boolean antivirus;
     private final ConnectionType connectionType;
 
-    public Internet(int speed, boolean antivirus, ConnectionType connectionType) {
+    public Internet(Date dateBegin, Date dateEnd, int speed, boolean antivirus, ConnectionType connectionType) {
+        super(dateBegin, dateEnd);
         this.speed = speed;
         this.antivirus = antivirus;
         this.connectionType = connectionType;

@@ -1,10 +1,13 @@
 package ru.internetprovider.model.services;
 
-public class Television implements Service {
+import java.util.Date;
+
+public class Television extends Service {
 
     private final int channelsCount;
 
-    public Television(int channelsCount) {
+    public Television(Date dateBegin, Date dateEnd, int channelsCount) {
+        super(dateBegin, dateEnd);
         this.channelsCount = channelsCount;
     }
 

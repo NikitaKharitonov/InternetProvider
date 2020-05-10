@@ -1,5 +1,6 @@
 package ru.internetprovider.model.services;
 
+import javax.xml.crypto.Data;
 import java.util.Date;
 import java.util.List;
 
@@ -9,7 +10,7 @@ public class ClientService<T extends Service> {
         SUSPENDED, ACTIVE, DISCONNECTED
     }
 
-    private final long id;
+    private long id;
     private final Date activationDate;
     private Status status;
     private List<T> serviceList; // history
@@ -17,6 +18,11 @@ public class ClientService<T extends Service> {
 
     public ClientService(long id, Date activationDate, Status status) {
         this.id = id;
+        this.activationDate = activationDate;
+        this.status = status;
+    }
+
+    public ClientService(Date activationDate, Status status) {
         this.activationDate = activationDate;
         this.status = status;
     }

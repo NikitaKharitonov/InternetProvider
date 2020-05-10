@@ -161,7 +161,7 @@
                     </td>
                     <td>
                         <form method="post">
-                            <button value="<%=clientService.getId()%>" class="btn">Dis-/connect</button>
+                            <button name="televisionId" value="<%=clientService.getId()%>" class="btn">Dis-/connect</button>
                         </form>
                     </td>
                 </tr>

@@ -1,4 +1,3 @@
-<%@ page import="ru.internetprovider.model.DBModel" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="ru.internetprovider.model.services.ClientService" %>
 <%@ page import="ru.internetprovider.model.services.Internet" %>
@@ -65,8 +64,8 @@
                         </form>
                     </td>
                     <td>
-                        <form>
-                            <button name="internetId" value="<%=clientService.getId()%>" class="btn">Disconnect</button>
+                        <form method="post">
+                            <button name="internetId" value="<%=clientService.getId()%>" class="btn">Dis-/connect</button>
                         </form>
                     </td>
                 </tr>
@@ -114,8 +113,8 @@
                         </form>
                     </td>
                     <td>
-                        <form>
-                            <button name="phoneId" value="<%=clientService.getId()%>" class="btn">Disconnect</button>
+                        <form method="post">
+                            <button name="phoneId" value="<%=clientService.getId()%>" class="btn">Dis-/connect</button>
                         </form>
                     </td>
                 </tr>
@@ -161,8 +160,8 @@
                         </form>
                     </td>
                     <td>
-                        <form>
-                            <button value="<%=clientService.getId()%>" class="btn">Disconnect</button>
+                        <form method="post">
+                            <button value="<%=clientService.getId()%>" class="btn">Dis-/connect</button>
                         </form>
                     </td>
                 </tr>

@@ -1,10 +1,7 @@
 package ru.internetprovider.servlets;
 
-import ru.internetprovider.model.DBModel;
-import ru.internetprovider.model.exceptions.ClientNotFoundException;
-import ru.internetprovider.model.exceptions.InvalidModelException;
-import ru.internetprovider.model.services.Internet;
-import ru.internetprovider.model.services.Phone;
+import ru.internetprovider.model.TelevisionDao;
+import ru.internetprovider.model.services.ClientService;
 import ru.internetprovider.model.services.Television;
 
 import javax.servlet.ServletException;
@@ -13,20 +10,22 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @WebServlet(name = "AddTelevision", urlPatterns = "/addTelevision")
 public class AddTelevision extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        DBModel dbModel = new DBModel();
+        TelevisionDao televisionDao = new TelevisionDao();
         long clientId = Long.parseLong(request.getSession().getAttribute("clientId").toString());
         int channelsCount = Integer.parseInt(request.getParameter("channelsCount"));
-        try {
-            dbModel.addTelevision(clientId, new Television(new Date(), null, channelsCount));
-        } catch (SQLException | ClientNotFoundException exception) {
-            exception.printStackTrace();
-        }
+        Television television = new Television(new Date(), null, channelsCount);
+        ClientService<Television> clientService = new ClientService<>(television.getBeginDate(), ClientService.Status.ACTIVE);
+        List<Television> internetList = new ArrayList<>();
+        internetList.add(television);
+        clientService.setServiceList(internetList);
+        televisionDao.save(clientId, clientService);
         response.sendRedirect(request.getContextPath() + "/services");
     }
 

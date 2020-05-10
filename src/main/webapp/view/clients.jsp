@@ -1,7 +1,6 @@
 <%@ page import="java.io.IOException" %>
 <%@ page import="ru.internetprovider.model.Client" %>
 <%@ page import="java.util.List" %>
-<%@ page import="ru.internetprovider.model.DBModel" %>
 <%@ page import="ru.internetprovider.model.exceptions.InvalidModelException" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="ru.internetprovider.servlets.Clients" %>

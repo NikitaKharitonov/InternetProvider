@@ -1,7 +1,7 @@
 package ru.internetprovider.servlets;
 
 import ru.internetprovider.model.Client;
-import ru.internetprovider.model.DBModel;
+import ru.internetprovider.model.ClientDao;
 import ru.internetprovider.model.exceptions.InvalidModelException;
 
 import javax.servlet.ServletException;
@@ -16,15 +16,11 @@ import java.sql.SQLException;
 public class AddClient extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        DBModel dbModel = new DBModel();
+        ClientDao clientDao = new ClientDao();
         String name = request.getParameter("name");
         String phone = request.getParameter("phone");
         String email = request.getParameter("email");
-        try {
-            dbModel.addClient(new Client(name, phone, email));
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+        clientDao.add(new Client(name, phone, email));
         response.sendRedirect(request.getContextPath() + "/");
     }
 

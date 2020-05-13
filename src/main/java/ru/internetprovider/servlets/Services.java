@@ -22,8 +22,8 @@ public class Services extends HttpServlet {
             InternetDao internetDao = new InternetDao();
             ClientService.Status status = internetDao.get(id).getStatus();
             if (status.equals(ClientService.Status.ACTIVE))
-                internetDao.deactivate(id);
-            else if (status.equals(ClientService.Status.DISCONNECTED)) {
+                internetDao.suspend(id);
+            else if (status.equals(ClientService.Status.SUSPENDED)) {
                 internetDao.activate(id);
             }
         } else         if (request.getParameter("phoneId") != null) {
@@ -31,17 +31,18 @@ public class Services extends HttpServlet {
             PhoneDao phoneDao = new PhoneDao();
             ClientService.Status status = phoneDao.get(id).getStatus();
             if (status.equals(ClientService.Status.ACTIVE))
-                phoneDao.deactivate(id);
-            else if (status.equals(ClientService.Status.DISCONNECTED)) {
+                phoneDao.suspend(id);
+            else if (status.equals(ClientService.Status.SUSPENDED)) {
                 phoneDao.activate(id);
             }
         } else         if (request.getParameter("televisionId") != null) {
             long id = Long.parseLong(request.getParameter("televisionId"));
             TelevisionDao televisionDao = new TelevisionDao();
-            ClientService.Status status = televisionDao.get(id).getStatus();
+            ClientService<Service> televisionClientService = televisionDao.get(id);
+            ClientService.Status status = televisionClientService.getStatus();
             if (status.equals(ClientService.Status.ACTIVE))
-                televisionDao.deactivate(id);
-            else if (status.equals(ClientService.Status.DISCONNECTED)) {
+                televisionDao.suspend(id);
+            else if (status.equals(ClientService.Status.SUSPENDED)) {
                 televisionDao.activate(id);
             }
         }

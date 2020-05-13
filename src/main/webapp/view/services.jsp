@@ -42,33 +42,41 @@
                     <th></th>
                     <th></th>
                     <th></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 <% if (internetList != null) for (ClientService<Internet> clientService: internetList) { %>
-                <tr>
-                    <td><%=clientService.getId()%></td>
-                    <td><%=formatter.format(clientService.getActivationDate())%></td>
-                    <td><%=clientService.getStatus()%></td>
-                    <td><%=clientService.getServiceList().get(clientService.getServiceList().size() - 1).getSpeed()%></td>
-                    <td><%=clientService.getServiceList().get(clientService.getServiceList().size() - 1).isAntivirus()%></td>
-                    <td><%=clientService.getServiceList().get(clientService.getServiceList().size() - 1).getConnectionType()%></td>
-                    <td>
-                        <form action="${pageContext.request.contextPath}/internetHistory">
-                            <button class="btn" name="internetId" value="<%=clientService.getId()%>">Get history</button>
-                        </form>
-                    </td>
-                    <td>
-                        <form action="${pageContext.request.contextPath}/updateInternet">
-                            <button name="internetId" value="<%=clientService.getId()%>" class="btn">Update</button>
-                        </form>
-                    </td>
-                    <td>
-                        <form method="post">
-                            <button name="internetId" value="<%=clientService.getId()%>" class="btn">Dis-/connect</button>
-                        </form>
-                    </td>
-                </tr>
+                    <% if (!clientService.getStatus().equals(ClientService.Status.DISCONNECTED)) { %>
+                        <tr>
+                            <td><%=clientService.getId()%></td>
+                            <td><%=formatter.format(clientService.getActivationDate())%></td>
+                            <td><%=clientService.getStatus()%></td>
+                            <td><%=clientService.getServiceList().get(clientService.getServiceList().size() - 1).getSpeed()%></td>
+                            <td><%=clientService.getServiceList().get(clientService.getServiceList().size() - 1).isAntivirus()%></td>
+                            <td><%=clientService.getServiceList().get(clientService.getServiceList().size() - 1).getConnectionType()%></td>
+                            <td>
+                                <form action="${pageContext.request.contextPath}/internetHistory">
+                                    <button class="btn" name="internetId" value="<%=clientService.getId()%>">Get history</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form action="${pageContext.request.contextPath}/updateInternet">
+                                    <button name="internetId" value="<%=clientService.getId()%>" class="btn">Update</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form method="post">
+                                    <button name="internetId" value="<%=clientService.getId()%>" class="btn"><%=clientService.getStatus().equals(ClientService.Status.ACTIVE) ? "Suspend" : "Activate"%></button>
+                                </form>
+                            </td>
+                            <td>
+                                <form method="post" action="${pageContext.request.contextPath}/disconnectInternet">
+                                    <button name="internetId" value="<%=clientService.getId()%>" class="btn" style="color: red">Disconnect</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% } %>
                 <% } %>
                 </tbody>
             </table>
@@ -92,32 +100,40 @@
                     <th></th>
                     <th></th>
                     <th></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 <% if (phoneList != null) for (ClientService<Phone> clientService: phoneList) { %>
-                <tr>
-                    <td><%=clientService.getId()%></td>
-                    <td><%=formatter.format(clientService.getActivationDate())%></td>
-                    <td><%=clientService.getStatus()%></td>
-                    <td><%=clientService.getServiceList().get(clientService.getServiceList().size() - 1).getMinsCount()%></td>
-                    <td><%=clientService.getServiceList().get(clientService.getServiceList().size() - 1).getSmsCount()%></td>
-                    <td>
-                        <form action="${pageContext.request.contextPath}/phoneHistory">
-                            <button name="phoneId" value="<%=clientService.getId()%>" class="btn">Get history</button>
-                        </form>
-                    </td>
-                    <td>
-                        <form action="${pageContext.request.contextPath}/updatePhone">
-                            <button name="phoneId" value="<%=clientService.getId()%>" class="btn">Update</button>
-                        </form>
-                    </td>
-                    <td>
-                        <form method="post">
-                            <button name="phoneId" value="<%=clientService.getId()%>" class="btn">Dis-/connect</button>
-                        </form>
-                    </td>
-                </tr>
+                    <% if (!clientService.getStatus().equals(ClientService.Status.DISCONNECTED)) { %>
+                        <tr>
+                            <td><%=clientService.getId()%></td>
+                            <td><%=formatter.format(clientService.getActivationDate())%></td>
+                            <td><%=clientService.getStatus()%></td>
+                            <td><%=clientService.getServiceList().get(clientService.getServiceList().size() - 1).getMinsCount()%></td>
+                            <td><%=clientService.getServiceList().get(clientService.getServiceList().size() - 1).getSmsCount()%></td>
+                            <td>
+                                <form action="${pageContext.request.contextPath}/phoneHistory">
+                                    <button name="phoneId" value="<%=clientService.getId()%>" class="btn">Get history</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form action="${pageContext.request.contextPath}/updatePhone">
+                                    <button name="phoneId" value="<%=clientService.getId()%>" class="btn">Update</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form method="post">
+                                    <button name="phoneId" value="<%=clientService.getId()%>" class="btn"><%=clientService.getStatus().equals(ClientService.Status.ACTIVE) ? "Suspend" : "Activate"%></button>
+                                </form>
+                            </td>
+                            <td>
+                                <form method="post" action="${pageContext.request.contextPath}/disconnectPhone">
+                                    <button name="phoneId" value="<%=clientService.getId()%>" class="btn" style="color: red">Disconnect</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% } %>
                 <% } %>
                 </tbody>
             </table>
@@ -140,31 +156,39 @@
                     <th></th>
                     <th></th>
                     <th></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 <%if (televisionList != null) for (ClientService<Television> clientService: televisionList) { %>
-                <tr>
-                    <td><%=clientService.getId()%></td>
-                    <td><%=formatter.format(clientService.getActivationDate())%></td>
-                    <td><%=clientService.getStatus()%></td>
-                    <td><%=clientService.getServiceList().get(clientService.getServiceList().size() - 1).getChannelsCount()%></td>
-                    <td>
-                        <form action="${pageContext.request.contextPath}/televisionHistory">
-                            <button name="televisionId" value="<%=clientService.getId()%>" class="btn">Get history</button>
-                        </form>
-                    </td>
-                    <td>
-                        <form action="${pageContext.request.contextPath}/updateTelevision">
-                            <button name="televisionId" value="<%=clientService.getId()%>" class="btn">Update</button>
-                        </form>
-                    </td>
-                    <td>
-                        <form method="post">
-                            <button name="televisionId" value="<%=clientService.getId()%>" class="btn">Dis-/connect</button>
-                        </form>
-                    </td>
-                </tr>
+                    <% if (!clientService.getStatus().equals(ClientService.Status.DISCONNECTED)) { %>
+                        <tr>
+                            <td><%=clientService.getId()%></td>
+                            <td><%=formatter.format(clientService.getActivationDate())%></td>
+                            <td><%=clientService.getStatus()%></td>
+                            <td><%=clientService.getServiceList().get(clientService.getServiceList().size() - 1).getChannelsCount()%></td>
+                            <td>
+                                <form action="${pageContext.request.contextPath}/televisionHistory">
+                                    <button name="televisionId" value="<%=clientService.getId()%>" class="btn">Get history</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form action="${pageContext.request.contextPath}/updateTelevision">
+                                    <button name="televisionId" value="<%=clientService.getId()%>" class="btn">Update</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form method="post">
+                                    <button name="televisionId" value="<%=clientService.getId()%>" class="btn"><%=clientService.getStatus().equals(ClientService.Status.ACTIVE) ? "Suspend" : "Activate"%></button>
+                                </form>
+                            </td>
+                            <td>
+                                <form method="get" action="${pageContext.request.contextPath}/disconnect">
+                                    <button name="televisionId" value="<%=clientService.getId()%>" class="btn" style="color: red">Disconnect</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% } %>
                 <% } %>
                 </tbody>
             </table>
@@ -173,7 +197,12 @@
                         <button class="btn" name="button" value="television">Add...</button>
                 </form>
             </div>
-
+            <br/>
+        </div>
+        <div>
+            <form action="${pageContext.request.contextPath}/">
+                <button class="btn">Back</button>
+            </form>
         </div>
     </body>
 </html>

@@ -10,12 +10,13 @@ public class Test {
 
     public static void main(String[] args) throws SQLException, ClientNotFoundException, ServiceNotFoundException {
 
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-ddThh:mm".replace("T", " "));
+//
+//        InternetDao internetDao = new InternetDao();
+//        Date date = internetDao.get(17).getActivationDate();
 
-        InternetDao internetDao = new InternetDao();
-        Date date = internetDao.get(17).getActivationDate();
-
-        System.out.println(formatter.format(date));
+        Date date = new Date(System.currentTimeMillis());
+        System.out.println(formatter.format(date).replace(" ", "T"));
 
     }
 }

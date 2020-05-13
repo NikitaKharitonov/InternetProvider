@@ -11,11 +11,16 @@
     <%
         Phone phone = (Phone) request.getAttribute("phone");
     %>
-    <form method="post" action="${pageContext.request.contextPath}/updatePhone" class="form-container">
-        <h1>Update phone #<%=request.getSession().getAttribute("phoneId")%></h1>
-        <input name="minsCount" type="number" min="1" value="<%=phone.getMinsCount()%>" required/>
-        <input name="smsCount" type="number" min="1" value="<%=phone.getSmsCount()%>" required/>
-        <input type="submit" value="Update" class="btn">
-    </form>
+    <div class="form-container">
+        <form method="post" action="${pageContext.request.contextPath}/updatePhone">
+            <h1>Update phone #<%=request.getSession().getAttribute("phoneId")%></h1>
+            <input name="minsCount" type="number" min="1" value="<%=phone.getMinsCount()%>" required/>
+            <input name="smsCount" type="number" min="1" value="<%=phone.getSmsCount()%>" required/>
+            <input type="submit" value="Update" class="btn">
+        </form>
+        <form action="${pageContext.request.contextPath}/services">
+            <button class="btn">Back</button>
+        </form>
+    </div>
 </body>
 </html>

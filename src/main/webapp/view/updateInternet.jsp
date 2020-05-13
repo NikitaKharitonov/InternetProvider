@@ -12,22 +12,28 @@
     <%
         Internet internet = (Internet) request.getAttribute("internet");
     %>
-    <form method="post" action="${pageContext.request.contextPath}/updateInternet" class="form-container">
-        <h1>Update internet #<%=request.getSession().getAttribute("internetId")%></h1>
-        <input name="speed" type="number" min="1" value="<%=internet.getSpeed()%>" required/>
-        <label>Antivirus:
-            <input name="antivirus" type="checkbox" <%=internet.isAntivirus() ? "checked" : ""%>>
-        </label>
-        <label>Connection Type:
-            <select name="connectionType">
-                <option selected><%=internet.getConnectionType()%></option>
-                <%List<Internet.ConnectionType> connectionTypeList = (List<Internet.ConnectionType>) request.getSession().getAttribute("connectionTypeList");%>
-                <%for(Internet.ConnectionType connectionType: connectionTypeList) {%>
-                <option><%=connectionType.toString()%></option>
-                <%}%>
-            </select>
-        </label>
-        <input type="submit" value="Update" class="btn">
-    </form>
+    <div class="form-container">
+        <form method="post" action="${pageContext.request.contextPath}/updateInternet">
+            <h1>Update internet #<%=request.getSession().getAttribute("internetId")%></h1>
+            <input name="speed" type="number" min="1" value="<%=internet.getSpeed()%>" required/>
+            <label>Antivirus:
+                <input name="antivirus" type="checkbox" <%=internet.isAntivirus() ? "checked" : ""%>>
+            </label>
+            <label>Connection Type:
+                <select name="connectionType">
+                    <option selected><%=internet.getConnectionType()%></option>
+                    <%List<Internet.ConnectionType> connectionTypeList = (List<Internet.ConnectionType>) request.getSession().getAttribute("connectionTypeList");%>
+                    <%for(Internet.ConnectionType connectionType: connectionTypeList) {%>
+                    <option><%=connectionType.toString()%></option>
+                    <%}%>
+                </select>
+            </label>
+            <input type="submit" value="Update" class="btn">
+        </form>
+        <form action="${pageContext.request.contextPath}/services">
+            <button class="btn">Back</button>
+        </form>
+    </div>
+
 </body>
 </html>

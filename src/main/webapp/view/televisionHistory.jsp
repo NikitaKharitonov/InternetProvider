@@ -39,7 +39,11 @@
             <% } %>
             </tbody>
         </table>
-
+        <div>
+            <form action="${pageContext.request.contextPath}/services">
+                <button class="btn">Back</button>
+            </form>
+        </div>
     </div>
 
 

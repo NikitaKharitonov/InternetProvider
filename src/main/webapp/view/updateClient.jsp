@@ -11,13 +11,18 @@
     <%
         Client client = (Client) request.getAttribute("client");
     %>
-    <form method="post" action="${pageContext.request.contextPath}/updateClient" class="form-container">
-        <h1>Update client #<%=request.getSession().getAttribute("clientId")%></h1>
-        <!--todo add current values-->
-        <input name="name" type="text" min="1" value="<%=client.getName()%>" required/>
-        <input name="phone" type="number" min="1" value="<%=client.getPhone()%>" required/>
-        <input name="email" type="text" min="1" value="<%=client.getEmail()%>" required/>
-        <input type="submit" value="Update" class="btn"/>
-    </form>
+    <div class="form-container">
+        <form method="post" action="${pageContext.request.contextPath}/updateClient">
+            <h1>Update client #<%=request.getSession().getAttribute("clientId")%></h1>
+            <input name="name" type="text" min="1" value="<%=client.getName()%>" required/>
+            <input name="phone" type="number" min="1" value="<%=client.getPhone()%>" required/>
+            <input name="email" type="text" min="1" value="<%=client.getEmail()%>" required/>
+            <input type="submit" value="Update" class="btn"/>
+
+        </form>
+        <form action="${pageContext.request.contextPath}/">
+            <button class="btn">Back</button>
+        </form>
+    </div>
 </body>
 </html>

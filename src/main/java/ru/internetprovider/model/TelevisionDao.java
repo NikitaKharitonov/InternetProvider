@@ -13,7 +13,7 @@ public class TelevisionDao implements ServiceDao<Television> {
     @Override
     public List<ClientService<Television>> getAll(long clientId) {
         List<ClientService<Television>> televisionClientServiceList = null;
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM television WHERE client_id = ?"
             );
@@ -39,7 +39,7 @@ public class TelevisionDao implements ServiceDao<Television> {
     @Override
     public List<Television> getHistory(long id) {
         List<Television> history = null;
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM television_history WHERE television_id = ? ORDER BY begin_date;"
             );
@@ -60,9 +60,9 @@ public class TelevisionDao implements ServiceDao<Television> {
 
     @Override
     public void update(long id, Television television) {
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "SELECT status from internet where id = ?"
+                    "SELECT status from television where id = ?"
             );
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -75,7 +75,7 @@ public class TelevisionDao implements ServiceDao<Television> {
                     );
                     preparedStatement.executeUpdate();
 
-                } else if (status.equals(ClientService.Status.DISCONNECTED)) {
+                } else if (status.equals(ClientService.Status.SUSPENDED)) {
 
                     preparedStatement = connection.prepareStatement(
                             "UPDATE television SET status = ?::status WHERE id = ?"
@@ -100,7 +100,7 @@ public class TelevisionDao implements ServiceDao<Television> {
 
     @Override
     public void save(long clientId, ClientService<Television> televisionClientService) {
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "INSERT INTO television (client_id, activation_date, status) VALUES (?, NOW(), ?::status) RETURNING id;"
             );
@@ -127,9 +127,9 @@ public class TelevisionDao implements ServiceDao<Television> {
     @Override
     public ClientService<Service> get(long id) {
         ClientService<Service> clientService = null;
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "SELECT * FROM television WHERE client_id = ?"
+                    "SELECT * FROM television WHERE id = ?"
             );
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -145,17 +145,18 @@ public class TelevisionDao implements ServiceDao<Television> {
     }
 
     @Override
-    public void deactivate(long id) {
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+    public void suspend(long id) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "UPDATE television_history SET end_date = NOW() WHERE begin_date = (SELECT MAX(begin_date) FROM television_history)"
+                    "UPDATE television_history SET end_date = NOW() WHERE begin_date = " +
+                            "(SELECT MAX(begin_date) FROM television_history)"
             );
             preparedStatement.executeUpdate();
             preparedStatement = connection.prepareStatement(
                     "UPDATE television SET status = ?::status WHERE id = ?"
             );
             preparedStatement.setLong(2, id);
-            preparedStatement.setString(1, String.valueOf(ClientService.Status.DISCONNECTED));
+            preparedStatement.setString(1, String.valueOf(ClientService.Status.SUSPENDED));
             preparedStatement.executeUpdate();
         } catch (SQLException exception) {
             exception.printStackTrace();
@@ -164,7 +165,7 @@ public class TelevisionDao implements ServiceDao<Television> {
 
     @Override
     public void activate(long id) {
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "UPDATE television SET status = ?::status WHERE id = ?"
             );
@@ -172,9 +173,9 @@ public class TelevisionDao implements ServiceDao<Television> {
             preparedStatement.setString(1, String.valueOf(ClientService.Status.ACTIVE));
             preparedStatement.executeUpdate();
             preparedStatement = connection.prepareStatement(
-                    "INSERT INTO television_history " +
-                            "(television_id, begin_date, channels_count) " +
-                            "VALUES (?, NOW(), ?);"
+                    "INSERT into television_history (television_id, begin_date, channels_count) " +
+                            "select television_id, now(), channels_count " +
+                            "from television_history where begin_date = (SELECT MAX(begin_date) FROM television_history);"
             );
             preparedStatement.executeUpdate();
         } catch (SQLException exception) {
@@ -184,11 +185,25 @@ public class TelevisionDao implements ServiceDao<Television> {
 
     @Override
     public void delete(long id) {
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "DELETE FROM television WHERE id = ?"
             );
             preparedStatement.setLong(1, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    @Override
+    public void disconnect(long id) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "UPDATE television SET status = ?::status WHERE id = ?"
+            );
+            preparedStatement.setLong(2, id);
+            preparedStatement.setString(1, String.valueOf(ClientService.Status.DISCONNECTED));
             preparedStatement.executeUpdate();
         } catch (SQLException exception) {
             exception.printStackTrace();

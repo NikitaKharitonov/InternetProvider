@@ -13,7 +13,7 @@ public class InternetDao implements ServiceDao<Internet> {
     @Override
     public List<Internet> getHistory(long id) {
         List<Internet> history = null;
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement pstmt = connection.prepareStatement(
                     "SELECT * " +
                             "FROM internet_history WHERE internet_id = ? ORDER BY begin_date;"
@@ -38,7 +38,7 @@ public class InternetDao implements ServiceDao<Internet> {
     @Override
     public ClientService<Service> get(long id) {
         ClientService<Service> clientService = null;
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM internet WHERE id = ?"
             );
@@ -58,7 +58,7 @@ public class InternetDao implements ServiceDao<Internet> {
     @Override
     public List<ClientService<Internet>> getAll(long clientId) {
         List<ClientService<Internet>> clientServiceList = null;
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM internet WHERE client_id = ?"
             );
@@ -82,8 +82,7 @@ public class InternetDao implements ServiceDao<Internet> {
 
     @Override
     public void update(long id, Internet internet) {
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
-
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT status from internet where id = ?"
             );
@@ -97,7 +96,7 @@ public class InternetDao implements ServiceDao<Internet> {
                     );
                     preparedStatement.executeUpdate();
 
-                } else if (status.equals(ClientService.Status.DISCONNECTED)) {
+                } else if (status.equals(ClientService.Status.SUSPENDED)) {
 
                     preparedStatement = connection.prepareStatement(
                             "UPDATE internet SET status = ?::status WHERE id = ?"
@@ -124,7 +123,7 @@ public class InternetDao implements ServiceDao<Internet> {
 
     @Override
     public void save(long clientId, ClientService<Internet> internetClientService) {
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "INSERT INTO internet (client_id, activation_date, status) VALUES (?, NOW(), ?::status) RETURNING id;"
             );
@@ -151,8 +150,8 @@ public class InternetDao implements ServiceDao<Internet> {
     }
 
     @Override
-    public void deactivate(long id) {
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+    public void suspend(long id) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "UPDATE internet_history SET end_date = NOW() WHERE begin_date = " +
                             "(SELECT MAX(begin_date) FROM internet_history)"
@@ -162,7 +161,7 @@ public class InternetDao implements ServiceDao<Internet> {
                     "UPDATE internet SET status = ?::status WHERE id = ?"
             );
             preparedStatement.setLong(2, id);
-            preparedStatement.setString(1, String.valueOf(ClientService.Status.DISCONNECTED));
+            preparedStatement.setString(1, String.valueOf(ClientService.Status.SUSPENDED));
             preparedStatement.executeUpdate();
         } catch (SQLException exception) {
             exception.printStackTrace();
@@ -171,7 +170,7 @@ public class InternetDao implements ServiceDao<Internet> {
 
     @Override
     public void activate(long id) {
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "UPDATE internet SET status = ?::status WHERE id = ?"
             );
@@ -190,8 +189,22 @@ public class InternetDao implements ServiceDao<Internet> {
     }
 
     @Override
+    public void disconnect(long id) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "UPDATE internet SET status = ?::status WHERE id = ?"
+            );
+            preparedStatement.setLong(2, id);
+            preparedStatement.setString(1, String.valueOf(ClientService.Status.DISCONNECTED));
+            preparedStatement.executeUpdate();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    @Override
     public void delete(long id) {
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "DELETE FROM internet WHERE id = ?"
             );

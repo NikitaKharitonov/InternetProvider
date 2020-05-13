@@ -16,7 +16,7 @@ public class ClientDao implements Dao<Client> {
     @Override
     public Client get(long id) {
         Client client = null;
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM client WHERE id = ?"
             );
@@ -36,7 +36,7 @@ public class ClientDao implements Dao<Client> {
 
     public List<Client> getAll() {
         List<Client> clientList = null;
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM client");
             clientList = new ArrayList<>();
@@ -54,7 +54,7 @@ public class ClientDao implements Dao<Client> {
     }
 
     public void update(long id, Client client) {
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "UPDATE client SET name = ?, phone_number = ?, email_address = ? WHERE id = ?"
             );
@@ -71,7 +71,7 @@ public class ClientDao implements Dao<Client> {
     }
 
     public void add(Client client) {
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "INSERT INTO client (name, phone_number, email_address) VALUES (?, ?, ?)"
             );
@@ -88,7 +88,7 @@ public class ClientDao implements Dao<Client> {
 
     @Override
     public void delete(long id) {
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "DELETE FROM client WHERE id = ?"
             );

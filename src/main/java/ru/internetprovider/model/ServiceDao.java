@@ -11,6 +11,7 @@ public interface ServiceDao<T extends Service> extends Dao<ClientService<Service
     List<T> getHistory(long id);
     void update(long id, T t);
     void save(long clientId, ClientService<T> t);
-    void deactivate(long id);
+    void suspend(long id);
     void activate(long id);
+    void disconnect(long id);
 }

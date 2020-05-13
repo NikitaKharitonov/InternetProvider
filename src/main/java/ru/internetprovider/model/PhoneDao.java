@@ -14,7 +14,7 @@ public class PhoneDao implements ServiceDao<Phone> {
     @Override
     public List<ClientService<Phone>> getAll(long clientId) {
         List<ClientService<Phone>> phoneClientServiceList = new ArrayList<>();
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM phone WHERE client_id = ?"
             );
@@ -39,7 +39,7 @@ public class PhoneDao implements ServiceDao<Phone> {
     @Override
     public List<Phone> getHistory(long id) {
         List<Phone> history = null;
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM phone_history WHERE phone_id = ? ORDER BY begin_date;"
             );
@@ -62,9 +62,9 @@ public class PhoneDao implements ServiceDao<Phone> {
 
     @Override
     public void update(long id, Phone phone) {
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "SELECT status from internet where id = ?"
+                    "SELECT status from phone where id = ?"
             );
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -76,7 +76,7 @@ public class PhoneDao implements ServiceDao<Phone> {
                     );
                     preparedStatement.executeUpdate();
 
-                } else if (status.equals(ClientService.Status.DISCONNECTED)) {
+                } else if (status.equals(ClientService.Status.SUSPENDED)) {
 
                     preparedStatement = connection.prepareStatement(
                             "UPDATE phone SET status = ?::status WHERE id = ?"
@@ -102,7 +102,7 @@ public class PhoneDao implements ServiceDao<Phone> {
 
     @Override
     public void save(long clientId, ClientService<Phone> phoneClientService) {
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "INSERT INTO phone (client_id, activation_date, status) VALUES (?, NOW(), ?::status) RETURNING id;"
             );
@@ -129,8 +129,8 @@ public class PhoneDao implements ServiceDao<Phone> {
 
     @Override
     public ClientService<Service> get(long id) {
-        ClientService<Service> phoneClientService = null;
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+        ClientService<Service> clientService = null;
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM phone WHERE id = ?"
             );
@@ -139,17 +139,17 @@ public class PhoneDao implements ServiceDao<Phone> {
             if (resultSet.next()) {
                 Date activationDate = resultSet.getTimestamp("activation_date");
                 ClientService.Status status = ClientService.Status.valueOf(resultSet.getString("status"));
-                phoneClientService = new ClientService<>(id, activationDate, status);
+                clientService = new ClientService<>(id, activationDate, status);
             }
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
-        return phoneClientService;
+        return clientService;
     }
 
     @Override
-    public void deactivate(long id) {
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+    public void suspend(long id) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "UPDATE phone_history SET end_date = NOW() WHERE begin_date = " +
                             "(SELECT MAX(begin_date) FROM phone_history)"
@@ -159,7 +159,7 @@ public class PhoneDao implements ServiceDao<Phone> {
                     "UPDATE phone SET status = ?::status WHERE id = ?"
             );
             preparedStatement.setLong(2, id);
-            preparedStatement.setString(1, String.valueOf(ClientService.Status.DISCONNECTED));
+            preparedStatement.setString(1, String.valueOf(ClientService.Status.SUSPENDED));
             preparedStatement.executeUpdate();
         } catch (SQLException exception) {
             exception.printStackTrace();
@@ -168,7 +168,7 @@ public class PhoneDao implements ServiceDao<Phone> {
 
     @Override
     public void activate(long id) {
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "UPDATE phone SET status = ?::status WHERE id = ?"
             );
@@ -188,11 +188,25 @@ public class PhoneDao implements ServiceDao<Phone> {
 
     @Override
     public void delete(long id) {
-        try (Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD)) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "DELETE FROM phone WHERE id = ?"
             );
             preparedStatement.setLong(1, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    @Override
+    public void disconnect(long id) {
+        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "UPDATE phone SET status = ?::status WHERE id = ?"
+            );
+            preparedStatement.setLong(2, id);
+            preparedStatement.setString(1, String.valueOf(ClientService.Status.DISCONNECTED));
             preparedStatement.executeUpdate();
         } catch (SQLException exception) {
             exception.printStackTrace();

@@ -38,7 +38,7 @@ public class Services extends HttpServlet {
         } else         if (request.getParameter("televisionId") != null) {
             long id = Long.parseLong(request.getParameter("televisionId"));
             TelevisionDao televisionDao = new TelevisionDao();
-            ClientService<Service> televisionClientService = televisionDao.get(id);
+            ClientService televisionClientService = televisionDao.get(id);
             ClientService.Status status = televisionClientService.getStatus();
             if (status.equals(ClientService.Status.ACTIVE))
                 televisionDao.suspend(id);
@@ -58,9 +58,9 @@ public class Services extends HttpServlet {
         InternetDao internetDao = new InternetDao();
         PhoneDao phoneDao = new PhoneDao();
         TelevisionDao televisionDao = new TelevisionDao();
-        List<ClientService<Internet>> internetList;
-        List<ClientService<Phone>> phoneList;
-        List<ClientService<Television>> televisionList;
+        List<ClientService> internetList;
+        List<ClientService> phoneList;
+        List<ClientService> televisionList;
         internetList = internetDao.getAll(clientId);
         phoneList = phoneDao.getAll(clientId);
         televisionList = televisionDao.getAll(clientId);

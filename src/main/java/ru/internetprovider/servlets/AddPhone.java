@@ -1,6 +1,7 @@
 package ru.internetprovider.servlets;
 
 import ru.internetprovider.model.PhoneDao;
+import ru.internetprovider.model.services.ClientPhone;
 import ru.internetprovider.model.services.ClientService;
 import ru.internetprovider.model.services.Phone;
 
@@ -22,7 +23,7 @@ public class AddPhone extends HttpServlet {
         int minsCount = Integer.parseInt(request.getParameter("minsCount"));
         int smsCount = Integer.parseInt(request.getParameter("smsCount"));
         Phone phone = new Phone(new Date(), null, minsCount, smsCount);
-        ClientService<Phone> clientService = new ClientService<>(phone.getBeginDate(), ClientService.Status.ACTIVE);
+        ClientPhone clientService = new ClientPhone(phone.getBeginDate(), ClientService.Status.ACTIVE);
         List<Phone> phoneList = new ArrayList<>();
         phoneList.add(phone);
         clientService.setServiceList(phoneList);

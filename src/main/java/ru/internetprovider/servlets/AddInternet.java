@@ -1,6 +1,7 @@
 package ru.internetprovider.servlets;
 
 import ru.internetprovider.model.InternetDao;
+import ru.internetprovider.model.services.ClientInternet;
 import ru.internetprovider.model.services.ClientService;
 import ru.internetprovider.model.services.Internet;
 
@@ -24,7 +25,7 @@ public class AddInternet extends HttpServlet {
         boolean antivirus = request.getParameter("antivirus") != null;
         Internet.ConnectionType connectionType = Internet.ConnectionType.valueOf(request.getParameter("connectionType"));
         Internet internet = new Internet(new Date(), null, speed, antivirus, connectionType);
-        ClientService<Internet> clientService = new ClientService<Internet>(internet.getBeginDate(), ClientService.Status.ACTIVE);
+        ClientInternet clientService = new ClientInternet(internet.getBeginDate(), ClientService.Status.ACTIVE);
         List<Internet> internetList = new ArrayList<>();
         internetList.add(internet);
         clientService.setServiceList(internetList);

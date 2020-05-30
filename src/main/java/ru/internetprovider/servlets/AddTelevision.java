@@ -2,6 +2,7 @@ package ru.internetprovider.servlets;
 
 import ru.internetprovider.model.TelevisionDao;
 import ru.internetprovider.model.services.ClientService;
+import ru.internetprovider.model.services.ClientTelevision;
 import ru.internetprovider.model.services.Television;
 
 import javax.servlet.ServletException;
@@ -21,7 +22,7 @@ public class AddTelevision extends HttpServlet {
         long clientId = Long.parseLong(request.getSession().getAttribute("clientId").toString());
         int channelsCount = Integer.parseInt(request.getParameter("channelsCount"));
         Television television = new Television(new Date(), null, channelsCount);
-        ClientService<Television> clientService = new ClientService<>(television.getBeginDate(), ClientService.Status.ACTIVE);
+        ClientTelevision clientService = new ClientTelevision(television.getBeginDate(), ClientService.Status.ACTIVE);
         List<Television> internetList = new ArrayList<>();
         internetList.add(television);
         clientService.setServiceList(internetList);

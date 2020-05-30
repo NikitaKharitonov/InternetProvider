@@ -1,9 +1,6 @@
 package ru.internetprovider.model;
 
-import ru.internetprovider.model.services.ClientService;
-import ru.internetprovider.model.services.Internet;
-import ru.internetprovider.model.services.Phone;
-import ru.internetprovider.model.services.Television;
+import ru.internetprovider.model.services.*;
 
 import java.util.List;
 
@@ -13,9 +10,9 @@ public class Client {
     private String name;
     private String phone;
     private String email;
-    private List<ClientService<Internet>> internetClientServiceList;
-    private List<ClientService<Phone>> phoneClientServiceList;
-    private List<ClientService<Television>> televisionClientServiceList;
+    private List<ClientInternet> clientInternetList;
+    private List<ClientPhone> clientPhoneList;
+    private List<ClientTelevision> clientTelevisionList;
 
     public Client(long id, String name, String phone, String email) {
         this.id = id;
@@ -59,28 +56,28 @@ public class Client {
         this.email = email;
     }
 
-    public List<ClientService<Internet>> getInternetClientServiceList() {
-        return internetClientServiceList;
+    public List<ClientInternet> getClientInternetList() {
+        return clientInternetList;
     }
 
-    public void setInternetClientServiceList(List<ClientService<Internet>> internetClientServiceList) {
-        this.internetClientServiceList = internetClientServiceList;
+    public void setClientInternetList(List<ClientInternet> clientInternetList) {
+        this.clientInternetList = clientInternetList;
     }
 
-    public List<ClientService<Phone>> getPhoneClientServiceList() {
-        return phoneClientServiceList;
+    public List<ClientPhone> getClientPhoneList() {
+        return clientPhoneList;
     }
 
-    public void setPhoneClientServiceList(List<ClientService<Phone>> phoneClientServiceList) {
-        this.phoneClientServiceList = phoneClientServiceList;
+    public void setClientPhoneList(List<ClientPhone> clientPhoneList) {
+        this.clientPhoneList = clientPhoneList;
     }
 
-    public List<ClientService<Television>> getTelevisionClientServiceList() {
-        return televisionClientServiceList;
+    public List<ClientTelevision> getClientTelevisionList() {
+        return clientTelevisionList;
     }
 
-    public void setTelevisionClientServiceList(List<ClientService<Television>> televisionClientServiceList) {
-        this.televisionClientServiceList = televisionClientServiceList;
+    public void setClientTelevisionList(List<ClientTelevision> clientTelevisionList) {
+        this.clientTelevisionList = clientTelevisionList;
     }
 
     @Override

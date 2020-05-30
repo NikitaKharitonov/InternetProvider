@@ -1,5 +1,6 @@
 package ru.internetprovider.model;
 
+import ru.internetprovider.model.services.ClientInternet;
 import ru.internetprovider.model.services.ClientService;
 import ru.internetprovider.model.services.Internet;
 import ru.internetprovider.model.services.Service;
@@ -36,8 +37,8 @@ public class InternetDao implements ServiceDao<Internet> {
     }
 
     @Override
-    public ClientService<Service> get(long id) {
-        ClientService<Service> clientService = null;
+    public ClientService get(long id) {
+        ClientService clientService = null;
         try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM internet WHERE id = ?"
@@ -47,7 +48,7 @@ public class InternetDao implements ServiceDao<Internet> {
             if (resultSet.next()) {
                 Date activationDate = resultSet.getTimestamp("activation_date");
                 ClientService.Status status = ClientService.Status.valueOf(resultSet.getString("status"));
-                clientService = new ClientService<>(id, activationDate, status);
+                clientService = new ClientInternet(id, activationDate, status);
             }
         } catch (SQLException exception) {
             exception.printStackTrace();
@@ -56,8 +57,8 @@ public class InternetDao implements ServiceDao<Internet> {
     }
 
     @Override
-    public List<ClientService<Internet>> getAll(long clientId) {
-        List<ClientService<Internet>> clientServiceList = null;
+    public List<ClientService> getAll(long clientId) {
+        List<ClientService> clientServiceList = null;
         try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM internet WHERE client_id = ?"
@@ -70,7 +71,7 @@ public class InternetDao implements ServiceDao<Internet> {
                 Date activationDate = resultSet.getTimestamp("activation_date");
                 ClientService.Status status = ClientService.Status.valueOf(resultSet.getString("status"));
                 List<Internet> internetList = getHistory(id);
-                ClientService<Internet> clientService = new ClientService<>(id, activationDate, status);
+                ClientInternet clientService = new ClientInternet(id, activationDate, status);
                 clientService.setServiceList(internetList);
                 clientServiceList.add(clientService);
             }
@@ -122,7 +123,7 @@ public class InternetDao implements ServiceDao<Internet> {
     }
 
     @Override
-    public void save(long clientId, ClientService<Internet> internetClientService) {
+    public void save(long clientId, ClientService internetClientService) {
         try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "INSERT INTO internet (client_id, activation_date, status) VALUES (?, NOW(), ?::status) RETURNING id;"
@@ -138,9 +139,9 @@ public class InternetDao implements ServiceDao<Internet> {
                             "VALUES (?, NOW(), ?, ?, ?::connection_type);"
             );
             preparedStatement.setLong(1, internetId);
-            preparedStatement.setInt(2, internetClientService.getServiceList().get(0).getSpeed());
-            preparedStatement.setBoolean(3, internetClientService.getServiceList().get(0).isAntivirus());
-            preparedStatement.setString(4, String.valueOf(internetClientService.getServiceList().get(0).getConnectionType()));
+            preparedStatement.setInt(2, ((Internet) internetClientService.getServiceList().get(0)).getSpeed());
+            preparedStatement.setBoolean(3, ((Internet) internetClientService.getServiceList().get(0)).isAntivirus());
+            preparedStatement.setString(4, String.valueOf(((Internet) internetClientService.getServiceList().get(0)).getConnectionType()));
             if (preparedStatement.executeUpdate() == 0) {
                 throw new SQLException("Failed to insert to database");
             }

@@ -1,5 +1,6 @@
 package ru.internetprovider.model;
 
+import ru.internetprovider.model.services.ClientPhone;
 import ru.internetprovider.model.services.ClientService;
 import ru.internetprovider.model.services.Phone;
 import ru.internetprovider.model.services.Service;
@@ -12,8 +13,8 @@ import java.util.List;
 public class PhoneDao implements ServiceDao<Phone> {
 
     @Override
-    public List<ClientService<Phone>> getAll(long clientId) {
-        List<ClientService<Phone>> phoneClientServiceList = new ArrayList<>();
+    public List<ClientService> getAll(long clientId) {
+        List<ClientService> phoneClientServiceList = new ArrayList<>();
         try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM phone WHERE client_id = ?"
@@ -26,7 +27,7 @@ public class PhoneDao implements ServiceDao<Phone> {
                 Date activationDate = resultSet.getTimestamp("activation_date");
                 ClientService.Status status = ClientService.Status.valueOf(resultSet.getString("status"));
                 List<Phone> phoneList = getHistory(id);
-                ClientService<Phone> clientService = new ClientService<>(id, activationDate, status);
+                ClientPhone clientService = new ClientPhone(id, activationDate, status);
                 clientService.setServiceList(phoneList);
                 phoneClientServiceList.add(clientService);
             }
@@ -101,7 +102,7 @@ public class PhoneDao implements ServiceDao<Phone> {
     }
 
     @Override
-    public void save(long clientId, ClientService<Phone> phoneClientService) {
+    public void save(long clientId, ClientService phoneClientService) {
         try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "INSERT INTO phone (client_id, activation_date, status) VALUES (?, NOW(), ?::status) RETURNING id;"
@@ -117,8 +118,8 @@ public class PhoneDao implements ServiceDao<Phone> {
                             "VALUES (?, NOW(), ?, ?);"
             );
             preparedStatement.setLong(1, phoneId);
-            preparedStatement.setInt(2, phoneClientService.getServiceList().get(0).getSmsCount());
-            preparedStatement.setInt(3, phoneClientService.getServiceList().get(0).getMinsCount());
+            preparedStatement.setInt(2, ((Phone) phoneClientService.getServiceList().get(0)).getSmsCount());
+            preparedStatement.setInt(3, ((Phone) phoneClientService.getServiceList().get(0)).getMinsCount());
             if (preparedStatement.executeUpdate() == 0) {
                 throw new SQLException("Failed to insert to database");
             }
@@ -128,8 +129,8 @@ public class PhoneDao implements ServiceDao<Phone> {
     }
 
     @Override
-    public ClientService<Service> get(long id) {
-        ClientService<Service> clientService = null;
+    public ClientService get(long id) {
+        ClientService clientService = null;
         try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM phone WHERE id = ?"
@@ -139,7 +140,7 @@ public class PhoneDao implements ServiceDao<Phone> {
             if (resultSet.next()) {
                 Date activationDate = resultSet.getTimestamp("activation_date");
                 ClientService.Status status = ClientService.Status.valueOf(resultSet.getString("status"));
-                clientService = new ClientService<>(id, activationDate, status);
+                clientService = new ClientPhone(id, activationDate, status);
             }
         } catch (SQLException exception) {
             exception.printStackTrace();

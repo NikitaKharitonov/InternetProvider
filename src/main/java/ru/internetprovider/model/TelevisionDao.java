@@ -1,6 +1,7 @@
 package ru.internetprovider.model;
 
 import ru.internetprovider.model.services.ClientService;
+import ru.internetprovider.model.services.ClientTelevision;
 import ru.internetprovider.model.services.Service;
 import ru.internetprovider.model.services.Television;
 
@@ -11,8 +12,8 @@ import java.util.List;
 
 public class TelevisionDao implements ServiceDao<Television> {
     @Override
-    public List<ClientService<Television>> getAll(long clientId) {
-        List<ClientService<Television>> televisionClientServiceList = null;
+    public List<ClientService> getAll(long clientId) {
+        List<ClientService> televisionClientServiceList = null;
         try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM television WHERE client_id = ?"
@@ -25,7 +26,7 @@ public class TelevisionDao implements ServiceDao<Television> {
                 Date activationDate = resultSet.getTimestamp("activation_date");
                 ClientService.Status status = ClientService.Status.valueOf(resultSet.getString("status"));
                 List<Television> televisionList = getHistory(id);
-                ClientService<Television> clientService = new ClientService<>(id, activationDate, status);
+                ClientTelevision clientService = new ClientTelevision(id, activationDate, status);
                 clientService.setServiceList(televisionList);
                 televisionClientServiceList.add(clientService);
             }
@@ -99,7 +100,7 @@ public class TelevisionDao implements ServiceDao<Television> {
     }
 
     @Override
-    public void save(long clientId, ClientService<Television> televisionClientService) {
+    public void save(long clientId, ClientService televisionClientService) {
         try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "INSERT INTO television (client_id, activation_date, status) VALUES (?, NOW(), ?::status) RETURNING id;"
@@ -115,7 +116,7 @@ public class TelevisionDao implements ServiceDao<Television> {
                             "VALUES (?, NOW(), ?);"
             );
             preparedStatement.setLong(1, televisionId);
-            preparedStatement.setInt(2, televisionClientService.getServiceList().get(0).getChannelsCount());
+            preparedStatement.setInt(2, ((Television) televisionClientService.getServiceList().get(0)).getChannelsCount());
             if (preparedStatement.executeUpdate() == 0) {
                 throw new SQLException("Failed to insert to database");
             }
@@ -125,8 +126,8 @@ public class TelevisionDao implements ServiceDao<Television> {
     }
 
     @Override
-    public ClientService<Service> get(long id) {
-        ClientService<Service> clientService = null;
+    public ClientService get(long id) {
+        ClientService clientService = null;
         try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM television WHERE id = ?"
@@ -136,7 +137,7 @@ public class TelevisionDao implements ServiceDao<Television> {
             if (resultSet.next()) {
                 Date activationDate = resultSet.getTimestamp("activation_date");
                 ClientService.Status status = ClientService.Status.valueOf(resultSet.getString("status"));
-                clientService = new ClientService<>(id, activationDate, status);
+                clientService = new ClientTelevision(id, activationDate, status);
             }
         } catch (SQLException exception) {
             exception.printStackTrace();

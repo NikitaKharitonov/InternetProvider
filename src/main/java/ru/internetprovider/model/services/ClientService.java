@@ -1,20 +1,22 @@
 package ru.internetprovider.model.services;
 
 import java.util.Date;
-import java.util.List;
 
 public interface ClientService {
-    enum Status {
-        SUSPENDED, ACTIVE, DISCONNECTED
-    }
 
-    List<? extends Service> getServiceList();
+    int getId();
 
-    Status getStatus();
+    void setId(int id);
 
-    long getId();
+    int getClientId();
+
+    void setClientId(int clientId);
 
     Date getActivationDate();
 
-//    void setServiceList(List<Service> serviceList);
+    void setActivationDate(Date activationDate);
+
+    Status getStatus();
+
+    void setStatus(Status status);
 }

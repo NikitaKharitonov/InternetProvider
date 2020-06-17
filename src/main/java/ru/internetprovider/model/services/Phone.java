@@ -1,48 +1,92 @@
 package ru.internetprovider.model.services;
 
+import javax.persistence.*;
 import java.util.Date;
 
+@Entity
+@Table(name = "phone_history")
 public class Phone implements Service {
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    @Column(name = "phone_id")
+    private int phoneId;
+    @Column(name = "begin_date")
+    private Date beginDate;
+    @Column(name = "end_date")
+    private Date endDate;
+    @Column(name = "mins_count")
+    private int minsCount;
+    @Column(name = "sms_count")
+    private int smsCount;
 
-    private final long id;
-    private final Date beginDate;
-    private final Date endDate;
-
-    private final int minsCount;
-    private final int smsCount;
-
-    public Phone(Date dateBegin, Date dateEnd, int minsCount, int smsCount) {
-        this.id = 0;
-        this.beginDate = dateBegin;
-        this.endDate = dateEnd;
+    public Phone(Date beginDate, Date endDate, int minsCount, int smsCount) {
+        this.beginDate = beginDate;
+        this.endDate = endDate;
         this.minsCount = minsCount;
         this.smsCount = smsCount;
     }
 
-    public long getId() {
+    public Phone() {
+    }
+
+    public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getPhoneId() {
+        return phoneId;
+    }
+
+    public void setPhoneId(int phoneId) {
+        this.phoneId = phoneId;
     }
 
     public Date getBeginDate() {
         return beginDate;
     }
 
+    public void setBeginDate(Date beginDate) {
+        this.beginDate = beginDate;
+    }
+
     public Date getEndDate() {
         return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
     public int getMinsCount() {
         return minsCount;
     }
 
+    public void setMinsCount(int minsCount) {
+        this.minsCount = minsCount;
+    }
+
     public int getSmsCount() {
         return smsCount;
+    }
+
+    public void setSmsCount(int smsCount) {
+        this.smsCount = smsCount;
     }
 
     @Override
     public String toString() {
         return "Phone{" +
-                "minsCount=" + minsCount +
+                "id=" + id +
+                ", phoneId=" + phoneId +
+                ", beginDate=" + beginDate +
+                ", endDate=" + endDate +
+                ", minsCount=" + minsCount +
                 ", smsCount=" + smsCount +
                 '}';
     }

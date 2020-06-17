@@ -1,12 +1,11 @@
-package ru.internetprovider.model;
+package ru.internetprovider.model.jdbc;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-import java.sql.Connection;
 
-public class DatabaseHelper {
+public class JdbcUtil {
 
     private static DataSource dataSource;
 

@@ -1,8 +1,9 @@
-package ru.internetprovider.model;
+package ru.internetprovider.model.jdbc;
 
+import ru.internetprovider.model.ServiceDao;
 import ru.internetprovider.model.services.ClientService;
 import ru.internetprovider.model.services.ClientTelevision;
-import ru.internetprovider.model.services.Service;
+import ru.internetprovider.model.services.Status;
 import ru.internetprovider.model.services.Television;
 
 import java.sql.*;
@@ -11,10 +12,11 @@ import java.util.Date;
 import java.util.List;
 
 public class TelevisionDao implements ServiceDao<Television> {
+
     @Override
-    public List<ClientService> getAll(long clientId) {
+    public List<ClientService> getAll(int clientId) {
         List<ClientService> televisionClientServiceList = null;
-        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
+        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM television WHERE client_id = ?"
             );
@@ -22,12 +24,12 @@ public class TelevisionDao implements ServiceDao<Television> {
             ResultSet resultSet = preparedStatement.executeQuery();
             televisionClientServiceList = new ArrayList<>();
             while (resultSet.next()) {
-                long id = resultSet.getLong("id");
+                int id = resultSet.getInt("id");
                 Date activationDate = resultSet.getTimestamp("activation_date");
-                ClientService.Status status = ClientService.Status.valueOf(resultSet.getString("status"));
+                Status status = Status.valueOf(resultSet.getString("status"));
                 List<Television> televisionList = getHistory(id);
                 ClientTelevision clientService = new ClientTelevision(id, activationDate, status);
-                clientService.setServiceList(televisionList);
+                clientService.setHistory(televisionList);
                 televisionClientServiceList.add(clientService);
             }
             return televisionClientServiceList;
@@ -38,9 +40,9 @@ public class TelevisionDao implements ServiceDao<Television> {
     }
 
     @Override
-    public List<Television> getHistory(long id) {
+    public List<Television> getHistory(int id) {
         List<Television> history = null;
-        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
+        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM television_history WHERE television_id = ? ORDER BY begin_date;"
             );
@@ -60,29 +62,30 @@ public class TelevisionDao implements ServiceDao<Television> {
     }
 
     @Override
-    public void update(long id, Television television) {
-        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
+    public void update(int id, Television television) {
+        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT status from television where id = ?"
             );
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                ClientService.Status status = ClientService.Status.valueOf(resultSet.getString("status"));
-                if (status.equals(ClientService.Status.ACTIVE)) {
+                Status status = Status.valueOf(resultSet.getString("status"));
+                if (status.equals(Status.ACTIVE)) {
                     preparedStatement = connection.prepareStatement(
                             "UPDATE television_history SET end_date = NOW() WHERE begin_date = " +
-                                    "(SELECT MAX(begin_date) FROM television_history)"
+                                    "(SELECT MAX(begin_date) FROM television_history WHERE television_id = ?)"
                     );
+                    preparedStatement.setInt(1, id);
                     preparedStatement.executeUpdate();
 
-                } else if (status.equals(ClientService.Status.SUSPENDED)) {
+                } else if (status.equals(Status.SUSPENDED)) {
 
                     preparedStatement = connection.prepareStatement(
                             "UPDATE television SET status = ?::status WHERE id = ?"
                     );
                     preparedStatement.setLong(2, id);
-                    preparedStatement.setString(1, String.valueOf(ClientService.Status.ACTIVE));
+                    preparedStatement.setString(1, String.valueOf(Status.ACTIVE));
                     preparedStatement.executeUpdate();
                 }
                 preparedStatement = connection.prepareStatement(
@@ -100,13 +103,13 @@ public class TelevisionDao implements ServiceDao<Television> {
     }
 
     @Override
-    public void save(long clientId, ClientService televisionClientService) {
-        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
+    public void save(int clientId, Television television) {
+        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "INSERT INTO television (client_id, activation_date, status) VALUES (?, NOW(), ?::status) RETURNING id;"
             );
             preparedStatement.setLong(1, clientId);
-            preparedStatement.setString(2, String.valueOf(ClientService.Status.ACTIVE));
+            preparedStatement.setString(2, String.valueOf(Status.ACTIVE));
             ResultSet rs = preparedStatement.executeQuery();
             rs.next();
             long televisionId = rs.getLong("id");
@@ -116,7 +119,7 @@ public class TelevisionDao implements ServiceDao<Television> {
                             "VALUES (?, NOW(), ?);"
             );
             preparedStatement.setLong(1, televisionId);
-            preparedStatement.setInt(2, ((Television) televisionClientService.getServiceList().get(0)).getChannelsCount());
+            preparedStatement.setInt(2, television.getChannelsCount());
             if (preparedStatement.executeUpdate() == 0) {
                 throw new SQLException("Failed to insert to database");
             }
@@ -126,9 +129,9 @@ public class TelevisionDao implements ServiceDao<Television> {
     }
 
     @Override
-    public ClientService get(long id) {
+    public ClientService get(int id) {
         ClientService clientService = null;
-        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
+        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM television WHERE id = ?"
             );
@@ -136,7 +139,7 @@ public class TelevisionDao implements ServiceDao<Television> {
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 Date activationDate = resultSet.getTimestamp("activation_date");
-                ClientService.Status status = ClientService.Status.valueOf(resultSet.getString("status"));
+                Status status = Status.valueOf(resultSet.getString("status"));
                 clientService = new ClientTelevision(id, activationDate, status);
             }
         } catch (SQLException exception) {
@@ -146,18 +149,19 @@ public class TelevisionDao implements ServiceDao<Television> {
     }
 
     @Override
-    public void suspend(long id) {
-        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
+    public void suspend(int id) {
+        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "UPDATE television_history SET end_date = NOW() WHERE begin_date = " +
-                            "(SELECT MAX(begin_date) FROM television_history)"
+                            "(SELECT MAX(begin_date) FROM television_history WHERE television_id = ?)"
             );
+            preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
             preparedStatement = connection.prepareStatement(
                     "UPDATE television SET status = ?::status WHERE id = ?"
             );
             preparedStatement.setLong(2, id);
-            preparedStatement.setString(1, String.valueOf(ClientService.Status.SUSPENDED));
+            preparedStatement.setString(1, String.valueOf(Status.SUSPENDED));
             preparedStatement.executeUpdate();
         } catch (SQLException exception) {
             exception.printStackTrace();
@@ -165,19 +169,21 @@ public class TelevisionDao implements ServiceDao<Television> {
     }
 
     @Override
-    public void activate(long id) {
-        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
+    public void activate(int id) {
+        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "UPDATE television SET status = ?::status WHERE id = ?"
             );
             preparedStatement.setLong(2, id);
-            preparedStatement.setString(1, String.valueOf(ClientService.Status.ACTIVE));
+            preparedStatement.setString(1, String.valueOf(Status.ACTIVE));
             preparedStatement.executeUpdate();
             preparedStatement = connection.prepareStatement(
                     "INSERT into television_history (television_id, begin_date, channels_count) " +
                             "select television_id, now(), channels_count " +
-                            "from television_history where begin_date = (SELECT MAX(begin_date) FROM television_history);"
+                            "from television_history where begin_date = (SELECT MAX(begin_date) FROM television_history " +
+                            "WHERE television_id = ?);"
             );
+            preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException exception) {
             exception.printStackTrace();
@@ -185,29 +191,37 @@ public class TelevisionDao implements ServiceDao<Television> {
     }
 
     @Override
-    public void delete(long id) {
-        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
+    public void disconnect(int id) {
+        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "DELETE FROM television WHERE id = ?"
+                    "SELECT status from television where id = ?"
             );
             preparedStatement.setLong(1, id);
-            preparedStatement.executeUpdate();
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
-    }
-
-    @Override
-    public void disconnect(long id) {
-        try (Connection connection = DatabaseHelper.getDataSource().getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                Status status = Status.valueOf(resultSet.getString("status"));
+                if (status.equals(Status.ACTIVE)) {
+                    preparedStatement = connection.prepareStatement(
+                            "UPDATE television_history SET end_date = NOW() WHERE begin_date = " +
+                                    "(SELECT MAX(begin_date) FROM television_history WHERE television_id = ?)"
+                    );
+                    preparedStatement.setInt(1, id);
+                    preparedStatement.executeUpdate();
+                }
+            }
+            preparedStatement = connection.prepareStatement(
                     "UPDATE television SET status = ?::status WHERE id = ?"
             );
             preparedStatement.setLong(2, id);
-            preparedStatement.setString(1, String.valueOf(ClientService.Status.DISCONNECTED));
+            preparedStatement.setString(1, String.valueOf(Status.DISCONNECTED));
             preparedStatement.executeUpdate();
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
+    }
+
+    @Override
+    public void delete(int id) {
+        // todo?
     }
 }

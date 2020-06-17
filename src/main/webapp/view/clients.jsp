@@ -1,10 +1,5 @@
-<%@ page import="java.io.IOException" %>
 <%@ page import="ru.internetprovider.model.Client" %>
 <%@ page import="java.util.List" %>
-<%@ page import="ru.internetprovider.model.exceptions.InvalidModelException" %>
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="ru.internetprovider.servlets.Clients" %>
-<%@ page import="ru.internetprovider.servlets.AddClient" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
@@ -22,13 +17,37 @@
             <div class="greeting">
                 Client list
             </div>
+            <br/>
+            <%
+                String nameSearch = (String) request.getAttribute("name-search");
+                String phoneSearch = (String) request.getAttribute("phone-search");
+                String emailSearch = (String) request.getAttribute("email-search");
+            %>
+            <br/>
+            <div class="add">
+                <%if(!(nameSearch == null && phoneSearch == null && emailSearch == null)) {%>
+                    Results for:
+                    <%=nameSearch != null && nameSearch.equals("") ? "" : "Name: " + "\"" + nameSearch + "\" "%><br>
+                    <%=phoneSearch != null && phoneSearch.equals("") ? "" : "Phone number: " + "\"" + phoneSearch + "\" "%><br>
+                    <%=emailSearch != null && emailSearch.equals("") ? "" : "Email address: " + "\"" + emailSearch + "\" "%><br>
+                <%}%>
+            </div>
+            <br/>
+            <div class="add">
+                <form action="${pageContext.request.contextPath}/searchByCriteria">
+                    <input type="text" name="name-search" placeholder="Name"/>
+                    <input type="text" name="phone-search" placeholder="Phone number"/>
+                    <input type="text" name="email-search" placeholder="Email address"/>
+                    <input type="submit" class="btn" value="Search"/>
+                </form>
+            </div>
             <table>
                 <thead>
                 <tr>
                     <th>ID</th>
                     <th>Name</th>
-                    <th>Phone</th>
-                    <th>Email</th>
+                    <th>Phone number</th>
+                    <th>Email address</th>
                     <th></th>
                     <th></th>
                     <th></th>
@@ -39,8 +58,8 @@
                     <tr>
                         <td><%=client.getId()%></td>
                         <td><%=client.getName()%></td>
-                        <td><%=client.getPhone()%></td>
-                        <td><%=client.getEmail()%></td>
+                        <td><%=client.getPhoneNumber()%></td>
+                        <td><%=client.getEmailAddress()%></td>
                         <td>
                             <form action="${pageContext.request.contextPath}/services">
                                 <button class="btn" name="clientId" value="<%=client.getId()%>">Get services</button>

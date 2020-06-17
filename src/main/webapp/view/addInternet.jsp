@@ -1,5 +1,6 @@
 <%@ page import="ru.internetprovider.model.services.Internet" %>
 <%@ page import="java.util.List" %>
+<%@ page import="ru.internetprovider.model.services.ConnectionType" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -18,8 +19,8 @@
             </label>
             <label>Connection Type:
                 <select name="connectionType">
-                    <%List<Internet.ConnectionType> connectionTypeList = (List<Internet.ConnectionType>) request.getSession().getAttribute("connectionTypeList");%>
-                    <%for(Internet.ConnectionType connectionType: connectionTypeList) {%>
+                    <%List<ConnectionType> connectionTypeList = (List<ConnectionType>) request.getSession().getAttribute("connectionTypeList");%>
+                    <%for(ConnectionType connectionType: connectionTypeList) {%>
                     <option selected><%=connectionType.toString()%></option>
                     <%}%>
                 </select>

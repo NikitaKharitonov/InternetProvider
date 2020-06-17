@@ -12,7 +12,7 @@
 <body>
     <%
         List<Phone> phoneList = (List<Phone>) request.getAttribute("phoneList");
-        long phoneId = (long) request.getAttribute("phoneId");
+        int phoneId = (int) request.getAttribute("phoneId");
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     %>
     <div class="container-table">

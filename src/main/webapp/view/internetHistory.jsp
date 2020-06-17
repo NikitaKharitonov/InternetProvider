@@ -1,7 +1,6 @@
 <%@ page import="ru.internetprovider.model.services.Internet" %>
-<%@ page import="ru.internetprovider.model.services.ClientService" %>
-<%@ page import="java.util.List" %>
 <%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -13,7 +12,7 @@
 <body>
     <%
         List<Internet> internetList = (List<Internet>) request.getAttribute("internetList");
-        long internetId = (long) request.getAttribute("internetId");
+        int internetId = (int) request.getAttribute("internetId");
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     %>
     <div class="container-table">

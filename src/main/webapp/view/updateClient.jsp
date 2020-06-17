@@ -15,8 +15,8 @@
         <form method="post" action="${pageContext.request.contextPath}/updateClient">
             <h1>Update client #<%=request.getSession().getAttribute("clientId")%></h1>
             <input name="name" type="text" min="1" value="<%=client.getName()%>" required/>
-            <input name="phone" type="number" min="1" value="<%=client.getPhone()%>" required/>
-            <input name="email" type="text" min="1" value="<%=client.getEmail()%>" required/>
+            <input name="phone" type="number" min="1" value="<%=client.getPhoneNumber()%>" required/>
+            <input name="email" type="text" min="1" value="<%=client.getEmailAddress()%>" required/>
             <input type="submit" value="Update" class="btn"/>
 
         </form>

@@ -1,22 +1,31 @@
-import ru.internetprovider.model.InternetDao;
-import ru.internetprovider.model.exceptions.ClientNotFoundException;
-import ru.internetprovider.model.exceptions.ServiceNotFoundException;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
+import ru.internetprovider.model.hibernate.HibernateUtil;
+import ru.internetprovider.model.services.ClientService;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.sql.SQLException;
+import javax.persistence.EntityTransaction;
+import java.util.List;
 
 public class Test {
 
-    public static void main(String[] args) throws SQLException, ClientNotFoundException, ServiceNotFoundException {
+    public static void main(String[] args) {
+        List<ClientService> clientServiceList = null;
+        EntityTransaction entityTransaction = null;
+        try (Session session = HibernateUtil.openSession()) {
+            entityTransaction = session.getTransaction();
+            entityTransaction.begin();
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-ddThh:mm".replace("T", " "));
-//
-//        InternetDao internetDao = new InternetDao();
-//        Date date = internetDao.get(17).getActivationDate();
+            Query query = session.createQuery("from ClientInternet where clientId = :clientId");
+            query.setParameter("clientId", 2);
+            clientServiceList = query.list();
 
-        Date date = new Date(System.currentTimeMillis());
-        System.out.println(formatter.format(date).replace(" ", "T"));
+            entityTransaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (entityTransaction != null)
+                entityTransaction.rollback();
+        }
+        System.out.println(clientServiceList);
 
     }
 }

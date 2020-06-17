@@ -1,6 +1,5 @@
-package ru.internetprovider.servlets;
+package ru.internetprovider.controller;
 
-import ru.internetprovider.model.PhoneDao;
 import ru.internetprovider.model.services.Phone;
 
 import javax.servlet.ServletException;
@@ -15,9 +14,8 @@ import java.util.List;
 public class PhoneHistory extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        long phoneId = Long.parseLong(request.getParameter("phoneId"));
-        PhoneDao phoneDao = new PhoneDao();
-        List<Phone> phoneList = phoneDao.getHistory(phoneId);
+        int phoneId = Integer.parseInt(request.getParameter("phoneId"));
+        List<Phone> phoneList = DaoUtil.getPhoneDao().getHistory(phoneId);
         request.setAttribute("phoneId", phoneId);
         request.setAttribute("phoneList", phoneList);
         request.getRequestDispatcher("view/phoneHistory.jsp").forward(request, response);

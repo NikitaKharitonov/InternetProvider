@@ -1,6 +1,6 @@
-package ru.internetprovider.servlets;
+package ru.internetprovider.controller;
 
-import ru.internetprovider.model.InternetDao;
+import ru.internetprovider.model.services.ConnectionType;
 import ru.internetprovider.model.services.Internet;
 
 import javax.servlet.ServletException;
@@ -17,23 +17,22 @@ import java.util.List;
 @WebServlet(name = "UpdateInternet", urlPatterns = "/updateInternet")
 public class UpdateInternet extends HttpServlet {
 
-    static InternetDao internetDao = new InternetDao();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        long internetId = Long.parseLong((String) request.getSession().getAttribute("internetId"));
+        int internetId = Integer.parseInt((String) request.getSession().getAttribute("internetId"));
         int speed = Integer.parseInt(request.getParameter("speed"));
         boolean antivirus = request.getParameter("antivirus") != null;
-        Internet.ConnectionType connectionType = Internet.ConnectionType.valueOf(request.getParameter("connectionType"));
-        internetDao.update(internetId, new Internet(new Date(), null, speed, antivirus, connectionType));
+        ConnectionType connectionType = ConnectionType.valueOf(request.getParameter("connectionType"));
+        DaoUtil.getInternetDao().update(internetId, new Internet(new Date(), null, speed, antivirus, connectionType));
         response.sendRedirect(request.getContextPath() + "/services");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String internetId = request.getParameter("internetId");
-        List<Internet> internetList = internetDao.getHistory(Long.parseLong(internetId));
+        List<Internet> internetList = DaoUtil.getInternetDao().getHistory(Integer.parseInt(internetId));
         request.setAttribute("internet", internetList.get(internetList.size() - 1));
-        Internet.ConnectionType[] connectionTypeArray = Internet.ConnectionType.values();
-        List<Internet.ConnectionType> connectionTypeList = new ArrayList<>(Arrays.asList(connectionTypeArray));
+        ConnectionType[] connectionTypeArray = ConnectionType.values();
+        List<ConnectionType> connectionTypeList = new ArrayList<>(Arrays.asList(connectionTypeArray));
         request.getSession().setAttribute("connectionTypeList", connectionTypeList);
         request.getSession().setAttribute("internetId", internetId);
         request.getRequestDispatcher("view/updateInternet.jsp").forward(request, response);

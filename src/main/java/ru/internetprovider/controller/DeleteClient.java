@@ -1,6 +1,4 @@
-package ru.internetprovider.servlets;
-
-import ru.internetprovider.model.ClientDao;
+package ru.internetprovider.controller;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,9 +11,8 @@ import java.io.IOException;
 public class DeleteClient extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        long clientId = Long.parseLong(request.getParameter("clientId"));
-        ClientDao clientDao = new ClientDao();
-        clientDao.delete(clientId);
+        int clientId = Integer.parseInt(request.getParameter("clientId"));
+        DaoUtil.getClientDao().delete(clientId);
         response.sendRedirect(request.getContextPath() + "/");
     }
 }

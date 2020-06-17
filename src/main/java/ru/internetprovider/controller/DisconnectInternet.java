@@ -1,7 +1,6 @@
-package ru.internetprovider.servlets;
+package ru.internetprovider.controller;
 
-import ru.internetprovider.model.InternetDao;
-import ru.internetprovider.model.TelevisionDao;
+import ru.internetprovider.model.hibernate.InternetDao;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,9 +12,8 @@ import java.io.IOException;
 @WebServlet(name = "DisconnectInternet", urlPatterns = "/disconnectInternet")
 public class DisconnectInternet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        long id = Long.parseLong(request.getParameter("internetId"));
-        InternetDao internetDao = new InternetDao();
-        internetDao.disconnect(id);
+        int id = Integer.parseInt(request.getParameter("internetId"));
+        DaoUtil.getInternetDao().disconnect(id);
         response.sendRedirect(request.getContextPath() + "/services");
     }
 

@@ -1,6 +1,5 @@
-package ru.internetprovider.servlets;
+package ru.internetprovider.controller;
 
-import ru.internetprovider.model.PhoneDao;
 import ru.internetprovider.model.services.Phone;
 
 import javax.servlet.ServletException;
@@ -15,19 +14,18 @@ import java.util.List;
 @WebServlet(name = "UpdatePhone", urlPatterns = "/updatePhone")
 public class UpdatePhone extends HttpServlet {
 
-    static         PhoneDao phoneDao = new PhoneDao();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        long phoneId = Long.parseLong((String) request.getSession().getAttribute("phoneId"));
+        int phoneId = Integer.parseInt((String) request.getSession().getAttribute("phoneId"));
         int minsCount = Integer.parseInt(request.getParameter("minsCount"));
         int smsCount = Integer.parseInt(request.getParameter("smsCount"));
-        phoneDao.update(phoneId, new Phone(new Date(), null, minsCount, smsCount));
+        DaoUtil.getPhoneDao().update(phoneId, new Phone(new Date(), null, minsCount, smsCount));
         response.sendRedirect(request.getContextPath() + "/services");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String phoneId = request.getParameter("phoneId");
-        List<Phone> phoneList = phoneDao.getHistory(Long.parseLong(phoneId));
+        List<Phone> phoneList = DaoUtil.getPhoneDao().getHistory(Integer.parseInt(phoneId));
         request.setAttribute("phone", phoneList.get(phoneList.size() - 1));
         request.getSession().setAttribute("phoneId", phoneId);
         request.getRequestDispatcher("view/updatePhone.jsp").forward(request, response);

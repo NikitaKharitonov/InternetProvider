@@ -1,7 +1,6 @@
-package ru.internetprovider.servlets;
+package ru.internetprovider.controller;
 
-import ru.internetprovider.model.PhoneDao;
-import ru.internetprovider.model.TelevisionDao;
+import ru.internetprovider.model.hibernate.TelevisionDao;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,16 +9,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "DisconnectPhone", urlPatterns = "/disconnectPhone")
-public class DisconnectPhone extends HttpServlet {
+@WebServlet(name = "DisconnectTelevision", urlPatterns = "/disconnect")
+public class DisconnectTelevision extends HttpServlet {
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        long id = Long.parseLong(request.getParameter("phoneId"));
-        PhoneDao phoneDao = new PhoneDao();
-        phoneDao.disconnect(id);
-        response.sendRedirect(request.getContextPath() + "/services");
+
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        int id = Integer.parseInt(request.getParameter("televisionId"));
+        TelevisionDao televisionDao = new TelevisionDao();
+        televisionDao.disconnect(id);
+        response.sendRedirect(request.getContextPath() + "/services");
     }
 }

@@ -1,6 +1,6 @@
-package ru.internetprovider.model.jdbc;
+package ru.internetprovider.model.dao.implementation.jdbc;
 
-import ru.internetprovider.model.Dao;
+import ru.internetprovider.model.dao.Dao;
 import ru.internetprovider.model.Client;
 import ru.internetprovider.model.exceptions.InvalidClientDataException;
 

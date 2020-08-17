@@ -1,61 +1,34 @@
-package ru.internetprovider.model.jdbc;
+package ru.internetprovider.model.dao.implementation.jdbc;
 
-import ru.internetprovider.model.ServiceDao;
-import ru.internetprovider.model.services.ClientPhone;
-import ru.internetprovider.model.services.ClientService;
-import ru.internetprovider.model.services.Phone;
-import ru.internetprovider.model.services.Status;
+import ru.internetprovider.model.dao.ServiceDao;
+import ru.internetprovider.model.services.*;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class PhoneDao implements ServiceDao<Phone> {
+public class InternetDao implements ServiceDao<Internet> {
 
     @Override
-    public List<ClientService> getAll(int clientId) {
-        List<ClientService> phoneClientServiceList = new ArrayList<>();
+    public List<Internet> getHistory(int id) {
+        List<Internet> history = null;
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    "SELECT * FROM phone WHERE client_id = ?"
+            PreparedStatement pstmt = connection.prepareStatement(
+                    "SELECT * " +
+                            "FROM internet_history WHERE internet_id = ? ORDER BY begin_date;"
             );
-            preparedStatement.setLong(1, clientId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            phoneClientServiceList = new ArrayList<>();
-            while (resultSet.next()) {
-                int id = resultSet.getInt("id");
-                Date activationDate = resultSet.getTimestamp("activation_date");
-                Status status = Status.valueOf(resultSet.getString("status"));
-                List<Phone> phoneList = getHistory(id);
-                ClientPhone clientService = new ClientPhone(id, activationDate, status);
-                clientService.setHistory(phoneList);
-                phoneClientServiceList.add(clientService);
-            }
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
-        return phoneClientServiceList;
-    }
-
-    @Override
-    public List<Phone> getHistory(int id) {
-        List<Phone> history = null;
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    "SELECT * FROM phone_history WHERE phone_id = ? ORDER BY begin_date;"
-            );
-            preparedStatement.setLong(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
+            pstmt.setLong(1, id);
+            ResultSet resultSet = pstmt.executeQuery();
             history = new ArrayList<>();
             while (resultSet.next()) {
                 Date beginDate = resultSet.getTimestamp("begin_date");
                 Date endDate = resultSet.getTimestamp("end_date");
-                int minsCount = resultSet.getInt("mins_count");
-                int smsCount = resultSet.getInt("sms_count");
-                history.add(new Phone(beginDate, endDate, minsCount, smsCount));
+                int speed = resultSet.getInt("speed");
+                boolean antivirus = resultSet.getBoolean("antivirus");
+                ConnectionType connectionType = ConnectionType.valueOf(resultSet.getString("connection_type"));
+                history.add(new Internet(beginDate, endDate, speed, antivirus, connectionType));
             }
-            return history;
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -63,10 +36,55 @@ public class PhoneDao implements ServiceDao<Phone> {
     }
 
     @Override
-    public void update(int id, Phone phone) {
+    public ClientService get(int id) {
+        ClientService clientService = null;
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "SELECT status from phone where id = ?"
+                    "SELECT * FROM internet WHERE id = ?"
+            );
+            preparedStatement.setLong(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                Date activationDate = resultSet.getTimestamp("activation_date");
+                Status status = Status.valueOf(resultSet.getString("status"));
+                clientService = new ClientInternet(id, activationDate, status);
+            }
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return clientService;
+    }
+
+    @Override
+    public List<ClientService> getAll(int clientId) {
+        List<ClientService> clientServiceList = null;
+        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "SELECT * FROM internet WHERE client_id = ?"
+            );
+            preparedStatement.setLong(1, clientId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            clientServiceList = new ArrayList<>();
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                Date activationDate = resultSet.getTimestamp("activation_date");
+                Status status = Status.valueOf(resultSet.getString("status"));
+                List<Internet> internetList = getHistory(id);
+                ClientInternet clientService = new ClientInternet(id, activationDate, status);
+                clientService.setHistory(internetList);
+                clientServiceList.add(clientService);
+            }
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return clientServiceList;
+    }
+
+    @Override
+    public void update(int id, Internet internet) {
+        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "SELECT status from internet where id = ?"
             );
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -74,8 +92,8 @@ public class PhoneDao implements ServiceDao<Phone> {
                 Status status = Status.valueOf(resultSet.getString("status"));
                 if (status.equals(Status.ACTIVE)) {
                     preparedStatement = connection.prepareStatement(
-                            "UPDATE phone_history SET end_date = NOW() WHERE begin_date " +
-                                    "= (SELECT MAX(begin_date) FROM phone_history WHERE phone_id = ?)"
+                            "UPDATE internet_history SET end_date = NOW() WHERE begin_date " +
+                                    "= (SELECT MAX(begin_date) FROM internet_history WHERE internet_id = ?)"
                     );
                     preparedStatement.setInt(1, id);
                     preparedStatement.executeUpdate();
@@ -83,20 +101,21 @@ public class PhoneDao implements ServiceDao<Phone> {
                 } else if (status.equals(Status.SUSPENDED)) {
 
                     preparedStatement = connection.prepareStatement(
-                            "UPDATE phone SET status = ?::status WHERE id = ?"
+                            "UPDATE internet SET status = ?::status WHERE id = ?"
                     );
                     preparedStatement.setLong(2, id);
                     preparedStatement.setString(1, String.valueOf(Status.ACTIVE));
                     preparedStatement.executeUpdate();
                 }
                 preparedStatement = connection.prepareStatement(
-                        "INSERT INTO phone_history " +
-                                "(phone_id, begin_date, mins_count, sms_count) " +
-                                "VALUES (?, NOW(), ?, ?);"
+                        "INSERT INTO internet_history " +
+                                "(internet_id, begin_date, speed, antivirus, connection_type) " +
+                                "VALUES (?, NOW(), ?, ?, ?::connection_type);"
                 );
                 preparedStatement.setLong(1, id);
-                preparedStatement.setInt(2, phone.getMinsCount());
-                preparedStatement.setInt(3, phone.getSmsCount());
+                preparedStatement.setInt(2, internet.getSpeed());
+                preparedStatement.setBoolean(3, internet.isAntivirus());
+                preparedStatement.setString(4, String.valueOf(internet.getConnectionType()));
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException exception) {
@@ -105,24 +124,25 @@ public class PhoneDao implements ServiceDao<Phone> {
     }
 
     @Override
-    public void save(int clientId, Phone phone) {
+    public void save(int clientId, Internet internet) {
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "INSERT INTO phone (client_id, activation_date, status) VALUES (?, NOW(), ?::status) RETURNING id;"
+                    "INSERT INTO internet (client_id, activation_date, status) VALUES (?, NOW(), ?::status) RETURNING id;"
             );
             preparedStatement.setLong(1, clientId);
             preparedStatement.setString(2, String.valueOf(Status.ACTIVE));
-            ResultSet rs = preparedStatement.executeQuery();
-            rs.next();
-            long phoneId = rs.getLong("id");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            long internetId = resultSet.getLong("id");
             preparedStatement = connection.prepareStatement(
-                    "INSERT INTO phone_history " +
-                            "(phone_id, begin_date, mins_count, sms_count) " +
-                            "VALUES (?, NOW(), ?, ?);"
+                    "INSERT INTO internet_history " +
+                            "(internet_id, begin_date, speed, antivirus, connection_type) " +
+                            "VALUES (?, NOW(), ?, ?, ?::connection_type);"
             );
-            preparedStatement.setLong(1, phoneId);
-            preparedStatement.setInt(2, phone.getSmsCount());
-            preparedStatement.setInt(3, phone.getMinsCount());
+            preparedStatement.setLong(1, internetId);
+            preparedStatement.setInt(2, internet.getSpeed());
+            preparedStatement.setBoolean(3, internet.isAntivirus());
+            preparedStatement.setString(4, String.valueOf(internet.getConnectionType()));
             if (preparedStatement.executeUpdate() == 0) {
                 throw new SQLException("Failed to insert to database");
             }
@@ -132,36 +152,16 @@ public class PhoneDao implements ServiceDao<Phone> {
     }
 
     @Override
-    public ClientService get(int id) {
-        ClientService clientService = null;
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    "SELECT * FROM phone WHERE id = ?"
-            );
-            preparedStatement.setLong(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                Date activationDate = resultSet.getTimestamp("activation_date");
-                Status status = Status.valueOf(resultSet.getString("status"));
-                clientService = new ClientPhone(id, activationDate, status);
-            }
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
-        return clientService;
-    }
-
-    @Override
     public void suspend(int id) {
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "UPDATE phone_history SET end_date = NOW() where begin_date = " +
-                            "(SELECT MAX(begin_date) FROM phone_history WHERE phone_id = ? )"
+                    "UPDATE internet_history SET end_date = NOW() WHERE begin_date = " +
+                            "(SELECT MAX(begin_date) FROM internet_history WHERE internet_id = ?)"
             );
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
             preparedStatement = connection.prepareStatement(
-                    "UPDATE phone SET status = ?::status WHERE id = ?"
+                    "UPDATE internet SET status = ?::status WHERE id = ?"
             );
             preparedStatement.setLong(2, id);
             preparedStatement.setString(1, String.valueOf(Status.SUSPENDED));
@@ -175,16 +175,16 @@ public class PhoneDao implements ServiceDao<Phone> {
     public void activate(int id) {
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "UPDATE phone SET status = ?::status WHERE id = ?"
+                    "UPDATE internet SET status = ?::status WHERE id = ?"
             );
             preparedStatement.setLong(2, id);
             preparedStatement.setString(1, String.valueOf(Status.ACTIVE));
             preparedStatement.executeUpdate();
             preparedStatement = connection.prepareStatement(
-                    "INSERT into phone_history (phone_id, begin_date, mins_count, sms_count) " +
-                            "select phone_id, now(), mins_count, sms_count " +
-                            "from phone_history where begin_date = (SELECT MAX(begin_date) FROM phone_history " +
-                            "WHERE phone_id = ?);"
+                    "INSERT into internet_history (internet_id, begin_date, speed, antivirus, connection_type) " +
+                            "select internet_id, now(), speed, antivirus, connection_type " +
+                            "from internet_history where begin_date = (SELECT MAX(begin_date) FROM internet_history " +
+                            "WHERE internet_id = ?);"
             );
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
@@ -197,7 +197,7 @@ public class PhoneDao implements ServiceDao<Phone> {
     public void disconnect(int id) {
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "SELECT status from phone where id = ?"
+                    "SELECT status from internet where id = ?"
             );
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -205,15 +205,15 @@ public class PhoneDao implements ServiceDao<Phone> {
                 Status status = Status.valueOf(resultSet.getString("status"));
                 if (status.equals(Status.ACTIVE)) {
                     preparedStatement = connection.prepareStatement(
-                            "UPDATE phone_history SET end_date = NOW() WHERE begin_date = " +
-                                    "(SELECT MAX(begin_date) FROM phone_history WHERE phone_id = ?)"
+                            "UPDATE internet_history SET end_date = NOW() WHERE begin_date = " +
+                                    "(SELECT MAX(begin_date) FROM internet_history WHERE internet_id = ?)"
                     );
                     preparedStatement.setInt(1, id);
                     preparedStatement.executeUpdate();
                 }
             }
             preparedStatement = connection.prepareStatement(
-                    "UPDATE phone SET status = ?::status WHERE id = ?"
+                    "UPDATE internet SET status = ?::status WHERE id = ?"
             );
             preparedStatement.setLong(2, id);
             preparedStatement.setString(1, String.valueOf(Status.DISCONNECTED));

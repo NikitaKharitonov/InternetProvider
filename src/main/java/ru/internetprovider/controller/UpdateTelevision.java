@@ -18,7 +18,7 @@ public class UpdateTelevision extends HttpServlet {
         int televisionId = Integer.parseInt((String) request.getSession().getAttribute("televisionId"));
         int channelsCount = Integer.parseInt(request.getParameter("channelsCount"));
         DaoUtil.getTelevisionDao().update(televisionId, new Television(new Date(), null, channelsCount));
-        response.sendRedirect(request.getContextPath() + "/services");
+        response.sendRedirect(request.getContextPath() + "/showTelevision");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

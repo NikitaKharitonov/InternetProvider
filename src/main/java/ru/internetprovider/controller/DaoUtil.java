@@ -1,6 +1,6 @@
 package ru.internetprovider.controller;
 
-import ru.internetprovider.model.jdbc.*;
+import ru.internetprovider.model.dao.implementation.jdbc.*;
 
 public class DaoUtil {
     private static final ClientDao clientDao = new ClientDao();

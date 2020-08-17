@@ -14,7 +14,7 @@
             <input name="smsCount" type="number" min="1" placeholder="Number of SMS" required/>
             <input type="submit" value="Add" class="btn">
         </form>
-        <form action="${pageContext.request.contextPath}/services">
+        <form action="${pageContext.request.contextPath}/showPhone">
             <button class="btn">Back</button>
         </form>
     </div>

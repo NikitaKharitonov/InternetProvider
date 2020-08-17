@@ -24,7 +24,7 @@ public class UpdateInternet extends HttpServlet {
         boolean antivirus = request.getParameter("antivirus") != null;
         ConnectionType connectionType = ConnectionType.valueOf(request.getParameter("connectionType"));
         DaoUtil.getInternetDao().update(internetId, new Internet(new Date(), null, speed, antivirus, connectionType));
-        response.sendRedirect(request.getContextPath() + "/services");
+        response.sendRedirect(request.getContextPath() + "/showInternet");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

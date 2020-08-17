@@ -13,7 +13,7 @@
             <input name="channelsCount" type="number" min="1" placeholder="Number of channels" required/>
             <input type="submit" value="Add" class="btn">
         </form>
-        <form action="${pageContext.request.contextPath}/services">
+        <form action="${pageContext.request.contextPath}/showTelevision">
             <button class="btn">Back</button>
         </form>
     </div>

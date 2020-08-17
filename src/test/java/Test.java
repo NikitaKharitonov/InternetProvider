@@ -1,6 +1,6 @@
 import org.hibernate.Session;
 import org.hibernate.query.Query;
-import ru.internetprovider.model.hibernate.HibernateUtil;
+import ru.internetprovider.model.dao.implementation.hibernate.HibernateUtil;
 import ru.internetprovider.model.services.ClientService;
 
 import javax.persistence.EntityTransaction;

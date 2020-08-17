@@ -22,7 +22,7 @@ public class AddInternet extends HttpServlet {
         ConnectionType connectionType = ConnectionType.valueOf(request.getParameter("connectionType"));
         Internet internet = new Internet(new Date(), null, speed, antivirus, connectionType);
         DaoUtil.getInternetDao().save(clientId, internet);
-        response.sendRedirect(request.getContextPath() + "/services");
+        response.sendRedirect(request.getContextPath() + "/showInternet");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

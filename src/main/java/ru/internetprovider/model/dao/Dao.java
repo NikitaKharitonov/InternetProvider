@@ -1,4 +1,4 @@
-package ru.internetprovider.model;
+package ru.internetprovider.model.dao;
 
 public interface Dao<T> {
 

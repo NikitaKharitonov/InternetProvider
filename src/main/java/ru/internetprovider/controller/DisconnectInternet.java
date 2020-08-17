@@ -1,7 +1,5 @@
 package ru.internetprovider.controller;
 
-import ru.internetprovider.model.hibernate.InternetDao;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;

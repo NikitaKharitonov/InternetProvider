@@ -27,7 +27,7 @@
             </label>
             <input type="submit" value="Add" class="btn">
         </form>
-        <form action="${pageContext.request.contextPath}/services">
+        <form action="${pageContext.request.contextPath}/showInternet">
             <button class="btn">Back</button>
         </form>
     </div>

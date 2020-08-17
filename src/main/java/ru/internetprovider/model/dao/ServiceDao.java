@@ -1,4 +1,4 @@
-package ru.internetprovider.model;
+package ru.internetprovider.model.dao;
 
 import ru.internetprovider.model.services.ClientService;
 import ru.internetprovider.model.services.Service;

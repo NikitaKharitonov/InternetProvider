@@ -31,6 +31,6 @@ public class SearchByCriteria extends HttpServlet {
             }
         }
         request.setAttribute("clientList", filteredClientList);
-        request.getRequestDispatcher("view/clients.jsp").forward(request, response);
+        request.getRequestDispatcher("view/showClient.jsp").forward(request, response);
     }
 }

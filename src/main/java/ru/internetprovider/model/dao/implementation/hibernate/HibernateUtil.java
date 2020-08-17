@@ -1,4 +1,4 @@
-package ru.internetprovider.model.hibernate;
+package ru.internetprovider.model.dao.implementation.hibernate;
 
 import org.hibernate.Session;
 

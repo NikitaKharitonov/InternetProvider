@@ -38,7 +38,7 @@
             </tbody>
         </table>
         <div>
-            <form action="${pageContext.request.contextPath}/services">
+            <form action="${pageContext.request.contextPath}/showTelevision">
                 <button class="btn">Back</button>
             </form>
         </div>

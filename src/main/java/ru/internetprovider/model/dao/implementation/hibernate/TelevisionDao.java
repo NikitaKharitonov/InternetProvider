@@ -1,33 +1,54 @@
-package ru.internetprovider.model.hibernate;
+package ru.internetprovider.model.dao.implementation.hibernate;
 
 import org.hibernate.Session;
 import org.hibernate.query.Query;
-import ru.internetprovider.model.ServiceDao;
-import ru.internetprovider.model.services.ClientInternet;
+import ru.internetprovider.model.dao.ServiceDao;
 import ru.internetprovider.model.services.ClientService;
-import ru.internetprovider.model.services.Internet;
+import ru.internetprovider.model.services.ClientTelevision;
 import ru.internetprovider.model.services.Status;
+import ru.internetprovider.model.services.Television;
 
 import javax.persistence.EntityTransaction;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-public class InternetDao implements ServiceDao<Internet> {
+public class TelevisionDao implements ServiceDao<Television> {
 
     @Override
-    public List<Internet> getHistory(int id) {
-        List<Internet> history = null;
+    public List<ClientService> getAll(int clientId) {
+        List<ClientService> televisionClientServiceList = null;
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            Query query = session.createQuery("from ClientInternet where id = :id");
+            Query query = session.createQuery("from ClientTelevision where clientId = :clientId");
+            query.setParameter("clientId", clientId);
+            televisionClientServiceList = query.list();
+
+            entityTransaction.commit();
+        } catch (Exception e) {
+            if (entityTransaction != null)
+                entityTransaction.rollback();
+            e.printStackTrace();
+        }
+        return televisionClientServiceList;
+    }
+
+    @Override
+    public List<Television> getHistory(int id) {
+        List<Television> history = null;
+        EntityTransaction entityTransaction = null;
+        try (Session session = HibernateUtil.openSession()) {
+            entityTransaction = session.getTransaction();
+            entityTransaction.begin();
+
+            Query query = session.createQuery("from ClientTelevision where id = :id");
             query.setParameter("id", id);
-            ClientInternet clientInternet = (ClientInternet) query.getSingleResult();
-            history = clientInternet.getHistory();
-            history.sort(Comparator.comparing(Internet::getBeginDate));
+            ClientTelevision clientTelevision = (ClientTelevision) query.getSingleResult();
+            history = clientTelevision.getHistory();
+            history.sort(Comparator.comparing(Television::getBeginDate));
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -39,6 +60,56 @@ public class InternetDao implements ServiceDao<Internet> {
     }
 
     @Override
+    public void update(int id, Television television) {
+        EntityTransaction entityTransaction = null;
+        try (Session session = HibernateUtil.openSession()) {
+            entityTransaction = session.getTransaction();
+            entityTransaction.begin();
+
+            ClientTelevision clientTelevision = session.get(ClientTelevision.class, id);
+            if (clientTelevision.getStatus().equals(Status.ACTIVE)) {
+                Query query = session.createQuery("from Television where televisionId = :id order by beginDate desc");
+                query.setParameter("id", id);
+                Television lastTelevision = (Television) query.list().get(0);
+                lastTelevision.setEndDate(new Date());
+            } else if (clientTelevision.getStatus().equals(Status.SUSPENDED)) {
+                clientTelevision.setStatus(Status.ACTIVE);
+            }
+
+            television.setTelevisionId(id);
+            session.persist(television);
+
+            entityTransaction.commit();
+        } catch (Exception e) {
+            if (entityTransaction != null)
+                entityTransaction.rollback();
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void save(int clientId, Television television) {
+        EntityTransaction entityTransaction = null;
+        try (Session session = HibernateUtil.openSession()) {
+            entityTransaction = session.getTransaction();
+            entityTransaction.begin();
+
+            ClientTelevision clientService = new ClientTelevision(television.getBeginDate(), Status.ACTIVE);
+            clientService.setClientId(clientId);
+            session.save(clientService);
+
+            television.setTelevisionId(clientService.getId());
+            session.save(television);
+
+            entityTransaction.commit();
+        } catch (Exception e) {
+            if (entityTransaction != null)
+                entityTransaction.rollback();
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public ClientService get(int id) {
         ClientService clientService = null;
         EntityTransaction entityTransaction = null;
@@ -46,7 +117,7 @@ public class InternetDao implements ServiceDao<Internet> {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            Query query = session.createQuery("from ClientInternet where id = :id");
+            Query query = session.createQuery("from ClientTelevision where id = :id");
             query.setParameter("id", id);
             clientService = (ClientService) query.getSingleResult();
 
@@ -60,90 +131,19 @@ public class InternetDao implements ServiceDao<Internet> {
     }
 
     @Override
-    public List<ClientService> getAll(int clientId) {
-        List<ClientService> clientServiceList = null;
-        EntityTransaction entityTransaction = null;
-        try (Session session = HibernateUtil.openSession()) {
-            entityTransaction = session.getTransaction();
-            entityTransaction.begin();
-
-            Query query = session.createQuery("from ClientInternet where clientId = :clientId");
-            query.setParameter("clientId", clientId);
-            clientServiceList = query.list();
-
-            entityTransaction.commit();
-        } catch (Exception e) {
-            if (entityTransaction != null)
-                entityTransaction.rollback();
-            e.printStackTrace();
-        }
-        return clientServiceList;
-    }
-
-    @Override
-    public void update(int id, Internet internet) {
-        EntityTransaction entityTransaction = null;
-        try (Session session = HibernateUtil.openSession()) {
-            entityTransaction = session.getTransaction();
-            entityTransaction.begin();
-
-            ClientInternet clientInternet = session.get(ClientInternet.class, id);
-            if (clientInternet.getStatus().equals(Status.ACTIVE)) {
-                Query query = session.createQuery("from Internet where internetId = :id order by beginDate desc");
-                query.setParameter("id", id);
-                Internet lastInternet = (Internet) query.list().get(0);
-                lastInternet.setEndDate(new Date());
-            } else if (clientInternet.getStatus().equals(Status.SUSPENDED)) {
-                clientInternet.setStatus(Status.ACTIVE);
-            }
-
-            internet.setInternetId(id);
-            session.persist(internet);
-
-            entityTransaction.commit();
-        } catch (Exception e) {
-            if (entityTransaction != null)
-                entityTransaction.rollback();
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void save(int clientId, Internet internet) {
-        EntityTransaction entityTransaction = null;
-        try (Session session = HibernateUtil.openSession()) {
-            entityTransaction = session.getTransaction();
-            entityTransaction.begin();
-
-            ClientInternet clientService = new ClientInternet(internet.getBeginDate(), Status.ACTIVE);
-            clientService.setClientId(clientId);
-            session.save(clientService);
-
-            internet.setInternetId(clientService.getId());
-            session.save(internet);
-
-            entityTransaction.commit();
-        } catch (Exception e) {
-            if (entityTransaction != null)
-                entityTransaction.rollback();
-            e.printStackTrace();
-        }
-    }
-
-    @Override
     public void suspend(int id) {
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            Query query = session.createQuery("from Internet where internetId = :id order by beginDate desc");
+            Query query = session.createQuery("from Television where televisionId = :id order by beginDate desc");
             query.setParameter("id", id);
-            Internet lastInternet = (Internet) query.list().get(0);
-            lastInternet.setEndDate(new Date());
+            Television lastTelevision = (Television) query.list().get(0);
+            lastTelevision.setEndDate(new Date());
 
-            ClientInternet clientInternet = session.get(ClientInternet.class, id);
-            clientInternet.setStatus(Status.SUSPENDED);
+            ClientTelevision clientTelevision = session.get(ClientTelevision.class, id);
+            clientTelevision.setStatus(Status.SUSPENDED);
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -160,21 +160,20 @@ public class InternetDao implements ServiceDao<Internet> {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            ClientInternet clientInternet = session.get(ClientInternet.class, id);
-            clientInternet.setStatus(Status.ACTIVE);
+            ClientTelevision clientTelevision = session.get(ClientTelevision.class, id);
+            clientTelevision.setStatus(Status.ACTIVE);
 
-            Query query = session.createQuery("from Internet where internetId = :id order by beginDate desc");
+            Query query = session.createQuery("from Television where televisionId = :id order by beginDate desc");
             query.setParameter("id", id);
-            Internet lastInternet = (Internet) query.list().get(0);
+            Television lastTelevision = (Television) query.list().get(0);
 
-            Internet internet = new Internet();
-            internet.setInternetId(lastInternet.getInternetId());
-            internet.setAntivirus(lastInternet.isAntivirus());
-            internet.setConnectionType(lastInternet.getConnectionType());
-            internet.setSpeed(lastInternet.getSpeed());
-            internet.setBeginDate(new Date());
+            // fixme kostyl'
+            Television television = new Television();
+            television.setTelevisionId(lastTelevision.getTelevisionId());
+            television.setChannelsCount(lastTelevision.getChannelsCount());
+            television.setBeginDate(new Date());
 
-            session.save(internet);
+            session.save(television);
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -191,16 +190,16 @@ public class InternetDao implements ServiceDao<Internet> {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            ClientInternet clientInternet = session.get(ClientInternet.class, id);
+            ClientTelevision clientTelevision = session.get(ClientTelevision.class, id);
 
-            if (clientInternet.getStatus().equals(Status.ACTIVE)) {
-                Query query = session.createQuery("from Internet where internetId = :id order by beginDate desc");
+            if (clientTelevision.getStatus().equals(Status.ACTIVE)) {
+                Query query = session.createQuery("from Television where televisionId = :id order by beginDate desc");
                 query.setParameter("id", id);
-                Internet lastInternet = (Internet) query.list().get(0);
-                lastInternet.setEndDate(new Date());
+                Television lastTelevision = (Television) query.list().get(0);
+                lastTelevision.setEndDate(new Date());
             }
 
-            clientInternet.setStatus(Status.DISCONNECTED);
+            clientTelevision.setStatus(Status.DISCONNECTED);
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -212,6 +211,7 @@ public class InternetDao implements ServiceDao<Internet> {
 
     @Override
     public void delete(int id) {
-        //todo?
+        // todo?
     }
+
 }

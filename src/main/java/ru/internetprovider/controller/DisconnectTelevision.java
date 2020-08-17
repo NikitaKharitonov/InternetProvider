@@ -1,6 +1,6 @@
 package ru.internetprovider.controller;
 
-import ru.internetprovider.model.hibernate.TelevisionDao;
+import ru.internetprovider.model.dao.implementation.hibernate.TelevisionDao;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

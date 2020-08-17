@@ -17,7 +17,7 @@ public class AddTelevision extends HttpServlet {
         int channelsCount = Integer.parseInt(request.getParameter("channelsCount"));
         Television television = new Television(new Date(), null, channelsCount);
         DaoUtil.getTelevisionDao().save(clientId, television);
-        response.sendRedirect(request.getContextPath() + "/services");
+        response.sendRedirect(request.getContextPath() + "/showTelevision");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

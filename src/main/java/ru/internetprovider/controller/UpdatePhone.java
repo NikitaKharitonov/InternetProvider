@@ -20,7 +20,7 @@ public class UpdatePhone extends HttpServlet {
         int minsCount = Integer.parseInt(request.getParameter("minsCount"));
         int smsCount = Integer.parseInt(request.getParameter("smsCount"));
         DaoUtil.getPhoneDao().update(phoneId, new Phone(new Date(), null, minsCount, smsCount));
-        response.sendRedirect(request.getContextPath() + "/services");
+        response.sendRedirect(request.getContextPath() + "/showPhone");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -1,31 +1,32 @@
-package ru.internetprovider.model.hibernate;
+package ru.internetprovider.model.dao.implementation.hibernate;
 
 import org.hibernate.Session;
 import org.hibernate.query.Query;
-import ru.internetprovider.model.ServiceDao;
+import ru.internetprovider.model.dao.ServiceDao;
+import ru.internetprovider.model.services.ClientPhone;
 import ru.internetprovider.model.services.ClientService;
-import ru.internetprovider.model.services.ClientTelevision;
+import ru.internetprovider.model.services.Phone;
 import ru.internetprovider.model.services.Status;
-import ru.internetprovider.model.services.Television;
 
 import javax.persistence.EntityTransaction;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-public class TelevisionDao implements ServiceDao<Television> {
+public class PhoneDao implements ServiceDao<Phone> {
 
     @Override
     public List<ClientService> getAll(int clientId) {
-        List<ClientService> televisionClientServiceList = null;
+        List<ClientService> phoneClientServiceList = new ArrayList<>();
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            Query query = session.createQuery("from ClientTelevision where clientId = :clientId");
+            Query query = session.createQuery("from ClientPhone where clientId = :clientId");
             query.setParameter("clientId", clientId);
-            televisionClientServiceList = query.list();
+            phoneClientServiceList = query.list();
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -33,22 +34,22 @@ public class TelevisionDao implements ServiceDao<Television> {
                 entityTransaction.rollback();
             e.printStackTrace();
         }
-        return televisionClientServiceList;
+        return phoneClientServiceList;
     }
 
     @Override
-    public List<Television> getHistory(int id) {
-        List<Television> history = null;
+    public List<Phone> getHistory(int id) {
+        List<Phone> history = null;
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            Query query = session.createQuery("from ClientTelevision where id = :id");
+            Query query = session.createQuery("from ClientPhone where id = :id");
             query.setParameter("id", id);
-            ClientTelevision clientTelevision = (ClientTelevision) query.getSingleResult();
-            history = clientTelevision.getHistory();
-            history.sort(Comparator.comparing(Television::getBeginDate));
+            ClientPhone clientPhone = (ClientPhone) query.getSingleResult();
+            history = clientPhone.getHistory();
+            history.sort(Comparator.comparing(Phone::getBeginDate));
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -60,24 +61,24 @@ public class TelevisionDao implements ServiceDao<Television> {
     }
 
     @Override
-    public void update(int id, Television television) {
+    public void update(int id, Phone phone) {
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            ClientTelevision clientTelevision = session.get(ClientTelevision.class, id);
-            if (clientTelevision.getStatus().equals(Status.ACTIVE)) {
-                Query query = session.createQuery("from Television where televisionId = :id order by beginDate desc");
+            ClientPhone clientPhone = session.get(ClientPhone.class, id);
+            if (clientPhone.getStatus().equals(Status.ACTIVE)) {
+                Query query = session.createQuery("from Phone where phoneId = :id order by beginDate desc");
                 query.setParameter("id", id);
-                Television lastTelevision = (Television) query.list().get(0);
-                lastTelevision.setEndDate(new Date());
-            } else if (clientTelevision.getStatus().equals(Status.SUSPENDED)) {
-                clientTelevision.setStatus(Status.ACTIVE);
+                Phone lastPhone = (Phone) query.list().get(0);
+                lastPhone.setEndDate(new Date());
+            } else if (clientPhone.getStatus().equals(Status.SUSPENDED)) {
+                clientPhone.setStatus(Status.ACTIVE);
             }
 
-            television.setTelevisionId(id);
-            session.persist(television);
+            phone.setPhoneId(id);
+            session.persist(phone);
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -88,18 +89,18 @@ public class TelevisionDao implements ServiceDao<Television> {
     }
 
     @Override
-    public void save(int clientId, Television television) {
+    public void save(int clientId, Phone phone) {
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            ClientTelevision clientService = new ClientTelevision(television.getBeginDate(), Status.ACTIVE);
+            ClientPhone clientService = new ClientPhone(phone.getBeginDate(), Status.ACTIVE);
             clientService.setClientId(clientId);
             session.save(clientService);
 
-            television.setTelevisionId(clientService.getId());
-            session.save(television);
+            phone.setPhoneId(clientService.getId());
+            session.save(phone);
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -117,7 +118,7 @@ public class TelevisionDao implements ServiceDao<Television> {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            Query query = session.createQuery("from ClientTelevision where id = :id");
+            Query query = session.createQuery("from ClientPhone where id = :id");
             query.setParameter("id", id);
             clientService = (ClientService) query.getSingleResult();
 
@@ -137,13 +138,14 @@ public class TelevisionDao implements ServiceDao<Television> {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            Query query = session.createQuery("from Television where televisionId = :id order by beginDate desc");
+            // fixme get by id
+            Query query = session.createQuery("from Phone where phoneId = :id order by beginDate desc");
             query.setParameter("id", id);
-            Television lastTelevision = (Television) query.list().get(0);
-            lastTelevision.setEndDate(new Date());
+            Phone lastPhone = (Phone) query.list().get(0);
+            lastPhone.setEndDate(new Date());
 
-            ClientTelevision clientTelevision = session.get(ClientTelevision.class, id);
-            clientTelevision.setStatus(Status.SUSPENDED);
+            ClientPhone clientPhone = session.get(ClientPhone.class, id);
+            clientPhone.setStatus(Status.SUSPENDED);
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -160,20 +162,20 @@ public class TelevisionDao implements ServiceDao<Television> {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            ClientTelevision clientTelevision = session.get(ClientTelevision.class, id);
-            clientTelevision.setStatus(Status.ACTIVE);
+            ClientPhone clientPhone = session.get(ClientPhone.class, id);
+            clientPhone.setStatus(Status.ACTIVE);
 
-            Query query = session.createQuery("from Television where televisionId = :id order by beginDate desc");
+            Query query = session.createQuery("from Phone where phoneId = :id order by beginDate desc");
             query.setParameter("id", id);
-            Television lastTelevision = (Television) query.list().get(0);
+            Phone lastPhone = (Phone) query.list().get(0);
 
-            // fixme kostyl'
-            Television television = new Television();
-            television.setTelevisionId(lastTelevision.getTelevisionId());
-            television.setChannelsCount(lastTelevision.getChannelsCount());
-            television.setBeginDate(new Date());
+            Phone phone = new Phone();
+            phone.setPhoneId(lastPhone.getPhoneId());
+            phone.setSmsCount(lastPhone.getSmsCount());
+            phone.setMinsCount(lastPhone.getMinsCount());
+            phone.setBeginDate(new Date());
 
-            session.save(television);
+            session.save(phone);
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -190,16 +192,16 @@ public class TelevisionDao implements ServiceDao<Television> {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            ClientTelevision clientTelevision = session.get(ClientTelevision.class, id);
+            ClientPhone clientPhone = session.get(ClientPhone.class, id);
 
-            if (clientTelevision.getStatus().equals(Status.ACTIVE)) {
-                Query query = session.createQuery("from Television where televisionId = :id order by beginDate desc");
+            if (clientPhone.getStatus().equals(Status.ACTIVE)) {
+                Query query = session.createQuery("from Phone where phoneId = :id order by beginDate desc");
                 query.setParameter("id", id);
-                Television lastTelevision = (Television) query.list().get(0);
-                lastTelevision.setEndDate(new Date());
+                Phone lastPhone = (Phone) query.list().get(0);
+                lastPhone.setEndDate(new Date());
             }
 
-            clientTelevision.setStatus(Status.DISCONNECTED);
+            clientPhone.setStatus(Status.DISCONNECTED);
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -213,5 +215,4 @@ public class TelevisionDao implements ServiceDao<Television> {
     public void delete(int id) {
         // todo?
     }
-
 }

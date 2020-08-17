@@ -5,17 +5,17 @@
          version="3.1">
 
   <servlet>
-    <servlet-name>Clients</servlet-name>
-    <servlet-class>ru.internetprovider.controller.Clients</servlet-class>
+    <servlet-name>ShowClient</servlet-name>
+    <servlet-class>ru.internetprovider.controller.ShowClient</servlet-class>
   </servlet>
 
   <servlet-mapping>
-    <servlet-name>Clients</servlet-name>
+    <servlet-name>ShowClient</servlet-name>
     <url-pattern>/index.html</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
-    <servlet-name>Clients</servlet-name>
+    <servlet-name>ShowClient</servlet-name>
     <url-pattern>/</url-pattern>
   </servlet-mapping>
 

@@ -1,4 +1,4 @@
-package ru.internetprovider.model.jdbc;
+package ru.internetprovider.model.dao.implementation.jdbc;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;

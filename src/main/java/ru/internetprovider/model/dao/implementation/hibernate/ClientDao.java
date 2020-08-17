@@ -1,9 +1,9 @@
-package ru.internetprovider.model.hibernate;
+package ru.internetprovider.model.dao.implementation.hibernate;
 
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import ru.internetprovider.model.Client;
-import ru.internetprovider.model.Dao;
+import ru.internetprovider.model.dao.Dao;
 
 import javax.persistence.EntityTransaction;
 import java.util.List;

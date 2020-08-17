@@ -18,7 +18,7 @@
             <input name="smsCount" type="number" min="1" value="<%=phone.getSmsCount()%>" required/>
             <input type="submit" value="Update" class="btn">
         </form>
-        <form action="${pageContext.request.contextPath}/services">
+        <form action="${pageContext.request.contextPath}/showPhone">
             <button class="btn">Back</button>
         </form>
     </div>

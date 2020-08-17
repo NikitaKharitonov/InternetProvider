@@ -17,7 +17,7 @@
             <input name="channelsCount" type="number" min="1" value="<%=television.getChannelsCount()%>" required/>
             <input type="submit" value="Update" class="btn">
         </form>
-        <form action="${pageContext.request.contextPath}/services">
+        <form action="${pageContext.request.contextPath}/showTelevision">
             <button class="btn">Back</button>
         </form>
     </div>

@@ -10,14 +10,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "TelevisionHistory", urlPatterns = "/televisionHistory")
-public class TelevisionHistory extends HttpServlet {
+@WebServlet(name = "HistoryTelevision", urlPatterns = "/historyTelevision")
+public class HistoryTelevision extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int televisionId = Integer.parseInt(request.getParameter("televisionId"));
         List<Television> televisionList = DaoUtil.getTelevisionDao().getHistory(televisionId);
         request.setAttribute("televisionId", televisionId);
         request.setAttribute("televisionList", televisionList);
-        request.getRequestDispatcher("view/televisionHistory.jsp").forward(request, response);
+        request.getRequestDispatcher("view/historyTelevision.jsp").forward(request, response);
     }
 }

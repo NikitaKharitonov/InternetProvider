@@ -1,55 +1,33 @@
-package ru.internetprovider.model.hibernate;
+package ru.internetprovider.model.dao.implementation.hibernate;
 
 import org.hibernate.Session;
 import org.hibernate.query.Query;
-import ru.internetprovider.model.ServiceDao;
-import ru.internetprovider.model.services.ClientPhone;
+import ru.internetprovider.model.dao.ServiceDao;
+import ru.internetprovider.model.services.ClientInternet;
 import ru.internetprovider.model.services.ClientService;
-import ru.internetprovider.model.services.Phone;
+import ru.internetprovider.model.services.Internet;
 import ru.internetprovider.model.services.Status;
 
 import javax.persistence.EntityTransaction;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-public class PhoneDao implements ServiceDao<Phone> {
+public class InternetDao implements ServiceDao<Internet> {
 
     @Override
-    public List<ClientService> getAll(int clientId) {
-        List<ClientService> phoneClientServiceList = new ArrayList<>();
+    public List<Internet> getHistory(int id) {
+        List<Internet> history = null;
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            Query query = session.createQuery("from ClientPhone where clientId = :clientId");
-            query.setParameter("clientId", clientId);
-            phoneClientServiceList = query.list();
-
-            entityTransaction.commit();
-        } catch (Exception e) {
-            if (entityTransaction != null)
-                entityTransaction.rollback();
-            e.printStackTrace();
-        }
-        return phoneClientServiceList;
-    }
-
-    @Override
-    public List<Phone> getHistory(int id) {
-        List<Phone> history = null;
-        EntityTransaction entityTransaction = null;
-        try (Session session = HibernateUtil.openSession()) {
-            entityTransaction = session.getTransaction();
-            entityTransaction.begin();
-
-            Query query = session.createQuery("from ClientPhone where id = :id");
+            Query query = session.createQuery("from ClientInternet where id = :id");
             query.setParameter("id", id);
-            ClientPhone clientPhone = (ClientPhone) query.getSingleResult();
-            history = clientPhone.getHistory();
-            history.sort(Comparator.comparing(Phone::getBeginDate));
+            ClientInternet clientInternet = (ClientInternet) query.getSingleResult();
+            history = clientInternet.getHistory();
+            history.sort(Comparator.comparing(Internet::getBeginDate));
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -61,56 +39,6 @@ public class PhoneDao implements ServiceDao<Phone> {
     }
 
     @Override
-    public void update(int id, Phone phone) {
-        EntityTransaction entityTransaction = null;
-        try (Session session = HibernateUtil.openSession()) {
-            entityTransaction = session.getTransaction();
-            entityTransaction.begin();
-
-            ClientPhone clientPhone = session.get(ClientPhone.class, id);
-            if (clientPhone.getStatus().equals(Status.ACTIVE)) {
-                Query query = session.createQuery("from Phone where phoneId = :id order by beginDate desc");
-                query.setParameter("id", id);
-                Phone lastPhone = (Phone) query.list().get(0);
-                lastPhone.setEndDate(new Date());
-            } else if (clientPhone.getStatus().equals(Status.SUSPENDED)) {
-                clientPhone.setStatus(Status.ACTIVE);
-            }
-
-            phone.setPhoneId(id);
-            session.persist(phone);
-
-            entityTransaction.commit();
-        } catch (Exception e) {
-            if (entityTransaction != null)
-                entityTransaction.rollback();
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void save(int clientId, Phone phone) {
-        EntityTransaction entityTransaction = null;
-        try (Session session = HibernateUtil.openSession()) {
-            entityTransaction = session.getTransaction();
-            entityTransaction.begin();
-
-            ClientPhone clientService = new ClientPhone(phone.getBeginDate(), Status.ACTIVE);
-            clientService.setClientId(clientId);
-            session.save(clientService);
-
-            phone.setPhoneId(clientService.getId());
-            session.save(phone);
-
-            entityTransaction.commit();
-        } catch (Exception e) {
-            if (entityTransaction != null)
-                entityTransaction.rollback();
-            e.printStackTrace();
-        }
-    }
-
-    @Override
     public ClientService get(int id) {
         ClientService clientService = null;
         EntityTransaction entityTransaction = null;
@@ -118,7 +46,7 @@ public class PhoneDao implements ServiceDao<Phone> {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            Query query = session.createQuery("from ClientPhone where id = :id");
+            Query query = session.createQuery("from ClientInternet where id = :id");
             query.setParameter("id", id);
             clientService = (ClientService) query.getSingleResult();
 
@@ -132,20 +60,90 @@ public class PhoneDao implements ServiceDao<Phone> {
     }
 
     @Override
+    public List<ClientService> getAll(int clientId) {
+        List<ClientService> clientServiceList = null;
+        EntityTransaction entityTransaction = null;
+        try (Session session = HibernateUtil.openSession()) {
+            entityTransaction = session.getTransaction();
+            entityTransaction.begin();
+
+            Query query = session.createQuery("from ClientInternet where clientId = :clientId");
+            query.setParameter("clientId", clientId);
+            clientServiceList = query.list();
+
+            entityTransaction.commit();
+        } catch (Exception e) {
+            if (entityTransaction != null)
+                entityTransaction.rollback();
+            e.printStackTrace();
+        }
+        return clientServiceList;
+    }
+
+    @Override
+    public void update(int id, Internet internet) {
+        EntityTransaction entityTransaction = null;
+        try (Session session = HibernateUtil.openSession()) {
+            entityTransaction = session.getTransaction();
+            entityTransaction.begin();
+
+            ClientInternet clientInternet = session.get(ClientInternet.class, id);
+            if (clientInternet.getStatus().equals(Status.ACTIVE)) {
+                Query query = session.createQuery("from Internet where internetId = :id order by beginDate desc");
+                query.setParameter("id", id);
+                Internet lastInternet = (Internet) query.list().get(0);
+                lastInternet.setEndDate(new Date());
+            } else if (clientInternet.getStatus().equals(Status.SUSPENDED)) {
+                clientInternet.setStatus(Status.ACTIVE);
+            }
+
+            internet.setInternetId(id);
+            session.persist(internet);
+
+            entityTransaction.commit();
+        } catch (Exception e) {
+            if (entityTransaction != null)
+                entityTransaction.rollback();
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void save(int clientId, Internet internet) {
+        EntityTransaction entityTransaction = null;
+        try (Session session = HibernateUtil.openSession()) {
+            entityTransaction = session.getTransaction();
+            entityTransaction.begin();
+
+            ClientInternet clientService = new ClientInternet(internet.getBeginDate(), Status.ACTIVE);
+            clientService.setClientId(clientId);
+            session.save(clientService);
+
+            internet.setInternetId(clientService.getId());
+            session.save(internet);
+
+            entityTransaction.commit();
+        } catch (Exception e) {
+            if (entityTransaction != null)
+                entityTransaction.rollback();
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void suspend(int id) {
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            // fixme get by id
-            Query query = session.createQuery("from Phone where phoneId = :id order by beginDate desc");
+            Query query = session.createQuery("from Internet where internetId = :id order by beginDate desc");
             query.setParameter("id", id);
-            Phone lastPhone = (Phone) query.list().get(0);
-            lastPhone.setEndDate(new Date());
+            Internet lastInternet = (Internet) query.list().get(0);
+            lastInternet.setEndDate(new Date());
 
-            ClientPhone clientPhone = session.get(ClientPhone.class, id);
-            clientPhone.setStatus(Status.SUSPENDED);
+            ClientInternet clientInternet = session.get(ClientInternet.class, id);
+            clientInternet.setStatus(Status.SUSPENDED);
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -162,20 +160,21 @@ public class PhoneDao implements ServiceDao<Phone> {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            ClientPhone clientPhone = session.get(ClientPhone.class, id);
-            clientPhone.setStatus(Status.ACTIVE);
+            ClientInternet clientInternet = session.get(ClientInternet.class, id);
+            clientInternet.setStatus(Status.ACTIVE);
 
-            Query query = session.createQuery("from Phone where phoneId = :id order by beginDate desc");
+            Query query = session.createQuery("from Internet where internetId = :id order by beginDate desc");
             query.setParameter("id", id);
-            Phone lastPhone = (Phone) query.list().get(0);
+            Internet lastInternet = (Internet) query.list().get(0);
 
-            Phone phone = new Phone();
-            phone.setPhoneId(lastPhone.getPhoneId());
-            phone.setSmsCount(lastPhone.getSmsCount());
-            phone.setMinsCount(lastPhone.getMinsCount());
-            phone.setBeginDate(new Date());
+            Internet internet = new Internet();
+            internet.setInternetId(lastInternet.getInternetId());
+            internet.setAntivirus(lastInternet.isAntivirus());
+            internet.setConnectionType(lastInternet.getConnectionType());
+            internet.setSpeed(lastInternet.getSpeed());
+            internet.setBeginDate(new Date());
 
-            session.save(phone);
+            session.save(internet);
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -192,16 +191,16 @@ public class PhoneDao implements ServiceDao<Phone> {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            ClientPhone clientPhone = session.get(ClientPhone.class, id);
+            ClientInternet clientInternet = session.get(ClientInternet.class, id);
 
-            if (clientPhone.getStatus().equals(Status.ACTIVE)) {
-                Query query = session.createQuery("from Phone where phoneId = :id order by beginDate desc");
+            if (clientInternet.getStatus().equals(Status.ACTIVE)) {
+                Query query = session.createQuery("from Internet where internetId = :id order by beginDate desc");
                 query.setParameter("id", id);
-                Phone lastPhone = (Phone) query.list().get(0);
-                lastPhone.setEndDate(new Date());
+                Internet lastInternet = (Internet) query.list().get(0);
+                lastInternet.setEndDate(new Date());
             }
 
-            clientPhone.setStatus(Status.DISCONNECTED);
+            clientInternet.setStatus(Status.DISCONNECTED);
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -213,6 +212,6 @@ public class PhoneDao implements ServiceDao<Phone> {
 
     @Override
     public void delete(int id) {
-        // todo?
+        //todo?
     }
 }

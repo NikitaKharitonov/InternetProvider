@@ -51,6 +51,8 @@
                     <th></th>
                     <th></th>
                     <th></th>
+                    <th></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -61,8 +63,18 @@
                         <td><%=client.getPhoneNumber()%></td>
                         <td><%=client.getEmailAddress()%></td>
                         <td>
-                            <form action="${pageContext.request.contextPath}/services">
-                                <button class="btn" name="clientId" value="<%=client.getId()%>">Get services</button>
+                            <form action="${pageContext.request.contextPath}/showInternet">
+                                <button class="btn" name="clientId" value="<%=client.getId()%>">Internet</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="${pageContext.request.contextPath}/showPhone">
+                                <button class="btn" name="clientId" value="<%=client.getId()%>">Phone</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="${pageContext.request.contextPath}/showTelevision">
+                                <button class="btn" name="clientId" value="<%=client.getId()%>">Television</button>
                             </form>
                         </td>
                         <td>

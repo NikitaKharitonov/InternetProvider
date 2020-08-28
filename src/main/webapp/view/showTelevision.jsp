@@ -4,7 +4,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
     <head>
-        <title>Services</title>
+        <title>Television</title>
         <style>
             <%@ include file="../resources/css/style.css"%>
         </style>
@@ -12,8 +12,6 @@
     <body>
         <%
             long clientId = Long.parseLong(request.getSession().getAttribute("clientId").toString());
-            List<ClientService> internetList = (List<ClientService>) request.getAttribute("internetList");
-            List<ClientService> phoneList = (List<ClientService>) request.getAttribute("phoneList");
             List<ClientService> televisionList = (List<ClientService>) request.getAttribute("televisionList");
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         %>

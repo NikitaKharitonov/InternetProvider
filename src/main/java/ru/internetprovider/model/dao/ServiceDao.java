@@ -5,12 +5,14 @@ import ru.internetprovider.model.services.Service;
 
 import java.util.List;
 
-public interface ServiceDao<T extends Service> extends Dao<ClientService> {
+public interface ServiceDao<S extends Service, T extends ClientService> extends Dao<T> {
 
-    List<ClientService> getAll(int clientId);
-    List<T> getHistory(int id);
-    void update(int id, T t);
-    void save(int clientId, T t);
+//    CS get(int id);
+//    void delete(int id);
+    List<T> getAll(int clientId);
+    List<S> getHistory(int id);
+    void update(int id, S s);
+    void add(int clientId, S s);
     void suspend(int id);
     void activate(int id);
     void disconnect(int id);

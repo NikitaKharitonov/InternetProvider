@@ -4,7 +4,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
     <head>
-        <title>Services</title>
+        <title>Internet</title>
         <style>
             <%@ include file="../resources/css/style.css"%>
         </style>

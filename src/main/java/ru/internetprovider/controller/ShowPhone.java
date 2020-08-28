@@ -33,7 +33,7 @@ public class ShowPhone extends HttpServlet {
             clientId = Integer.parseInt(request.getParameter("clientId"));
         else clientId = (int) request.getSession().getAttribute("clientId");
         request.getSession().setAttribute("clientId", clientId);
-        List<ClientService> phoneList;
+        List<ClientPhone> phoneList;
         phoneList = DaoUtil.getPhoneDao().getAll(clientId);
         phoneList.sort(Comparator.comparing(ClientService::getId));
         for (ClientService clientService: phoneList) {

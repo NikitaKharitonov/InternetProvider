@@ -34,7 +34,7 @@ public class ShowTelevision extends HttpServlet {
             clientId = Integer.parseInt(request.getParameter("clientId"));
         else clientId = (int) request.getSession().getAttribute("clientId");
         request.getSession().setAttribute("clientId", clientId);
-        List<ClientService> televisionList;
+        List<ClientTelevision> televisionList;
         televisionList = DaoUtil.getTelevisionDao().getAll(clientId);
         televisionList.sort(Comparator.comparing(ClientService::getId));
         for (ClientService clientService: televisionList) {

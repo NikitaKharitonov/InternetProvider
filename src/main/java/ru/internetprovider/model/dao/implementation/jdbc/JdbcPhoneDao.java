@@ -1,8 +1,7 @@
 package ru.internetprovider.model.dao.implementation.jdbc;
 
-import ru.internetprovider.model.dao.ServiceDao;
+import ru.internetprovider.model.dao.PhoneDao;
 import ru.internetprovider.model.services.ClientPhone;
-import ru.internetprovider.model.services.ClientService;
 import ru.internetprovider.model.services.Phone;
 import ru.internetprovider.model.services.Status;
 
@@ -11,11 +10,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class PhoneDao implements ServiceDao<Phone> {
+public class JdbcPhoneDao implements PhoneDao {
 
     @Override
-    public List<ClientService> getAll(int clientId) {
-        List<ClientService> phoneClientServiceList = new ArrayList<>();
+    public List<ClientPhone> getAll(int clientId) {
+        List<ClientPhone> phoneClientServiceList = new ArrayList<>();
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM phone WHERE client_id = ?"
@@ -105,7 +104,7 @@ public class PhoneDao implements ServiceDao<Phone> {
     }
 
     @Override
-    public void save(int clientId, Phone phone) {
+    public void add(int clientId, Phone phone) {
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "INSERT INTO phone (client_id, activation_date, status) VALUES (?, NOW(), ?::status) RETURNING id;"
@@ -132,8 +131,8 @@ public class PhoneDao implements ServiceDao<Phone> {
     }
 
     @Override
-    public ClientService get(int id) {
-        ClientService clientService = null;
+    public ClientPhone get(int id) {
+        ClientPhone clientPhone = null;
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM phone WHERE id = ?"
@@ -143,12 +142,12 @@ public class PhoneDao implements ServiceDao<Phone> {
             if (resultSet.next()) {
                 Date activationDate = resultSet.getTimestamp("activation_date");
                 Status status = Status.valueOf(resultSet.getString("status"));
-                clientService = new ClientPhone(id, activationDate, status);
+                clientPhone = new ClientPhone(id, activationDate, status);
             }
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
-        return clientService;
+        return clientPhone;
     }
 
     @Override

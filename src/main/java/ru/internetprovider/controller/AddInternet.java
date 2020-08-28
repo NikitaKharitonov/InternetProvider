@@ -21,7 +21,7 @@ public class AddInternet extends HttpServlet {
         boolean antivirus = request.getParameter("antivirus") != null;
         ConnectionType connectionType = ConnectionType.valueOf(request.getParameter("connectionType"));
         Internet internet = new Internet(new Date(), null, speed, antivirus, connectionType);
-        DaoUtil.getInternetDao().save(clientId, internet);
+        DaoUtil.getInternetDao().add(clientId, internet);
         response.sendRedirect(request.getContextPath() + "/showInternet");
     }
 

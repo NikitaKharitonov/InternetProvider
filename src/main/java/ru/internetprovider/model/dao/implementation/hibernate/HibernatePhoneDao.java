@@ -2,6 +2,7 @@ package ru.internetprovider.model.dao.implementation.hibernate;
 
 import org.hibernate.Session;
 import org.hibernate.query.Query;
+import ru.internetprovider.model.dao.PhoneDao;
 import ru.internetprovider.model.dao.ServiceDao;
 import ru.internetprovider.model.services.ClientPhone;
 import ru.internetprovider.model.services.ClientService;
@@ -14,11 +15,11 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-public class PhoneDao implements ServiceDao<Phone> {
+public class HibernatePhoneDao implements PhoneDao {
 
     @Override
-    public List<ClientService> getAll(int clientId) {
-        List<ClientService> phoneClientServiceList = new ArrayList<>();
+    public List<ClientPhone> getAll(int clientId) {
+        List<ClientPhone> phoneClientServiceList = new ArrayList<>();
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
@@ -89,7 +90,7 @@ public class PhoneDao implements ServiceDao<Phone> {
     }
 
     @Override
-    public void save(int clientId, Phone phone) {
+    public void add(int clientId, Phone phone) {
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
@@ -111,8 +112,8 @@ public class PhoneDao implements ServiceDao<Phone> {
     }
 
     @Override
-    public ClientService get(int id) {
-        ClientService clientService = null;
+    public ClientPhone get(int id) {
+        ClientPhone clientPhone = null;
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
@@ -120,7 +121,7 @@ public class PhoneDao implements ServiceDao<Phone> {
 
             Query query = session.createQuery("from ClientPhone where id = :id");
             query.setParameter("id", id);
-            clientService = (ClientService) query.getSingleResult();
+            clientPhone = (ClientPhone) query.getSingleResult();
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -128,7 +129,7 @@ public class PhoneDao implements ServiceDao<Phone> {
                 entityTransaction.rollback();
             e.printStackTrace();
         }
-        return clientService;
+        return clientPhone;
     }
 
     @Override

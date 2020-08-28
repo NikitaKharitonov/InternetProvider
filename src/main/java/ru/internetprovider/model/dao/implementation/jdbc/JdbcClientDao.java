@@ -1,14 +1,14 @@
 package ru.internetprovider.model.dao.implementation.jdbc;
 
-import ru.internetprovider.model.dao.Dao;
 import ru.internetprovider.model.Client;
+import ru.internetprovider.model.dao.ClientDao;
 import ru.internetprovider.model.exceptions.InvalidClientDataException;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClientDao implements Dao<Client> {
+public class JdbcClientDao implements ClientDao {
 
 
     @Override
@@ -32,6 +32,7 @@ public class ClientDao implements Dao<Client> {
         return client;
     }
 
+    @Override
     public List<Client> getAll() {
         List<Client> clientList = null;
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
@@ -51,7 +52,8 @@ public class ClientDao implements Dao<Client> {
         return clientList;
     }
 
-    public void update(long id, Client client) {
+    @Override
+    public void update(int id, Client client) {
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "UPDATE client SET name = ?, phone_number = ?, email_address = ? WHERE id = ?"
@@ -68,6 +70,7 @@ public class ClientDao implements Dao<Client> {
         }
     }
 
+    @Override
     public void add(Client client) {
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(

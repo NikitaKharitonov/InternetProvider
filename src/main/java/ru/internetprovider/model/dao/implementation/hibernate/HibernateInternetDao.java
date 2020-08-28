@@ -2,6 +2,7 @@ package ru.internetprovider.model.dao.implementation.hibernate;
 
 import org.hibernate.Session;
 import org.hibernate.query.Query;
+import ru.internetprovider.model.dao.InternetDao;
 import ru.internetprovider.model.dao.ServiceDao;
 import ru.internetprovider.model.services.ClientInternet;
 import ru.internetprovider.model.services.ClientService;
@@ -13,7 +14,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-public class InternetDao implements ServiceDao<Internet> {
+public class HibernateInternetDao implements InternetDao {
 
     @Override
     public List<Internet> getHistory(int id) {
@@ -39,8 +40,8 @@ public class InternetDao implements ServiceDao<Internet> {
     }
 
     @Override
-    public ClientService get(int id) {
-        ClientService clientService = null;
+    public ClientInternet get(int id) {
+        ClientInternet clientInternet = null;
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
@@ -48,7 +49,7 @@ public class InternetDao implements ServiceDao<Internet> {
 
             Query query = session.createQuery("from ClientInternet where id = :id");
             query.setParameter("id", id);
-            clientService = (ClientService) query.getSingleResult();
+            clientInternet = (ClientInternet) query.getSingleResult();
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -56,12 +57,12 @@ public class InternetDao implements ServiceDao<Internet> {
                 entityTransaction.rollback();
             e.printStackTrace();
         }
-        return clientService;
+        return clientInternet;
     }
 
     @Override
-    public List<ClientService> getAll(int clientId) {
-        List<ClientService> clientServiceList = null;
+    public List<ClientInternet> getAll(int clientId) {
+        List<ClientInternet> clientInternetList = null;
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
@@ -69,7 +70,7 @@ public class InternetDao implements ServiceDao<Internet> {
 
             Query query = session.createQuery("from ClientInternet where clientId = :clientId");
             query.setParameter("clientId", clientId);
-            clientServiceList = query.list();
+            clientInternetList = query.list();
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -77,7 +78,7 @@ public class InternetDao implements ServiceDao<Internet> {
                 entityTransaction.rollback();
             e.printStackTrace();
         }
-        return clientServiceList;
+        return clientInternetList;
     }
 
     @Override
@@ -109,7 +110,7 @@ public class InternetDao implements ServiceDao<Internet> {
     }
 
     @Override
-    public void save(int clientId, Internet internet) {
+    public void add(int clientId, Internet internet) {
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();

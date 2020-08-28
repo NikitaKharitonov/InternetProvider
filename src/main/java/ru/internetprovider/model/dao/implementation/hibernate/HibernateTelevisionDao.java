@@ -3,6 +3,7 @@ package ru.internetprovider.model.dao.implementation.hibernate;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import ru.internetprovider.model.dao.ServiceDao;
+import ru.internetprovider.model.dao.TelevisionDao;
 import ru.internetprovider.model.services.ClientService;
 import ru.internetprovider.model.services.ClientTelevision;
 import ru.internetprovider.model.services.Status;
@@ -13,11 +14,11 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-public class TelevisionDao implements ServiceDao<Television> {
+public class HibernateTelevisionDao implements TelevisionDao {
 
     @Override
-    public List<ClientService> getAll(int clientId) {
-        List<ClientService> televisionClientServiceList = null;
+    public List<ClientTelevision> getAll(int clientId) {
+        List<ClientTelevision> televisionClientServiceList = null;
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
@@ -88,7 +89,7 @@ public class TelevisionDao implements ServiceDao<Television> {
     }
 
     @Override
-    public void save(int clientId, Television television) {
+    public void add(int clientId, Television television) {
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
@@ -110,8 +111,8 @@ public class TelevisionDao implements ServiceDao<Television> {
     }
 
     @Override
-    public ClientService get(int id) {
-        ClientService clientService = null;
+    public ClientTelevision get(int id) {
+        ClientTelevision clientTelevision = null;
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
@@ -119,7 +120,7 @@ public class TelevisionDao implements ServiceDao<Television> {
 
             Query query = session.createQuery("from ClientTelevision where id = :id");
             query.setParameter("id", id);
-            clientService = (ClientService) query.getSingleResult();
+            clientTelevision = (ClientTelevision) query.getSingleResult();
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -127,7 +128,7 @@ public class TelevisionDao implements ServiceDao<Television> {
                 entityTransaction.rollback();
             e.printStackTrace();
         }
-        return clientService;
+        return clientTelevision;
     }
 
     @Override

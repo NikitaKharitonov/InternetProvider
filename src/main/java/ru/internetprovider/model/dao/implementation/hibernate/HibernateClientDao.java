@@ -3,12 +3,13 @@ package ru.internetprovider.model.dao.implementation.hibernate;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import ru.internetprovider.model.Client;
+import ru.internetprovider.model.dao.ClientDao;
 import ru.internetprovider.model.dao.Dao;
 
 import javax.persistence.EntityTransaction;
 import java.util.List;
 
-public class ClientDao implements Dao<Client> {
+public class HibernateClientDao implements ClientDao {
 
     @Override
     public Client get(int id) {
@@ -30,6 +31,7 @@ public class ClientDao implements Dao<Client> {
         return client;
     }
 
+    @Override
     public List<Client> getAll() {
         List<Client> clientList = null;
         EntityTransaction entityTransaction = null;
@@ -49,6 +51,7 @@ public class ClientDao implements Dao<Client> {
         return clientList;
     }
 
+    @Override
     public void update(int id, Client client) {
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
@@ -70,6 +73,7 @@ public class ClientDao implements Dao<Client> {
         }
     }
 
+    @Override
     public void add(Client client) {
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {

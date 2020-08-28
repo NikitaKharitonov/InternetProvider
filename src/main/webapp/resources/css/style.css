@@ -91,7 +91,7 @@ a:hover {
     padding: 33px 30px;
 }
 
-table, .add {
+table, .container {
     border-spacing: 1px;
     border-collapse: collapse;
     border-radius: 10px;
@@ -103,7 +103,7 @@ table, .add {
     position: relative;
 }
 
-.add {
+.container {
     width: 20%;
     margin-bottom: 50px;
 }

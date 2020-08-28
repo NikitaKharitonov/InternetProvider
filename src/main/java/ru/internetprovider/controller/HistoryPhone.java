@@ -1,6 +1,6 @@
 package ru.internetprovider.controller;
 
-import ru.internetprovider.model.services.Phone;
+import ru.internetprovider.model.services.TemporalPhone;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,9 +15,9 @@ public class HistoryPhone extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int phoneId = Integer.parseInt(request.getParameter("phoneId"));
-        List<Phone> phoneList = DaoUtil.getPhoneDao().getHistory(phoneId);
+        List<TemporalPhone> history = DaoUtil.getPhoneDao().getHistory(phoneId);
         request.setAttribute("phoneId", phoneId);
-        request.setAttribute("phoneList", phoneList);
+        request.setAttribute("history", history);
         request.getRequestDispatcher("view/historyPhone.jsp").forward(request, response);
     }
 }

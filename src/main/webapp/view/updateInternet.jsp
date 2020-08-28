@@ -1,28 +1,28 @@
-<%@ page import="ru.internetprovider.model.services.Internet" %>
+<%@ page import="ru.internetprovider.model.services.TemporalInternet" %>
 <%@ page import="java.util.List" %>
 <%@ page import="ru.internetprovider.model.services.ConnectionType" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Update internet</title>
+    <title>Update Internet</title>
     <style>
         <%@ include file="../resources/css/style.css"%>
     </style>
 </head>
 <body>
     <%
-        Internet internet = (Internet) request.getAttribute("internet");
+        TemporalInternet temporalInternet = (TemporalInternet) request.getAttribute("internet");
     %>
     <div class="form-container">
         <form method="post" action="${pageContext.request.contextPath}/updateInternet">
-            <h1>Update internet #<%=request.getSession().getAttribute("internetId")%></h1>
-            <input name="speed" type="number" min="1" value="<%=internet.getSpeed()%>" required/>
+            <h1>Update Internet #<%=request.getSession().getAttribute("internetId")%></h1>
+            <input name="speed" type="number" min="1" value="<%=temporalInternet.getSpeed()%>" required/>
             <label>Antivirus:
-                <input name="antivirus" type="checkbox" <%=internet.isAntivirus() ? "checked" : ""%>>
+                <input name="antivirus" type="checkbox" <%=temporalInternet.isAntivirus() ? "checked" : ""%>>
             </label>
             <label>Connection Type:
                 <select name="connectionType">
-                    <option selected><%=internet.getConnectionType()%></option>
+                    <option selected><%=temporalInternet.getConnectionType()%></option>
                     <%List<ConnectionType> connectionTypeList = (List<ConnectionType>) request.getSession().getAttribute("connectionTypeList");%>
                     <%for(ConnectionType connectionType: connectionTypeList) {%>
                     <option><%=connectionType.toString()%></option>

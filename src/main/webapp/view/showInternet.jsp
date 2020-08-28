@@ -12,7 +12,7 @@
     <body>
         <%
             long clientId = Long.parseLong(request.getSession().getAttribute("clientId").toString());
-            List<ClientService> internetList = (List<ClientService>) request.getAttribute("internetList");
+            List<Internet> internetList = (List<Internet>) request.getAttribute("internetList");
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         %>
         <div class="container-table">
@@ -38,36 +38,36 @@
                 </tr>
                 </thead>
                 <tbody>
-                <% if (internetList != null) for (ClientService clientService: internetList) { %>
-                    <% if (!clientService.getStatus().equals(Status.DISCONNECTED)) { %>
+                <% if (internetList != null) for (Service service : internetList) { %>
+                    <% if (!service.getStatus().equals(Status.DISCONNECTED)) { %>
                         <tr>
-                            <td><%=clientService.getId()%></td>
-                            <td><%=formatter.format(clientService.getActivationDate())%></td>
-                            <td><%=clientService.getStatus()%></td>
-                            <% List<Internet> history = ((ClientInternet)clientService).getHistory(); %>
+                            <td><%=service.getId()%></td>
+                            <td><%=formatter.format(service.getActivationDate())%></td>
+                            <td><%=service.getStatus()%></td>
+                            <% List<TemporalInternet> history = ((Internet) service).getHistory(); %>
 <%--                            <% history.sort((i1, i2) -> i1.getBeginDate().compareTo(i2.getBeginDate())); %>--%>
-                            <% Internet current = history.get(history.size() - 1); %>
+                            <% TemporalInternet current = history.get(history.size() - 1); %>
                             <td><%=current.getSpeed()%></td>
                             <td><%=current.isAntivirus()%></td>
                             <td><%=current.getConnectionType()%></td>
                             <td>
                                 <form action="${pageContext.request.contextPath}/historyInternet">
-                                    <button class="btn" name="internetId" value="<%=clientService.getId()%>">Get history</button>
+                                    <button class="btn" name="internetId" value="<%=service.getId()%>">Get history</button>
                                 </form>
                             </td>
                             <td>
                                 <form action="${pageContext.request.contextPath}/updateInternet">
-                                    <button name="internetId" value="<%=clientService.getId()%>" class="btn">Update</button>
+                                    <button name="internetId" value="<%=service.getId()%>" class="btn">Update</button>
                                 </form>
                             </td>
                             <td>
                                 <form method="post">
-                                    <button name="internetId" value="<%=clientService.getId()%>" class="btn"><%=clientService.getStatus().equals(Status.ACTIVE) ? "Suspend" : "Activate"%></button>
+                                    <button name="internetId" value="<%=service.getId()%>" class="btn"><%=service.getStatus().equals(Status.ACTIVE) ? "Suspend" : "Activate"%></button>
                                 </form>
                             </td>
                             <td>
                                 <form method="post" action="${pageContext.request.contextPath}/disconnectInternet">
-                                    <button name="internetId" value="<%=clientService.getId()%>" class="btn" style="color: red">Disconnect</button>
+                                    <button name="internetId" value="<%=service.getId()%>" class="btn" style="color: red">Disconnect</button>
                                 </form>
                             </td>
                         </tr>
@@ -75,18 +75,19 @@
                 <% } %>
                 </tbody>
             </table>
-            <div class="add">
+            <div class="container">
                 <form action="${pageContext.request.contextPath}/addInternet">
-                <button class="btn" name="button" value="internet">Add...</button>
+                    <button class="btn" name="button" value="internet">Add...</button>
                 </form>
             </div>
 
             <br/>
+            <div class="container">
+                <form action="${pageContext.request.contextPath}/">
+                    <button class="btn">Back</button>
+                </form>
+            </div>
         </div>
-        <div>
-            <form action="${pageContext.request.contextPath}/">
-                <button class="btn">Back</button>
-            </form>
-        </div>
+
     </body>
 </html>

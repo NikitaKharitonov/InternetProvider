@@ -1,6 +1,6 @@
 package ru.internetprovider.controller;
 
-import ru.internetprovider.model.services.Television;
+import ru.internetprovider.model.services.TemporalTelevision;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,14 +17,14 @@ public class UpdateTelevision extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int televisionId = Integer.parseInt((String) request.getSession().getAttribute("televisionId"));
         int channelsCount = Integer.parseInt(request.getParameter("channelsCount"));
-        DaoUtil.getTelevisionDao().update(televisionId, new Television(new Date(), null, channelsCount));
+        DaoUtil.getTelevisionDao().update(televisionId, new TemporalTelevision(new Date(), null, channelsCount));
         response.sendRedirect(request.getContextPath() + "/showTelevision");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String televisionId = request.getParameter("televisionId");
-        List<Television> televisionList = DaoUtil.getTelevisionDao().getHistory(Integer.parseInt(televisionId));
-        request.setAttribute("television", televisionList.get(televisionList.size() - 1));
+        List<TemporalTelevision> history = DaoUtil.getTelevisionDao().getHistory(Integer.parseInt(televisionId));
+        request.setAttribute("television", history.get(history.size() - 1));
         request.getSession().setAttribute("televisionId", televisionId);
         request.getRequestDispatcher("view/updateTelevision.jsp").forward(request, response);
 

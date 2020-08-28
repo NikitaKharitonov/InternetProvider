@@ -12,7 +12,7 @@
     <body>
         <%
             long clientId = Long.parseLong(request.getSession().getAttribute("clientId").toString());
-            List<ClientService> televisionList = (List<ClientService>) request.getAttribute("televisionList");
+            List<Television> televisionList = (List<Television>) request.getAttribute("televisionList");
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         %>
         <div class="container-table">
@@ -37,33 +37,33 @@
                 </tr>
                 </thead>
                 <tbody>
-                <%if (televisionList != null) for (ClientService clientService: televisionList) { %>
-                    <% if (!clientService.getStatus().equals(Status.DISCONNECTED)) { %>
+                <%if (televisionList != null) for (Service service : televisionList) { %>
+                    <% if (!service.getStatus().equals(Status.DISCONNECTED)) { %>
                         <tr>
-                            <td><%=clientService.getId()%></td>
-                            <td><%=formatter.format(clientService.getActivationDate())%></td>
-                            <td><%=clientService.getStatus()%></td>
-                            <% List<Television> history = ((ClientTelevision)clientService).getHistory(); %>
-                            <% Television current = history.get(history.size() - 1); %>
+                            <td><%=service.getId()%></td>
+                            <td><%=formatter.format(service.getActivationDate())%></td>
+                            <td><%=service.getStatus()%></td>
+                            <% List<TemporalTelevision> history = ((Television) service).getHistory(); %>
+                            <% TemporalTelevision current = history.get(history.size() - 1); %>
                             <td><%=current.getChannelsCount()%></td>
                             <td>
                                 <form action="${pageContext.request.contextPath}/historyTelevision">
-                                    <button name="televisionId" value="<%=clientService.getId()%>" class="btn">Get history</button>
+                                    <button name="televisionId" value="<%=service.getId()%>" class="btn">Get history</button>
                                 </form>
                             </td>
                             <td>
                                 <form action="${pageContext.request.contextPath}/updateTelevision">
-                                    <button name="televisionId" value="<%=clientService.getId()%>" class="btn">Update</button>
+                                    <button name="televisionId" value="<%=service.getId()%>" class="btn">Update</button>
                                 </form>
                             </td>
                             <td>
                                 <form method="post">
-                                    <button name="televisionId" value="<%=clientService.getId()%>" class="btn"><%=clientService.getStatus().equals(Status.ACTIVE) ? "Suspend" : "Activate"%></button>
+                                    <button name="televisionId" value="<%=service.getId()%>" class="btn"><%=service.getStatus().equals(Status.ACTIVE) ? "Suspend" : "Activate"%></button>
                                 </form>
                             </td>
                             <td>
-                                <form method="get" action="${pageContext.request.contextPath}/disconnect">
-                                    <button name="televisionId" value="<%=clientService.getId()%>" class="btn" style="color: red">Disconnect</button>
+                                <form method="post" action="${pageContext.request.contextPath}/disconnectTelevision">
+                                    <button name="televisionId" value="<%=service.getId()%>" class="btn" style="color: red">Disconnect</button>
                                 </form>
                             </td>
                         </tr>
@@ -71,17 +71,17 @@
                 <% } %>
                 </tbody>
             </table>
-            <div class="add">
+            <div class="container">
                 <form action="${pageContext.request.contextPath}/addTelevision">
                         <button class="btn" name="button" value="television">Add...</button>
                 </form>
             </div>
             <br/>
-        </div>
-        <div>
-            <form action="${pageContext.request.contextPath}/">
-                <button class="btn">Back</button>
-            </form>
+            <div class="container">
+                <form action="${pageContext.request.contextPath}/">
+                    <button class="btn">Back</button>
+                </form>
+            </div>
         </div>
     </body>
 </html>

@@ -3,39 +3,41 @@ package ru.internetprovider.model.services;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 @Entity
-@Table(name = "internet_history")
-public class Internet implements Service {
+@Table(name = "internet")
+public class Internet implements Service<TemporalInternet> {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name = "internet_id")
-    private int internetId;
-    @Column(name = "begin_date")
-    private Date beginDate;
-    @Column(name = "end_date")
-    private Date endDate;
-    @Column(name = "speed")
-    private int speed;
-    @Column(name = "antivirus")
-    private boolean antivirus;
+    @Column(name = "client_id")
+    private int clientId;
+    @Column(name = "activation_date")
+    private Date activationDate;
     @Enumerated(EnumType.STRING)
-    @Column(name = "connection_type", columnDefinition = "connection_type")
+    @Column(name = "status", columnDefinition = "status")
     @Type(type = "ru.internetprovider.model.services.PostgreSQLEnumType")
-    private ConnectionType connectionType;
+    private Status status;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "internet_id")
+    private List<TemporalInternet> history;
 
-    public Internet(Date beginDate, Date endDate, int speed, boolean antivirus, ConnectionType connectionType) {
-        this.beginDate = beginDate;
-        this.endDate = endDate;
-        this.speed = speed;
-        this.antivirus = antivirus;
-        this.connectionType = connectionType;
+    public Internet(Date activationDate, Status status) {
+        this.activationDate = activationDate;
+        this.status = status;
     }
 
     public Internet() {
+    }
+
+    public Internet(int id, Date activationDate, Status status) {
+        this.id = id;
+        this.activationDate = activationDate;
+        this.status = status;
     }
 
     public int getId() {
@@ -46,64 +48,47 @@ public class Internet implements Service {
         this.id = id;
     }
 
-    public int getInternetId() {
-        return internetId;
+    public int getClientId() {
+        return clientId;
     }
 
-    public void setInternetId(int internetId) {
-        this.internetId = internetId;
+    public void setClientId(int clientId) {
+        this.clientId = clientId;
     }
 
-    public Date getBeginDate() {
-        return beginDate;
+    public Date getActivationDate() {
+        return activationDate;
     }
 
-    public void setBeginDate(Date beginDate) {
-        this.beginDate = beginDate;
+    public void setActivationDate(Date activationDate) {
+        this.activationDate = activationDate;
     }
 
-    public Date getEndDate() {
-        return endDate;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
-    public int getSpeed() {
-        return speed;
+    public List<TemporalInternet> getHistory() {
+        return history;
     }
 
-    public void setSpeed(int speed) {
-        this.speed = speed;
-    }
-
-    public boolean isAntivirus() {
-        return antivirus;
-    }
-
-    public void setAntivirus(boolean antivirus) {
-        this.antivirus = antivirus;
-    }
-
-    public ConnectionType getConnectionType() {
-        return connectionType;
-    }
-
-    public void setConnectionType(ConnectionType connectionType) {
-        this.connectionType = connectionType;
+    public void setHistory(List<TemporalInternet> history) {
+        this.history = history;
+        this.history.sort(Comparator.comparing(TemporalInternet::getBeginDate));
     }
 
     @Override
     public String toString() {
-        return "Internet{" +
+        return "ClientInternet{" +
                 "id=" + id +
-                ", internetId=" + internetId +
-                ", beginDate=" + beginDate +
-                ", endDate=" + endDate +
-                ", speed=" + speed +
-                ", antivirus=" + antivirus +
-                ", connectionType=" + connectionType +
+                ", clientId=" + clientId +
+                ", activationDate=" + activationDate +
+                ", status=" + status +
+                ", history=" + history +
                 '}';
     }
 }

@@ -1,7 +1,7 @@
 package ru.internetprovider.controller;
 
 import ru.internetprovider.model.services.ConnectionType;
-import ru.internetprovider.model.services.Internet;
+import ru.internetprovider.model.services.TemporalInternet;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,14 +23,14 @@ public class UpdateInternet extends HttpServlet {
         int speed = Integer.parseInt(request.getParameter("speed"));
         boolean antivirus = request.getParameter("antivirus") != null;
         ConnectionType connectionType = ConnectionType.valueOf(request.getParameter("connectionType"));
-        DaoUtil.getInternetDao().update(internetId, new Internet(new Date(), null, speed, antivirus, connectionType));
+        DaoUtil.getInternetDao().update(internetId, new TemporalInternet(new Date(), null, speed, antivirus, connectionType));
         response.sendRedirect(request.getContextPath() + "/showInternet");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String internetId = request.getParameter("internetId");
-        List<Internet> internetList = DaoUtil.getInternetDao().getHistory(Integer.parseInt(internetId));
-        request.setAttribute("internet", internetList.get(internetList.size() - 1));
+        List<TemporalInternet> history = DaoUtil.getInternetDao().getHistory(Integer.parseInt(internetId));
+        request.setAttribute("internet", history.get(history.size() - 1));
         ConnectionType[] connectionTypeArray = ConnectionType.values();
         List<ConnectionType> connectionTypeList = new ArrayList<>(Arrays.asList(connectionTypeArray));
         request.getSession().setAttribute("connectionTypeList", connectionTypeList);

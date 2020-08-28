@@ -17,8 +17,8 @@ public class ShowTelevision extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getParameter("televisionId") != null) {
             int id = Integer.parseInt(request.getParameter("televisionId"));
-            ClientService televisionClientService = DaoUtil.getTelevisionDao().get(id);
-            Status status = televisionClientService.getStatus();
+            Television television = DaoUtil.getTelevisionDao().get(id);
+            Status status = television.getStatus();
             if (status.equals(Status.ACTIVE))
                 DaoUtil.getTelevisionDao().suspend(id);
             else if (status.equals(Status.SUSPENDED)) {
@@ -34,11 +34,11 @@ public class ShowTelevision extends HttpServlet {
             clientId = Integer.parseInt(request.getParameter("clientId"));
         else clientId = (int) request.getSession().getAttribute("clientId");
         request.getSession().setAttribute("clientId", clientId);
-        List<ClientTelevision> televisionList;
+        List<Television> televisionList;
         televisionList = DaoUtil.getTelevisionDao().getAll(clientId);
-        televisionList.sort(Comparator.comparing(ClientService::getId));
-        for (ClientService clientService: televisionList) {
-            ((ClientTelevision)clientService).getHistory().sort(Comparator.comparing(Television::getBeginDate));
+        televisionList.sort(Comparator.comparing(Service::getId));
+        for (Television television : televisionList) {
+            television.getHistory().sort(Comparator.comparing(TemporalTelevision::getBeginDate));
         }
         request.setAttribute("televisionList", televisionList);
         request.getRequestDispatcher("view/showTelevision.jsp").forward(request, response);

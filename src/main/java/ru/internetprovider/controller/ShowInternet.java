@@ -33,11 +33,11 @@ public class ShowInternet extends HttpServlet {
             clientId = Integer.parseInt(request.getParameter("clientId"));
         else clientId = (int) request.getSession().getAttribute("clientId");
         request.getSession().setAttribute("clientId", clientId);
-        List<ClientInternet> internetList;
+        List<Internet> internetList;
         internetList = DaoUtil.getInternetDao().getAll(clientId);
-        internetList.sort(Comparator.comparing(ClientService::getId));
-        for (ClientInternet clientInternet: internetList) {
-            clientInternet.getHistory().sort(Comparator.comparing(Internet::getBeginDate));
+        internetList.sort(Comparator.comparing(Service::getId));
+        for (Internet internet : internetList) {
+            internet.getHistory().sort(Comparator.comparing(TemporalInternet::getBeginDate));
         }
         request.setAttribute("internetList", internetList);
         request.getRequestDispatcher("view/showInternet.jsp").forward(request, response);

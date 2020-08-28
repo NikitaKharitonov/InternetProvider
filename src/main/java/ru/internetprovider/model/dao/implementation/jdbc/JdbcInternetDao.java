@@ -11,12 +11,12 @@ import java.util.List;
 public class JdbcInternetDao implements InternetDao {
 
     @Override
-    public List<Internet> getHistory(int id) {
-        List<Internet> history = null;
+    public List<TemporalInternet> getHistory(int id) {
+        List<TemporalInternet> history = null;
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement pstmt = connection.prepareStatement(
                     "SELECT * " +
-                            "FROM internet_history WHERE internet_id = ? ORDER BY begin_date;"
+                            "FROM temporal_internet WHERE internet_id = ? ORDER BY begin_date;"
             );
             pstmt.setLong(1, id);
             ResultSet resultSet = pstmt.executeQuery();
@@ -27,7 +27,7 @@ public class JdbcInternetDao implements InternetDao {
                 int speed = resultSet.getInt("speed");
                 boolean antivirus = resultSet.getBoolean("antivirus");
                 ConnectionType connectionType = ConnectionType.valueOf(resultSet.getString("connection_type"));
-                history.add(new Internet(beginDate, endDate, speed, antivirus, connectionType));
+                history.add(new TemporalInternet(beginDate, endDate, speed, antivirus, connectionType));
             }
         } catch (SQLException exception) {
             exception.printStackTrace();
@@ -36,8 +36,8 @@ public class JdbcInternetDao implements InternetDao {
     }
 
     @Override
-    public ClientInternet get(int id) {
-        ClientInternet clientInternet = null;
+    public Internet get(int id) {
+        Internet internet = null;
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM internet WHERE id = ?"
@@ -47,41 +47,41 @@ public class JdbcInternetDao implements InternetDao {
             if (resultSet.next()) {
                 Date activationDate = resultSet.getTimestamp("activation_date");
                 Status status = Status.valueOf(resultSet.getString("status"));
-                clientInternet = new ClientInternet(id, activationDate, status);
+                internet = new Internet(id, activationDate, status);
             }
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
-        return clientInternet;
+        return internet;
     }
 
     @Override
-    public List<ClientInternet> getAll(int clientId) {
-        List<ClientInternet> clientInternetList = null;
+    public List<Internet> getAll(int clientId) {
+        List<Internet> internetList = null;
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM internet WHERE client_id = ?"
             );
             preparedStatement.setLong(1, clientId);
             ResultSet resultSet = preparedStatement.executeQuery();
-            clientInternetList = new ArrayList<>();
+            internetList = new ArrayList<>();
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 Date activationDate = resultSet.getTimestamp("activation_date");
                 Status status = Status.valueOf(resultSet.getString("status"));
-                List<Internet> internetList = getHistory(id);
-                ClientInternet clientService = new ClientInternet(id, activationDate, status);
-                clientService.setHistory(internetList);
-                clientInternetList.add(clientService);
+                List<TemporalInternet> temporalInternetList = getHistory(id);
+                Internet internet = new Internet(id, activationDate, status);
+                internet.setHistory(temporalInternetList);
+                internetList.add(internet);
             }
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
-        return clientInternetList;
+        return internetList;
     }
 
     @Override
-    public void update(int id, Internet internet) {
+    public void update(int id, TemporalInternet temporalInternet) {
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT status from internet where id = ?"
@@ -92,8 +92,8 @@ public class JdbcInternetDao implements InternetDao {
                 Status status = Status.valueOf(resultSet.getString("status"));
                 if (status.equals(Status.ACTIVE)) {
                     preparedStatement = connection.prepareStatement(
-                            "UPDATE internet_history SET end_date = NOW() WHERE begin_date " +
-                                    "= (SELECT MAX(begin_date) FROM internet_history WHERE internet_id = ?)"
+                            "UPDATE temporal_internet SET end_date = NOW() WHERE begin_date " +
+                                    "= (SELECT MAX(begin_date) FROM temporal_internet WHERE internet_id = ?)"
                     );
                     preparedStatement.setInt(1, id);
                     preparedStatement.executeUpdate();
@@ -108,14 +108,14 @@ public class JdbcInternetDao implements InternetDao {
                     preparedStatement.executeUpdate();
                 }
                 preparedStatement = connection.prepareStatement(
-                        "INSERT INTO internet_history " +
+                        "INSERT INTO temporal_internet " +
                                 "(internet_id, begin_date, speed, antivirus, connection_type) " +
                                 "VALUES (?, NOW(), ?, ?, ?::connection_type);"
                 );
                 preparedStatement.setLong(1, id);
-                preparedStatement.setInt(2, internet.getSpeed());
-                preparedStatement.setBoolean(3, internet.isAntivirus());
-                preparedStatement.setString(4, String.valueOf(internet.getConnectionType()));
+                preparedStatement.setInt(2, temporalInternet.getSpeed());
+                preparedStatement.setBoolean(3, temporalInternet.isAntivirus());
+                preparedStatement.setString(4, String.valueOf(temporalInternet.getConnectionType()));
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException exception) {
@@ -124,7 +124,7 @@ public class JdbcInternetDao implements InternetDao {
     }
 
     @Override
-    public void add(int clientId, Internet internet) {
+    public void add(int clientId, TemporalInternet temporalInternet) {
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "INSERT INTO internet (client_id, activation_date, status) VALUES (?, NOW(), ?::status) RETURNING id;"
@@ -135,14 +135,14 @@ public class JdbcInternetDao implements InternetDao {
             resultSet.next();
             long internetId = resultSet.getLong("id");
             preparedStatement = connection.prepareStatement(
-                    "INSERT INTO internet_history " +
+                    "INSERT INTO temporal_internet " +
                             "(internet_id, begin_date, speed, antivirus, connection_type) " +
                             "VALUES (?, NOW(), ?, ?, ?::connection_type);"
             );
             preparedStatement.setLong(1, internetId);
-            preparedStatement.setInt(2, internet.getSpeed());
-            preparedStatement.setBoolean(3, internet.isAntivirus());
-            preparedStatement.setString(4, String.valueOf(internet.getConnectionType()));
+            preparedStatement.setInt(2, temporalInternet.getSpeed());
+            preparedStatement.setBoolean(3, temporalInternet.isAntivirus());
+            preparedStatement.setString(4, String.valueOf(temporalInternet.getConnectionType()));
             if (preparedStatement.executeUpdate() == 0) {
                 throw new SQLException("Failed to insert to database");
             }
@@ -155,8 +155,8 @@ public class JdbcInternetDao implements InternetDao {
     public void suspend(int id) {
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "UPDATE internet_history SET end_date = NOW() WHERE begin_date = " +
-                            "(SELECT MAX(begin_date) FROM internet_history WHERE internet_id = ?)"
+                    "UPDATE temporal_internet SET end_date = NOW() WHERE begin_date = " +
+                            "(SELECT MAX(begin_date) FROM temporal_internet WHERE internet_id = ?)"
             );
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
@@ -181,9 +181,9 @@ public class JdbcInternetDao implements InternetDao {
             preparedStatement.setString(1, String.valueOf(Status.ACTIVE));
             preparedStatement.executeUpdate();
             preparedStatement = connection.prepareStatement(
-                    "INSERT into internet_history (internet_id, begin_date, speed, antivirus, connection_type) " +
+                    "INSERT into temporal_internet (internet_id, begin_date, speed, antivirus, connection_type) " +
                             "select internet_id, now(), speed, antivirus, connection_type " +
-                            "from internet_history where begin_date = (SELECT MAX(begin_date) FROM internet_history " +
+                            "from temporal_internet where begin_date = (SELECT MAX(begin_date) FROM temporal_internet " +
                             "WHERE internet_id = ?);"
             );
             preparedStatement.setInt(1, id);
@@ -205,15 +205,15 @@ public class JdbcInternetDao implements InternetDao {
                 Status status = Status.valueOf(resultSet.getString("status"));
                 if (status.equals(Status.ACTIVE)) {
                     preparedStatement = connection.prepareStatement(
-                            "UPDATE internet_history SET end_date = NOW() WHERE begin_date = " +
-                                    "(SELECT MAX(begin_date) FROM internet_history WHERE internet_id = ?)"
+                            "UPDATE temporal_internet SET end_date = NOW() WHERE begin_date = " +
+                                    "(SELECT MAX(begin_date) FROM temporal_internet WHERE internet_id = ?)"
                     );
                     preparedStatement.setInt(1, id);
                     preparedStatement.executeUpdate();
                 }
             }
             preparedStatement = connection.prepareStatement(
-                    "UPDATE internet SET status = ?::status WHERE id = 2"
+                    "UPDATE internet SET status = ?::status WHERE id = ?"
             );
             preparedStatement.setLong(2, id);
             preparedStatement.setString(1, String.valueOf(Status.DISCONNECTED));

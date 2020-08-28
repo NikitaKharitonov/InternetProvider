@@ -1,10 +1,10 @@
-<%@ page import="ru.internetprovider.model.services.Internet" %>
+<%@ page import="ru.internetprovider.model.services.TemporalInternet" %>
 <%@ page import="java.util.List" %>
 <%@ page import="ru.internetprovider.model.services.ConnectionType" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Add internet</title>
+    <title>Add Internet</title>
     <style>
         <%@ include file="../resources/css/style.css"%>
     </style>
@@ -12,7 +12,7 @@
 <body>
     <div class="form-container">
         <form method="post" action="${pageContext.request.contextPath}/addInternet">
-            <h1>Add internet to client #<%=request.getSession().getAttribute("clientId")%></h1>
+            <h1>Add Internet to client #<%=request.getSession().getAttribute("clientId")%></h1>
             <input name="speed" type="number" min="1" placeholder="Speed" required/>
             <label>Antivirus:
                 <input name="antivirus" type="checkbox">

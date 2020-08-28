@@ -11,7 +11,7 @@
 </head>
 <body>
     <%
-        List<Phone> phoneList = (List<Phone>) request.getAttribute("phoneList");
+        List<TemporalPhone> history = (List<TemporalPhone>) request.getAttribute("history");
         int phoneId = (int) request.getAttribute("phoneId");
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     %>
@@ -29,12 +29,12 @@
             </tr>
             </thead>
             <tbody>
-            <% for (Phone phone: phoneList) { %>
+            <% for (TemporalPhone temporalPhone : history) { %>
             <tr>
-                <td><%=phone.getBeginDate() != null ? formatter.format(phone.getBeginDate()) : ""%></td>
-                <td><%=phone.getEndDate() != null ? formatter.format(phone.getEndDate()) : ""%></td>
-                <td><%=phone.getMinsCount()%></td>
-                <td><%=phone.getSmsCount()%></td>
+                <td><%=temporalPhone.getBeginDate() != null ? formatter.format(temporalPhone.getBeginDate()) : ""%></td>
+                <td><%=temporalPhone.getEndDate() != null ? formatter.format(temporalPhone.getEndDate()) : ""%></td>
+                <td><%=temporalPhone.getMinsCount()%></td>
+                <td><%=temporalPhone.getSmsCount()%></td>
             </tr>
             <% } %>
             </tbody>

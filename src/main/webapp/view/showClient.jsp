@@ -24,7 +24,7 @@
                 String emailSearch = (String) request.getAttribute("email-search");
             %>
             <br/>
-            <div class="add">
+            <div class="container">
                 <%if(!(nameSearch == null && phoneSearch == null && emailSearch == null)) {%>
                     Results for:
                     <%=nameSearch != null && nameSearch.equals("") ? "" : "Name: " + "\"" + nameSearch + "\" "%><br>
@@ -33,7 +33,7 @@
                 <%}%>
             </div>
             <br/>
-            <div class="add">
+            <div class="container">
                 <form action="${pageContext.request.contextPath}/searchByCriteria">
                     <input type="text" name="name-search" placeholder="Name"/>
                     <input type="text" name="phone-search" placeholder="Phone number"/>
@@ -91,7 +91,7 @@
                     <%}%>
                 </tbody>
             </table>
-            <div class="add">
+            <div class="container">
                 <form action="${pageContext.request.contextPath}/addClient">
                     <button class="btn" name="button" value="add">Add...</button>
                 </form>

@@ -1,6 +1,6 @@
 package ru.internetprovider.controller;
 
-import ru.internetprovider.model.services.Television;
+import ru.internetprovider.model.services.TemporalTelevision;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,9 +15,9 @@ public class HistoryTelevision extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int televisionId = Integer.parseInt(request.getParameter("televisionId"));
-        List<Television> televisionList = DaoUtil.getTelevisionDao().getHistory(televisionId);
+        List<TemporalTelevision> history = DaoUtil.getTelevisionDao().getHistory(televisionId);
         request.setAttribute("televisionId", televisionId);
-        request.setAttribute("televisionList", televisionList);
+        request.setAttribute("history", history);
         request.getRequestDispatcher("view/historyTelevision.jsp").forward(request, response);
     }
 }

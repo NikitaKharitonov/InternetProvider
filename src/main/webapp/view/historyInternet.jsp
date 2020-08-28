@@ -1,4 +1,4 @@
-<%@ page import="ru.internetprovider.model.services.Internet" %>
+<%@ page import="ru.internetprovider.model.services.TemporalInternet" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -11,7 +11,7 @@
 </head>
 <body>
     <%
-        List<Internet> internetList = (List<Internet>) request.getAttribute("internetList");
+        List<TemporalInternet> history = (List<TemporalInternet>) request.getAttribute("history");
         int internetId = (int) request.getAttribute("internetId");
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     %>
@@ -30,13 +30,13 @@
             </tr>
             </thead>
             <tbody>
-            <% for (Internet internet: internetList) { %>
+            <% for (TemporalInternet temporalInternet : history) { %>
             <tr>
-                <td><%=internet.getBeginDate() != null ? formatter.format(internet.getBeginDate()) : ""%></td>
-                <td><%=internet.getEndDate() != null ? formatter.format(internet.getEndDate()) : ""%></td>
-                <td><%=internet.getSpeed()%></td>
-                <td><%=internet.isAntivirus()%></td>
-                <td><%=internet.getConnectionType()%></td>
+                <td><%=temporalInternet.getBeginDate() != null ? formatter.format(temporalInternet.getBeginDate()) : ""%></td>
+                <td><%=temporalInternet.getEndDate() != null ? formatter.format(temporalInternet.getEndDate()) : ""%></td>
+                <td><%=temporalInternet.getSpeed()%></td>
+                <td><%=temporalInternet.isAntivirus()%></td>
+                <td><%=temporalInternet.getConnectionType()%></td>
             </tr>
             <% } %>
             </tbody>

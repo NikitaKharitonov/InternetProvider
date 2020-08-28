@@ -97,13 +97,13 @@ public class HibernateClientDao implements ClientDao {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            session.createQuery("delete from ClientInternet where clientId = :id")
+            session.createQuery("delete from Internet where clientId = :id")
                     .setParameter("id", id)
                     .executeUpdate();
-            session.createQuery("delete from ClientPhone where clientId = :id")
+            session.createQuery("delete from Phone where clientId = :id")
                     .setParameter("id", id)
                     .executeUpdate();
-            session.createQuery("delete from ClientTelevision where clientId = :id")
+            session.createQuery("delete from Television where clientId = :id")
                     .setParameter("id", id)
                     .executeUpdate();
             session.createQuery("delete from Client where id = :id")

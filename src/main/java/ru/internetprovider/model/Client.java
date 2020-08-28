@@ -1,8 +1,8 @@
 package ru.internetprovider.model;
 
-import ru.internetprovider.model.services.ClientInternet;
-import ru.internetprovider.model.services.ClientPhone;
-import ru.internetprovider.model.services.ClientTelevision;
+import ru.internetprovider.model.services.Internet;
+import ru.internetprovider.model.services.Phone;
+import ru.internetprovider.model.services.Television;
 
 import javax.persistence.*;
 import java.util.List;
@@ -22,13 +22,13 @@ public class Client {
     private String emailAddress;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "client_id")
-    private List<ClientInternet> clientInternetList;
+    private List<Internet> internetList;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "client_id")
-    private List<ClientPhone> clientPhoneList;
+    private List<Phone> phoneList;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "client_id")
-    private List<ClientTelevision> clientTelevisionList;
+    private List<Television> televisionList;
 
     public Client() {
     }
@@ -78,28 +78,28 @@ public class Client {
         this.emailAddress = emailAddress;
     }
 
-    public List<ClientInternet> getClientInternetList() {
-        return clientInternetList;
+    public List<Internet> getInternetList() {
+        return internetList;
     }
 
-    public void setClientInternetList(List<ClientInternet> clientInternetList) {
-        this.clientInternetList = clientInternetList;
+    public void setInternetList(List<Internet> internetList) {
+        this.internetList = internetList;
     }
 
-    public List<ClientPhone> getClientPhoneList() {
-        return clientPhoneList;
+    public List<Phone> getPhoneList() {
+        return phoneList;
     }
 
-    public void setClientPhoneList(List<ClientPhone> clientPhoneList) {
-        this.clientPhoneList = clientPhoneList;
+    public void setPhoneList(List<Phone> phoneList) {
+        this.phoneList = phoneList;
     }
 
-    public List<ClientTelevision> getClientTelevisionList() {
-        return clientTelevisionList;
+    public List<Television> getTelevisionList() {
+        return televisionList;
     }
 
-    public void setClientTelevisionList(List<ClientTelevision> clientTelevisionList) {
-        this.clientTelevisionList = clientTelevisionList;
+    public void setTelevisionList(List<Television> televisionList) {
+        this.televisionList = televisionList;
     }
 
     @Override
@@ -109,9 +109,9 @@ public class Client {
                 ", name='" + name + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", emailAddress='" + emailAddress + '\'' +
-                ", clientInternetList=" + clientInternetList +
-                ", clientPhoneList=" + clientPhoneList +
-                ", clientTelevisionList=" + clientTelevisionList +
+                ", clientInternetList=" + internetList +
+                ", clientPhoneList=" + phoneList +
+                ", clientTelevisionList=" + televisionList +
                 '}';
     }
 }

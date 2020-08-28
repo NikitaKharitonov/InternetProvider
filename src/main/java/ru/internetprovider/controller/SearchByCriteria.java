@@ -24,9 +24,9 @@ public class SearchByCriteria extends HttpServlet {
         List<Client> clientList = (List<Client>) request.getSession().getAttribute("clientList");
         List<Client> filteredClientList = new ArrayList<>();
         for (Client client: clientList) {
-            if ((nameSearch.equals("") || client.getName().contains(nameSearch))
+            if ((nameSearch.equals("") || client.getName().toLowerCase().contains(nameSearch.toLowerCase()))
                     && (phoneSearch.equals("") || client.getPhoneNumber().contains(phoneSearch))
-                    && (emailSearch.equals("") || client.getEmailAddress().contains(emailSearch))) {
+                    && (emailSearch.equals("") || client.getEmailAddress().toLowerCase().contains(emailSearch.toLowerCase()))) {
                 filteredClientList.add(client);
             }
         }

@@ -1,34 +1,42 @@
 package ru.internetprovider.model.services;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
-@Table(name = "phone_history")
-public class Phone implements Service {
+@Table(name = "phone")
+public class Phone implements Service<TemporalPhone> {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name = "phone_id")
-    private int phoneId;
-    @Column(name = "begin_date")
-    private Date beginDate;
-    @Column(name = "end_date")
-    private Date endDate;
-    @Column(name = "mins_count")
-    private int minsCount;
-    @Column(name = "sms_count")
-    private int smsCount;
+    @Column(name = "client_id")
+    private int clientId;
+    @Column(name = "activation_date")
+    private Date activationDate;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", columnDefinition = "status")
+    @Type(type = "ru.internetprovider.model.services.PostgreSQLEnumType")
+    private Status status;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "phone_id")
+    private List<TemporalPhone> history;
 
-    public Phone(Date beginDate, Date endDate, int minsCount, int smsCount) {
-        this.beginDate = beginDate;
-        this.endDate = endDate;
-        this.minsCount = minsCount;
-        this.smsCount = smsCount;
+    public Phone(Date activationDate, Status status) {
+        this.activationDate = activationDate;
+        this.status = status;
     }
 
     public Phone() {
+    }
+
+    public Phone(int id, Date activationDate, Status status) {
+        this.id = id;
+        this.activationDate = activationDate;
+        this.status = status;
     }
 
     public int getId() {
@@ -39,55 +47,46 @@ public class Phone implements Service {
         this.id = id;
     }
 
-    public int getPhoneId() {
-        return phoneId;
+    public int getClientId() {
+        return clientId;
     }
 
-    public void setPhoneId(int phoneId) {
-        this.phoneId = phoneId;
+    public void setClientId(int clientId) {
+        this.clientId = clientId;
     }
 
-    public Date getBeginDate() {
-        return beginDate;
+    public Date getActivationDate() {
+        return activationDate;
     }
 
-    public void setBeginDate(Date beginDate) {
-        this.beginDate = beginDate;
+    public void setActivationDate(Date activationDate) {
+        this.activationDate = activationDate;
     }
 
-    public Date getEndDate() {
-        return endDate;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
-    public int getMinsCount() {
-        return minsCount;
+    public List<TemporalPhone> getHistory() {
+        return history;
     }
 
-    public void setMinsCount(int minsCount) {
-        this.minsCount = minsCount;
-    }
-
-    public int getSmsCount() {
-        return smsCount;
-    }
-
-    public void setSmsCount(int smsCount) {
-        this.smsCount = smsCount;
+    public void setHistory(List<TemporalPhone> history) {
+        this.history = history;
     }
 
     @Override
     public String toString() {
-        return "Phone{" +
+        return "ClientPhone{" +
                 "id=" + id +
-                ", phoneId=" + phoneId +
-                ", beginDate=" + beginDate +
-                ", endDate=" + endDate +
-                ", minsCount=" + minsCount +
-                ", smsCount=" + smsCount +
+                ", clientId=" + clientId +
+                ", activationDate=" + activationDate +
+                ", status=" + status +
+                ", history=" + history +
                 '}';
     }
 }

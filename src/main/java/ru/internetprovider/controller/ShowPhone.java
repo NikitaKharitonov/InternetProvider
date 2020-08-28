@@ -33,11 +33,11 @@ public class ShowPhone extends HttpServlet {
             clientId = Integer.parseInt(request.getParameter("clientId"));
         else clientId = (int) request.getSession().getAttribute("clientId");
         request.getSession().setAttribute("clientId", clientId);
-        List<ClientPhone> phoneList;
+        List<Phone> phoneList;
         phoneList = DaoUtil.getPhoneDao().getAll(clientId);
-        phoneList.sort(Comparator.comparing(ClientService::getId));
-        for (ClientService clientService: phoneList) {
-            ((ClientPhone)clientService).getHistory().sort(Comparator.comparing(Phone::getBeginDate));
+        phoneList.sort(Comparator.comparing(Service::getId));
+        for (Phone phone : phoneList) {
+            phone.getHistory().sort(Comparator.comparing(TemporalPhone::getBeginDate));
         }
         request.setAttribute("phoneList", phoneList);
         request.getRequestDispatcher("view/showPhone.jsp").forward(request, response);

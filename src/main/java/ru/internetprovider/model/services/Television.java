@@ -1,31 +1,42 @@
 package ru.internetprovider.model.services;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
-@Table(name = "television_history")
-public class Television implements Service {
+@Table(name = "television")
+public class Television implements Service<TemporalTelevision> {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name = "television_id")
-    private int televisionId;
-    @Column(name = "begin_date")
-    private Date beginDate;
-    @Column(name = "end_date")
-    private Date endDate;
-    @Column(name = "channels_count")
-    private int channelsCount;
+    @Column(name = "client_id")
+    private int clientId;
+    @Column(name = "activation_date")
+    private Date activationDate;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", columnDefinition = "status")
+    @Type(type = "ru.internetprovider.model.services.PostgreSQLEnumType")
+    private Status status;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "television_id")
+    private List<TemporalTelevision> history;
 
-    public Television(Date beginDate, Date endDate, int channelsCount) {
-        this.beginDate = beginDate;
-        this.endDate = endDate;
-        this.channelsCount = channelsCount;
+    public Television(Date activationDate, Status status) {
+        this.activationDate = activationDate;
+        this.status = status;
     }
 
     public Television() {
+    }
+
+    public Television(int id, Date activationDate, Status status) {
+        this.id = id;
+        this.activationDate = activationDate;
+        this.status = status;
     }
 
     public int getId() {
@@ -36,46 +47,46 @@ public class Television implements Service {
         this.id = id;
     }
 
-    public int getTelevisionId() {
-        return televisionId;
+    public int getClientId() {
+        return clientId;
     }
 
-    public void setTelevisionId(int televisionId) {
-        this.televisionId = televisionId;
+    public void setClientId(int clientId) {
+        this.clientId = clientId;
     }
 
-    public Date getBeginDate() {
-        return beginDate;
+    public Date getActivationDate() {
+        return activationDate;
     }
 
-    public void setBeginDate(Date beginDate) {
-        this.beginDate = beginDate;
+    public void setActivationDate(Date activationDate) {
+        this.activationDate = activationDate;
     }
 
-    public Date getEndDate() {
-        return endDate;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
-    public int getChannelsCount() {
-        return channelsCount;
+    public List<TemporalTelevision> getHistory() {
+        return history;
     }
 
-    public void setChannelsCount(int channelsCount) {
-        this.channelsCount = channelsCount;
+    public void setHistory(List<TemporalTelevision> history) {
+        this.history = history;
     }
 
     @Override
     public String toString() {
-        return "Television{" +
+        return "ClientTelevision{" +
                 "id=" + id +
-                ", televisionId=" + televisionId +
-                ", beginDate=" + beginDate +
-                ", endDate=" + endDate +
-                ", channelsCount=" + channelsCount +
+                ", clientId=" + clientId +
+                ", activationDate=" + activationDate +
+                ", status=" + status +
+                ", history=" + history +
                 '}';
     }
 }

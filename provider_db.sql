@@ -11,21 +11,21 @@ CREATE TABLE client (
                         email_address VARCHAR(129) NOT NULL
 );
 
-CREATE TABLE internet (
+CREATE TABLE temporalInternet (
                           id SERIAL PRIMARY KEY,
                           client_id INT NOT NULL REFERENCES client(id) ON DELETE CASCADE ON UPDATE CASCADE,
                           activation_date TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
                           status status NOT NULL
 );
 
-CREATE TABLE phone (
+CREATE TABLE temporalPhone (
                        id SERIAL PRIMARY KEY,
                        client_id INT NOT NULL REFERENCES client(id) ON DELETE CASCADE ON UPDATE CASCADE,
                        activation_date TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
                        status status NOT NULL
 );
 
-CREATE TABLE television (
+CREATE TABLE temporalTelevision (
                             id SERIAL PRIMARY KEY,
                             client_id INT NOT NULL REFERENCES client(id) ON DELETE CASCADE ON UPDATE CASCADE,
                             activation_date TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE television (
 
 CREATE TABLE internet_history (
                                   id SERIAL PRIMARY KEY,
-                                  internet_id INT NOT NULL REFERENCES internet(id) ON DELETE CASCADE ON UPDATE CASCADE,
+                                  internet_id INT NOT NULL REFERENCES temporalInternet(id) ON DELETE CASCADE ON UPDATE CASCADE,
                                   begin_date TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
                                   end_date TIMESTAMP(0) WITHOUT TIME ZONE,
                                   speed INT NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE internet_history (
 
 CREATE TABLE phone_history (
                                id SERIAL PRIMARY KEY,
-                               phone_id INT NOT NULL REFERENCES phone(id) ON DELETE CASCADE ON UPDATE CASCADE,
+                               phone_id INT NOT NULL REFERENCES temporalPhone(id) ON DELETE CASCADE ON UPDATE CASCADE,
                                begin_date TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
                                end_date TIMESTAMP(0) WITHOUT TIME ZONE,
                                mins_count INT NOT NULL,
@@ -53,7 +53,7 @@ CREATE TABLE phone_history (
 
 CREATE TABLE television_history (
                                     id SERIAL PRIMARY KEY,
-                                    television_id INT NOT NULL REFERENCES television(id) ON DELETE CASCADE ON UPDATE CASCADE,
+                                    television_id INT NOT NULL REFERENCES temporalTelevision(id) ON DELETE CASCADE ON UPDATE CASCADE,
                                     begin_date TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
                                     end_date TIMESTAMP(0) WITHOUT TIME ZONE,
                                     channels_count INT NOT NULL

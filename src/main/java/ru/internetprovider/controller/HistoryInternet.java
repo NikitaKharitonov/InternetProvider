@@ -1,6 +1,6 @@
 package ru.internetprovider.controller;
 
-import ru.internetprovider.model.services.Internet;
+import ru.internetprovider.model.services.TemporalInternet;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,9 +15,9 @@ public class HistoryInternet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int internetId = Integer.parseInt(request.getParameter("internetId"));
-        List<Internet> internetList = DaoUtil.getInternetDao().getHistory(internetId);
+        List<TemporalInternet> history = DaoUtil.getInternetDao().getHistory(internetId);
         request.setAttribute("internetId", internetId);
-        request.setAttribute("internetList", internetList);
+        request.setAttribute("history", history);
         request.getRequestDispatcher("view/historyInternet.jsp").forward(request, response);
     }
 }

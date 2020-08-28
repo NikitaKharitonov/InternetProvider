@@ -2,12 +2,10 @@ package ru.internetprovider.model.dao.implementation.hibernate;
 
 import org.hibernate.Session;
 import org.hibernate.query.Query;
-import ru.internetprovider.model.dao.ServiceDao;
 import ru.internetprovider.model.dao.TelevisionDao;
-import ru.internetprovider.model.services.ClientService;
-import ru.internetprovider.model.services.ClientTelevision;
-import ru.internetprovider.model.services.Status;
 import ru.internetprovider.model.services.Television;
+import ru.internetprovider.model.services.Status;
+import ru.internetprovider.model.services.TemporalTelevision;
 
 import javax.persistence.EntityTransaction;
 import java.util.Comparator;
@@ -17,14 +15,14 @@ import java.util.List;
 public class HibernateTelevisionDao implements TelevisionDao {
 
     @Override
-    public List<ClientTelevision> getAll(int clientId) {
-        List<ClientTelevision> televisionClientServiceList = null;
+    public List<Television> getAll(int clientId) {
+        List<Television> televisionClientServiceList = null;
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            Query query = session.createQuery("from ClientTelevision where clientId = :clientId");
+            Query query = session.createQuery("from Television where clientId = :clientId");
             query.setParameter("clientId", clientId);
             televisionClientServiceList = query.list();
 
@@ -38,18 +36,18 @@ public class HibernateTelevisionDao implements TelevisionDao {
     }
 
     @Override
-    public List<Television> getHistory(int id) {
-        List<Television> history = null;
+    public List<TemporalTelevision> getHistory(int id) {
+        List<TemporalTelevision> history = null;
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            Query query = session.createQuery("from ClientTelevision where id = :id");
+            Query query = session.createQuery("from Television where id = :id");
             query.setParameter("id", id);
-            ClientTelevision clientTelevision = (ClientTelevision) query.getSingleResult();
-            history = clientTelevision.getHistory();
-            history.sort(Comparator.comparing(Television::getBeginDate));
+            Television television = (Television) query.getSingleResult();
+            history = television.getHistory();
+            history.sort(Comparator.comparing(TemporalTelevision::getBeginDate));
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -61,24 +59,24 @@ public class HibernateTelevisionDao implements TelevisionDao {
     }
 
     @Override
-    public void update(int id, Television television) {
+    public void update(int id, TemporalTelevision temporalTelevision) {
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            ClientTelevision clientTelevision = session.get(ClientTelevision.class, id);
-            if (clientTelevision.getStatus().equals(Status.ACTIVE)) {
-                Query query = session.createQuery("from Television where televisionId = :id order by beginDate desc");
+            Television television = session.get(Television.class, id);
+            if (television.getStatus().equals(Status.ACTIVE)) {
+                Query query = session.createQuery("from TemporalTelevision where televisionId = :id order by beginDate desc");
                 query.setParameter("id", id);
-                Television lastTelevision = (Television) query.list().get(0);
-                lastTelevision.setEndDate(new Date());
-            } else if (clientTelevision.getStatus().equals(Status.SUSPENDED)) {
-                clientTelevision.setStatus(Status.ACTIVE);
+                TemporalTelevision lastTemporalTelevision = (TemporalTelevision) query.list().get(0);
+                lastTemporalTelevision.setEndDate(new Date());
+            } else if (television.getStatus().equals(Status.SUSPENDED)) {
+                television.setStatus(Status.ACTIVE);
             }
 
-            television.setTelevisionId(id);
-            session.persist(television);
+            temporalTelevision.setTelevisionId(id);
+            session.persist(temporalTelevision);
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -89,18 +87,18 @@ public class HibernateTelevisionDao implements TelevisionDao {
     }
 
     @Override
-    public void add(int clientId, Television television) {
+    public void add(int clientId, TemporalTelevision temporalTelevision) {
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            ClientTelevision clientService = new ClientTelevision(television.getBeginDate(), Status.ACTIVE);
+            Television clientService = new Television(temporalTelevision.getBeginDate(), Status.ACTIVE);
             clientService.setClientId(clientId);
             session.save(clientService);
 
-            television.setTelevisionId(clientService.getId());
-            session.save(television);
+            temporalTelevision.setTelevisionId(clientService.getId());
+            session.save(temporalTelevision);
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -111,16 +109,16 @@ public class HibernateTelevisionDao implements TelevisionDao {
     }
 
     @Override
-    public ClientTelevision get(int id) {
-        ClientTelevision clientTelevision = null;
+    public Television get(int id) {
+        Television television = null;
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            Query query = session.createQuery("from ClientTelevision where id = :id");
+            Query query = session.createQuery("from Television where id = :id");
             query.setParameter("id", id);
-            clientTelevision = (ClientTelevision) query.getSingleResult();
+            television = (Television) query.getSingleResult();
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -128,7 +126,7 @@ public class HibernateTelevisionDao implements TelevisionDao {
                 entityTransaction.rollback();
             e.printStackTrace();
         }
-        return clientTelevision;
+        return television;
     }
 
     @Override
@@ -138,13 +136,13 @@ public class HibernateTelevisionDao implements TelevisionDao {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            Query query = session.createQuery("from Television where televisionId = :id order by beginDate desc");
+            Query query = session.createQuery("from TemporalTelevision where televisionId = :id order by beginDate desc");
             query.setParameter("id", id);
-            Television lastTelevision = (Television) query.list().get(0);
-            lastTelevision.setEndDate(new Date());
+            TemporalTelevision lastTemporalTelevision = (TemporalTelevision) query.list().get(0);
+            lastTemporalTelevision.setEndDate(new Date());
 
-            ClientTelevision clientTelevision = session.get(ClientTelevision.class, id);
-            clientTelevision.setStatus(Status.SUSPENDED);
+            Television television = session.get(Television.class, id);
+            television.setStatus(Status.SUSPENDED);
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -161,20 +159,20 @@ public class HibernateTelevisionDao implements TelevisionDao {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            ClientTelevision clientTelevision = session.get(ClientTelevision.class, id);
-            clientTelevision.setStatus(Status.ACTIVE);
+            Television television = session.get(Television.class, id);
+            television.setStatus(Status.ACTIVE);
 
-            Query query = session.createQuery("from Television where televisionId = :id order by beginDate desc");
+            Query query = session.createQuery("from TemporalTelevision where televisionId = :id order by beginDate desc");
             query.setParameter("id", id);
-            Television lastTelevision = (Television) query.list().get(0);
+            TemporalTelevision lastTemporalTelevision = (TemporalTelevision) query.list().get(0);
 
             // fixme kostyl'
-            Television television = new Television();
-            television.setTelevisionId(lastTelevision.getTelevisionId());
-            television.setChannelsCount(lastTelevision.getChannelsCount());
-            television.setBeginDate(new Date());
+            TemporalTelevision temporalTelevision = new TemporalTelevision();
+            temporalTelevision.setTelevisionId(lastTemporalTelevision.getTelevisionId());
+            temporalTelevision.setChannelsCount(lastTemporalTelevision.getChannelsCount());
+            temporalTelevision.setBeginDate(new Date());
 
-            session.save(television);
+            session.save(temporalTelevision);
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -191,16 +189,16 @@ public class HibernateTelevisionDao implements TelevisionDao {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            ClientTelevision clientTelevision = session.get(ClientTelevision.class, id);
+            Television television = session.get(Television.class, id);
 
-            if (clientTelevision.getStatus().equals(Status.ACTIVE)) {
-                Query query = session.createQuery("from Television where televisionId = :id order by beginDate desc");
+            if (television.getStatus().equals(Status.ACTIVE)) {
+                Query query = session.createQuery("from TemporalTelevision where televisionId = :id order by beginDate desc");
                 query.setParameter("id", id);
-                Television lastTelevision = (Television) query.list().get(0);
-                lastTelevision.setEndDate(new Date());
+                TemporalTelevision lastTemporalTelevision = (TemporalTelevision) query.list().get(0);
+                lastTemporalTelevision.setEndDate(new Date());
             }
 
-            clientTelevision.setStatus(Status.DISCONNECTED);
+            television.setStatus(Status.DISCONNECTED);
 
             entityTransaction.commit();
         } catch (Exception e) {

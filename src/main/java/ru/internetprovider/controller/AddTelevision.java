@@ -1,6 +1,7 @@
 package ru.internetprovider.controller;
 
-import ru.internetprovider.model.services.Television;
+import ru.internetprovider.model.services.TemporalTelevision;
+import ru.internetprovider.model.services.TemporalTelevision;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,8 +16,8 @@ public class AddTelevision extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int clientId = Integer.parseInt(request.getSession().getAttribute("clientId").toString());
         int channelsCount = Integer.parseInt(request.getParameter("channelsCount"));
-        Television television = new Television(new Date(), null, channelsCount);
-        DaoUtil.getTelevisionDao().add(clientId, television);
+        TemporalTelevision temporalTelevision = new TemporalTelevision(new Date(), null, channelsCount);
+        DaoUtil.getTelevisionDao().add(clientId, temporalTelevision);
         response.sendRedirect(request.getContextPath() + "/showTelevision");
     }
 

@@ -2,7 +2,6 @@ package ru.internetprovider.model.dao.implementation.jdbc;
 
 import ru.internetprovider.model.Client;
 import ru.internetprovider.model.dao.ClientDao;
-import ru.internetprovider.model.exceptions.InvalidClientDataException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,7 +12,7 @@ import java.util.List;
  * using the Hibernate technology.
  */
 public class JdbcClientDao implements ClientDao {
-
+// todo exception handling
 
     @Override
     public Client get(int id) {
@@ -66,9 +65,6 @@ public class JdbcClientDao implements ClientDao {
             preparedStatement.setString(2, client.getPhoneNumber());
             preparedStatement.setString(3, client.getEmailAddress());
             preparedStatement.setLong(4, id);
-            if (preparedStatement.executeUpdate() == 0) {
-                throw new InvalidClientDataException();
-            }
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -83,9 +79,6 @@ public class JdbcClientDao implements ClientDao {
             preparedStatement.setString(1, client.getName());
             preparedStatement.setString(2, client.getPhoneNumber());
             preparedStatement.setString(3, client.getEmailAddress());
-            if (preparedStatement.executeUpdate() == 0) {
-                throw new InvalidClientDataException();
-            }
         } catch (SQLException exception) {
             exception.printStackTrace();
         }

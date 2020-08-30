@@ -11,7 +11,7 @@
         <form method="post" action="${pageContext.request.contextPath}/addClient">
             <h1>Add client</h1>
             <input name="name" type="text" placeholder="Name" required/>
-            <input name="phone" type="number" placeholder="Phone number" required/>
+            <input name="phone" type="number" min="10_000_000_000" max="1_000_000_000_000" placeholder="Phone number" required/>
             <input name="email" type="text" placeholder="Email address" required/>
             <input type="submit" value="Add" class="btn"/>
         </form>

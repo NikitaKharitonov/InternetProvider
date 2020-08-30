@@ -14,9 +14,9 @@
     <div class="form-container">
         <form method="post" action="${pageContext.request.contextPath}/updateClient">
             <h1>Update client #<%=request.getSession().getAttribute("clientId")%></h1>
-            <input name="name" type="text" min="1" value="<%=client.getName()%>" required/>
-            <input name="phone" type="number" min="1" value="<%=client.getPhoneNumber()%>" required/>
-            <input name="email" type="text" min="1" value="<%=client.getEmailAddress()%>" required/>
+            <input name="name" type="text" value="<%=client.getName()%>" required/>
+            <input name="phone" type="number" min="10_000_000_000" max="1_000_000_000_000" value="<%=client.getPhoneNumber()%>" required/>
+            <input name="email" type="text" value="<%=client.getEmailAddress()%>" required/>
             <input type="submit" value="Update" class="btn"/>
 
         </form>

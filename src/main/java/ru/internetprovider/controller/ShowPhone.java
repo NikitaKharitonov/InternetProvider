@@ -15,7 +15,10 @@ import java.util.List;
 public class ShowPhone extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (request.getParameter("phoneId") != null) {
+        if (request.getParameter("delete") != null) {
+            int id = Integer.parseInt(request.getParameter("delete"));
+            DaoUtil.getInternetDao().delete(id);
+        } else if (request.getParameter("phoneId") != null) {
             int id = Integer.parseInt(request.getParameter("phoneId"));
             Status status = DaoUtil.getPhoneDao().get(id).getStatus();
             if (status.equals(Status.ACTIVE))
@@ -24,7 +27,7 @@ public class ShowPhone extends HttpServlet {
                 DaoUtil.getPhoneDao().activate(id);
             }
         }
-        doGet(request, response);
+        response.sendRedirect(request.getContextPath() + "/showPhone");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -62,8 +62,8 @@
                                 </form>
                             </td>
                             <td>
-                                <form method="post" action="${pageContext.request.contextPath}/deleteInternet">
-                                    <button name="internetId" value="<%=internet.getId()%>" class="btn" style="color: red">Delete</button>
+                                <form method="post">
+                                    <button name="delete" value="<%=internet.getId()%>" class="btn" style="color: red">Delete</button>
                                 </form>
                             </td>
                         </tr>

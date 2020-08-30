@@ -61,8 +61,8 @@
                                 </form>
                             </td>
                             <td>
-                                <form method="post" action="${pageContext.request.contextPath}/deletePhone">
-                                    <button name="phoneId" value="<%=phone.getId()%>" class="btn" style="color: red">Delete</button>
+                                <form method="post">
+                                    <button name="delete" value="<%=phone.getId()%>" class="btn" style="color: red">Delete</button>
                                 </form>
                             </td>
                         </tr>

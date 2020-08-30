@@ -15,7 +15,10 @@ import java.util.List;
 public class ShowInternet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (request.getParameter("internetId") != null) {
+        if (request.getParameter("delete") != null) {
+            int id = Integer.parseInt(request.getParameter("delete"));
+            DaoUtil.getInternetDao().delete(id);
+        } else if (request.getParameter("internetId") != null) {
             int id = Integer.parseInt(request.getParameter("internetId"));
             Status status = DaoUtil.getInternetDao().get(id).getStatus();
             if (status.equals(Status.ACTIVE))
@@ -24,7 +27,7 @@ public class ShowInternet extends HttpServlet {
                 DaoUtil.getInternetDao().activate(id);
             }
         }
-        doGet(request, response);
+        response.sendRedirect(request.getContextPath() + "/showInternet");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -15,7 +15,10 @@ import java.util.List;
 public class ShowTelevision extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (request.getParameter("televisionId") != null) {
+        if (request.getParameter("delete") != null) {
+            int id = Integer.parseInt(request.getParameter("delete"));
+            DaoUtil.getInternetDao().delete(id);
+        } else if (request.getParameter("televisionId") != null) {
             int id = Integer.parseInt(request.getParameter("televisionId"));
             Television television = DaoUtil.getTelevisionDao().get(id);
             Status status = television.getStatus();
@@ -25,7 +28,7 @@ public class ShowTelevision extends HttpServlet {
                 DaoUtil.getTelevisionDao().activate(id);
             }
         }
-        doGet(request, response);
+        response.sendRedirect(request.getContextPath() + "/showTelevision");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

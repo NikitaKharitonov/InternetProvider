@@ -59,8 +59,8 @@
                                 </form>
                             </td>
                             <td>
-                                <form method="post" action="${pageContext.request.contextPath}/deleteTelevision">
-                                    <button name="televisionId" value="<%=television.getId()%>" class="btn" style="color: red">Delete</button>
+                                <form method="post">
+                                    <button name="delete" value="<%=television.getId()%>" class="btn" style="color: red">Delete</button>
                                 </form>
                             </td>
                         </tr>

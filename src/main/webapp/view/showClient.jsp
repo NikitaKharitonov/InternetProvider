@@ -34,11 +34,11 @@
             </div>
             <br/>
             <div class="container">
-                <form action="${pageContext.request.contextPath}/searchByCriteria">
+                <form method="get">
                     <input type="text" name="name-search" placeholder="Name"/>
                     <input type="text" name="phone-search" placeholder="Phone number"/>
                     <input type="text" name="email-search" placeholder="Email address"/>
-                    <input type="submit" class="btn" value="Search"/>
+                    <input type="submit" class="btn" value="Search" name="search"/>
                 </form>
             </div>
             <table>
@@ -83,7 +83,7 @@
                             </form>
                         </td>
                         <td>
-                            <form method="post" action="${pageContext.request.contextPath}/deleteClient">
+                            <form method="post">
                                 <button class="btn" name="clientId" value="<%=client.getId()%>" style="color: red">Delete</button>
                             </form>
                         </td>

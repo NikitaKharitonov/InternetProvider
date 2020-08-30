@@ -21,9 +21,6 @@
             </div>
 
             <table>
-<%--                <caption>--%>
-<%--                    Television--%>
-<%--                </caption>--%>
                 <thead>
                 <tr>
                     <th>ID</th>
@@ -37,33 +34,33 @@
                 </tr>
                 </thead>
                 <tbody>
-                <%if (televisionList != null) for (Service service : televisionList) { %>
-                    <% if (!service.getStatus().equals(Status.DISCONNECTED)) { %>
+                <%if (televisionList != null) for (Television television : televisionList) { %>
+                    <% if (!television.getStatus().equals(Status.DELETED)) { %>
                         <tr>
-                            <td><%=service.getId()%></td>
-                            <td><%=formatter.format(service.getActivationDate())%></td>
-                            <td><%=service.getStatus()%></td>
-                            <% List<TemporalTelevision> history = ((Television) service).getHistory(); %>
-                            <% TemporalTelevision current = history.get(history.size() - 1); %>
+                            <td><%=television.getId()%></td>
+                            <td><%=formatter.format(television.getActivationDate())%></td>
+                            <td><%=television.getStatus()%></td>
+                            <% List<TelevisionSpecification> history = television.getHistory(); %>
+                            <% TelevisionSpecification current = history.get(history.size() - 1); %>
                             <td><%=current.getChannelsCount()%></td>
                             <td>
                                 <form action="${pageContext.request.contextPath}/historyTelevision">
-                                    <button name="televisionId" value="<%=service.getId()%>" class="btn">Get history</button>
+                                    <button name="televisionId" value="<%=television.getId()%>" class="btn">Get history</button>
                                 </form>
                             </td>
                             <td>
                                 <form action="${pageContext.request.contextPath}/updateTelevision">
-                                    <button name="televisionId" value="<%=service.getId()%>" class="btn">Update</button>
+                                    <button name="televisionId" value="<%=television.getId()%>" class="btn">Update</button>
                                 </form>
                             </td>
                             <td>
                                 <form method="post">
-                                    <button name="televisionId" value="<%=service.getId()%>" class="btn"><%=service.getStatus().equals(Status.ACTIVE) ? "Suspend" : "Activate"%></button>
+                                    <button name="televisionId" value="<%=television.getId()%>" class="btn"><%=television.getStatus().equals(Status.ACTIVE) ? "Suspend" : "Activate"%></button>
                                 </form>
                             </td>
                             <td>
-                                <form method="post" action="${pageContext.request.contextPath}/disconnectTelevision">
-                                    <button name="televisionId" value="<%=service.getId()%>" class="btn" style="color: red">Disconnect</button>
+                                <form method="post" action="${pageContext.request.contextPath}/deleteTelevision">
+                                    <button name="televisionId" value="<%=television.getId()%>" class="btn" style="color: red">Delete</button>
                                 </form>
                             </td>
                         </tr>

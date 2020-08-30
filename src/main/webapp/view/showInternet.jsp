@@ -20,9 +20,6 @@
                 <label>Internet of client #<%=clientId%></label>
             </div>
             <table>
-<%--                <caption>--%>
-<%--                    Internet--%>
-<%--                </caption>--%>
                 <thead>
                 <tr>
                     <th>ID</th>
@@ -38,36 +35,35 @@
                 </tr>
                 </thead>
                 <tbody>
-                <% if (internetList != null) for (Service service : internetList) { %>
-                    <% if (!service.getStatus().equals(Status.DISCONNECTED)) { %>
+                <% if (internetList != null) for (Internet internet : internetList) { %>
+                    <% if (!internet.getStatus().equals(Status.DELETED)) { %>
                         <tr>
-                            <td><%=service.getId()%></td>
-                            <td><%=formatter.format(service.getActivationDate())%></td>
-                            <td><%=service.getStatus()%></td>
-                            <% List<TemporalInternet> history = ((Internet) service).getHistory(); %>
-<%--                            <% history.sort((i1, i2) -> i1.getBeginDate().compareTo(i2.getBeginDate())); %>--%>
-                            <% TemporalInternet current = history.get(history.size() - 1); %>
+                            <td><%=internet.getId()%></td>
+                            <td><%=formatter.format(internet.getActivationDate())%></td>
+                            <td><%=internet.getStatus()%></td>
+                            <% InternetSpecification current =
+                                    internet.getHistory().get(internet.getHistory().size() - 1); %>
                             <td><%=current.getSpeed()%></td>
                             <td><%=current.isAntivirus()%></td>
                             <td><%=current.getConnectionType()%></td>
                             <td>
                                 <form action="${pageContext.request.contextPath}/historyInternet">
-                                    <button class="btn" name="internetId" value="<%=service.getId()%>">Get history</button>
+                                    <button class="btn" name="internetId" value="<%=internet.getId()%>">Get history</button>
                                 </form>
                             </td>
                             <td>
                                 <form action="${pageContext.request.contextPath}/updateInternet">
-                                    <button name="internetId" value="<%=service.getId()%>" class="btn">Update</button>
+                                    <button name="internetId" value="<%=internet.getId()%>" class="btn">Update</button>
                                 </form>
                             </td>
                             <td>
                                 <form method="post">
-                                    <button name="internetId" value="<%=service.getId()%>" class="btn"><%=service.getStatus().equals(Status.ACTIVE) ? "Suspend" : "Activate"%></button>
+                                    <button name="internetId" value="<%=internet.getId()%>" class="btn"><%=internet.getStatus().equals(Status.ACTIVE) ? "Suspend" : "Activate"%></button>
                                 </form>
                             </td>
                             <td>
-                                <form method="post" action="${pageContext.request.contextPath}/disconnectInternet">
-                                    <button name="internetId" value="<%=service.getId()%>" class="btn" style="color: red">Disconnect</button>
+                                <form method="post" action="${pageContext.request.contextPath}/deleteInternet">
+                                    <button name="internetId" value="<%=internet.getId()%>" class="btn" style="color: red">Delete</button>
                                 </form>
                             </td>
                         </tr>

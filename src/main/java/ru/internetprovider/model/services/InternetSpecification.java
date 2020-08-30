@@ -5,29 +5,52 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import java.util.Date;
 
+/**
+ * A specification of an Internet service.
+ * Contains the Internet parameters that may be changed by a user.
+ */
+
 @Entity
-@Table(name = "temporal_internet")
-public class TemporalInternet implements TemporalService {
+@Table(name = "internet_specification")
+public class InternetSpecification implements ServiceSpecification {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    /**
+     * The ID of the Internet service that has this specification.
+     */
     @Column(name = "internet_id")
     private int internetId;
+
+    /**
+     * The date when this specification was assigned to its Internet service.
+     */
     @Column(name = "begin_date")
     private Date beginDate;
+
+    /**
+     * The date when this specification became no longer active (e. g. when
+     * the Internet service's status was switched from ACTIVE to SUSPENDED or
+     * DELETED or when a new specification was assigned to the service (i. e.
+     * the service was updated)).
+     */
     @Column(name = "end_date")
     private Date endDate;
+
     @Column(name = "speed")
     private int speed;
+
     @Column(name = "antivirus")
     private boolean antivirus;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "connection_type", columnDefinition = "connection_type")
     @Type(type = "ru.internetprovider.model.services.PostgreSQLEnumType")
     private ConnectionType connectionType;
 
-    public TemporalInternet(Date beginDate, Date endDate, int speed, boolean antivirus, ConnectionType connectionType) {
+    public InternetSpecification(Date beginDate, Date endDate, int speed, boolean antivirus, ConnectionType connectionType) {
         this.beginDate = beginDate;
         this.endDate = endDate;
         this.speed = speed;
@@ -35,7 +58,7 @@ public class TemporalInternet implements TemporalService {
         this.connectionType = connectionType;
     }
 
-    public TemporalInternet() {
+    public InternetSpecification() {
     }
 
     public int getId() {

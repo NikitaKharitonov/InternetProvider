@@ -20,8 +20,8 @@ public class AddInternet extends HttpServlet {
         int speed = Integer.parseInt(request.getParameter("speed"));
         boolean antivirus = request.getParameter("antivirus") != null;
         ConnectionType connectionType = ConnectionType.valueOf(request.getParameter("connectionType"));
-        TemporalInternet temporalInternet = new TemporalInternet(new Date(), null, speed, antivirus, connectionType);
-        DaoUtil.getInternetDao().add(clientId, temporalInternet);
+        InternetSpecification internetSpecification = new InternetSpecification(new Date(), null, speed, antivirus, connectionType);
+        DaoUtil.getInternetDao().add(clientId, internetSpecification);
         response.sendRedirect(request.getContextPath() + "/showInternet");
     }
 

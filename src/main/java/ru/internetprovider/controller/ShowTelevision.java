@@ -38,7 +38,7 @@ public class ShowTelevision extends HttpServlet {
         televisionList = DaoUtil.getTelevisionDao().getAll(clientId);
         televisionList.sort(Comparator.comparing(Service::getId));
         for (Television television : televisionList) {
-            television.getHistory().sort(Comparator.comparing(TemporalTelevision::getBeginDate));
+            television.getHistory().sort(Comparator.comparing(TelevisionSpecification::getBeginDate));
         }
         request.setAttribute("televisionList", televisionList);
         request.getRequestDispatcher("view/showTelevision.jsp").forward(request, response);

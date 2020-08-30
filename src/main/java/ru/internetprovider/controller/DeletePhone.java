@@ -7,13 +7,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "DisconnectTelevision", urlPatterns = "/disconnectTelevision")
-public class DisconnectTelevision extends HttpServlet {
-
+@WebServlet(name = "DeletePhone", urlPatterns = "/deletePhone")
+public class DeletePhone extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int id = Integer.parseInt(request.getParameter("televisionId"));
-        DaoUtil.getTelevisionDao().disconnect(id);
-        response.sendRedirect(request.getContextPath() + "/showTelevision");
+        int id = Integer.parseInt(request.getParameter("phoneId"));
+        DaoUtil.getPhoneDao().delete(id);
+        response.sendRedirect(request.getContextPath() + "/showPhone");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

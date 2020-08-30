@@ -1,7 +1,10 @@
 package ru.internetprovider.model.dao;
 
 import ru.internetprovider.model.services.Television;
-import ru.internetprovider.model.services.TemporalTelevision;
+import ru.internetprovider.model.services.TelevisionSpecification;
 
-public interface TelevisionDao extends ServiceDao<TemporalTelevision, Television> {
+/**
+ * The implementation of the Data Access Object pattern for Television services.
+ */
+public interface TelevisionDao extends ServiceDao<TelevisionSpecification, Television> {
 }

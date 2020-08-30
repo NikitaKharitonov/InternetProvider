@@ -2,6 +2,10 @@ package ru.internetprovider.model.dao.implementation.hibernate;
 
 import ru.internetprovider.model.dao.*;
 
+/**
+ * The implementation of the Abstract Factory pattern.
+ * Provides methods for creation of Hibernate DAO objects.
+ */
 public class HibernateDaoFactory implements DaoFactory {
     @Override
     public ClientDao createClientDao() {

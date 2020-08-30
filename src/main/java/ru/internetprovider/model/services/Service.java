@@ -1,9 +1,19 @@
 package ru.internetprovider.model.services;
 
 import java.util.Date;
+import java.util.Deque;
 import java.util.List;
 
-public interface Service<T> {
+/**
+ * An abstract service which belongs to one and only one
+ * client. The service's specification is stored in an ServiceSpecification list,
+ * the so-called "history". This list contains the service's current specification
+ * as well as all its former specifications which the service once had.
+ * @param <T> a service specification implementation corresponding to this interface
+ *           implementation.
+ */
+
+public interface Service<T extends ServiceSpecification> {
 
     int getId();
 

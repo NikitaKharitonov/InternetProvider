@@ -7,6 +7,11 @@ import ru.internetprovider.model.services.Television;
 import javax.persistence.*;
 import java.util.List;
 
+/**
+ * A client of the internet provider, which may have multiple services
+ * of different types, such as: Internet, Phone, Television.
+ */
+
 @Entity
 @Table(name = "client")
 public class Client {
@@ -14,18 +19,24 @@ public class Client {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     @Column(name = "name")
     private String name;
+
     @Column(name = "phone_number")
     private String phoneNumber;
+
     @Column(name = "email_address")
     private String emailAddress;
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "client_id")
     private List<Internet> internetList;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "client_id")
     private List<Phone> phoneList;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "client_id")
     private List<Television> televisionList;

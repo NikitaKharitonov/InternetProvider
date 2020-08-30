@@ -21,9 +21,6 @@
             </div>
 
             <table>
-<%--                <caption>--%>
-<%--                    Phone--%>
-<%--                </caption>--%>
                 <thead>
                 <tr>
                     <th>ID</th>
@@ -38,34 +35,34 @@
                 </tr>
                 </thead>
                 <tbody>
-                <% if (phoneList != null) for (Service service : phoneList) { %>
-                    <% if (!service.getStatus().equals(Status.DISCONNECTED)) { %>
+                <% if (phoneList != null) for (Phone phone : phoneList) { %>
+                    <% if (!phone.getStatus().equals(Status.DELETED)) { %>
                         <tr>
-                            <td><%=service.getId()%></td>
-                            <td><%=formatter.format(service.getActivationDate())%></td>
-                            <td><%=service.getStatus()%></td>
-                            <% List<TemporalPhone> history = ((Phone) service).getHistory(); %>
-                            <% TemporalPhone current = history.get(history.size() - 1); %>
+                            <td><%=phone.getId()%></td>
+                            <td><%=formatter.format(phone.getActivationDate())%></td>
+                            <td><%=phone.getStatus()%></td>
+                            <% List<PhoneSpecification> history = phone.getHistory(); %>
+                            <% PhoneSpecification current = history.get(history.size() - 1); %>
                             <td><%=current.getMinsCount()%></td>
                             <td><%=current.getSmsCount()%></td>
                             <td>
                                 <form action="${pageContext.request.contextPath}/historyPhone">
-                                    <button name="phoneId" value="<%=service.getId()%>" class="btn">Get history</button>
+                                    <button name="phoneId" value="<%=phone.getId()%>" class="btn">Get history</button>
                                 </form>
                             </td>
                             <td>
                                 <form action="${pageContext.request.contextPath}/updatePhone">
-                                    <button name="phoneId" value="<%=service.getId()%>" class="btn">Update</button>
+                                    <button name="phoneId" value="<%=phone.getId()%>" class="btn">Update</button>
                                 </form>
                             </td>
                             <td>
                                 <form method="post">
-                                    <button name="phoneId" value="<%=service.getId()%>" class="btn"><%=service.getStatus().equals(Status.ACTIVE) ? "Suspend" : "Activate"%></button>
+                                    <button name="phoneId" value="<%=phone.getId()%>" class="btn"><%=phone.getStatus().equals(Status.ACTIVE) ? "Suspend" : "Activate"%></button>
                                 </form>
                             </td>
                             <td>
-                                <form method="post" action="${pageContext.request.contextPath}/disconnectPhone">
-                                    <button name="phoneId" value="<%=service.getId()%>" class="btn" style="color: red">Disconnect</button>
+                                <form method="post" action="${pageContext.request.contextPath}/deletePhone">
+                                    <button name="phoneId" value="<%=phone.getId()%>" class="btn" style="color: red">Delete</button>
                                 </form>
                             </td>
                         </tr>

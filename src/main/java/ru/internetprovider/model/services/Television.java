@@ -4,11 +4,12 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Deque;
 import java.util.List;
 
 @Entity
 @Table(name = "television")
-public class Television implements Service<TemporalTelevision> {
+public class Television implements Service<TelevisionSpecification> {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +24,7 @@ public class Television implements Service<TemporalTelevision> {
     private Status status;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "television_id")
-    private List<TemporalTelevision> history;
+    private List<TelevisionSpecification> history;
 
     public Television(Date activationDate, Status status) {
         this.activationDate = activationDate;
@@ -71,11 +72,11 @@ public class Television implements Service<TemporalTelevision> {
         this.status = status;
     }
 
-    public List<TemporalTelevision> getHistory() {
+    public List<TelevisionSpecification> getHistory() {
         return history;
     }
 
-    public void setHistory(List<TemporalTelevision> history) {
+    public void setHistory(List<TelevisionSpecification> history) {
         this.history = history;
     }
 

@@ -4,29 +4,30 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import ru.internetprovider.model.dao.InternetDao;
 import ru.internetprovider.model.services.Internet;
-import ru.internetprovider.model.services.TemporalInternet;
+import ru.internetprovider.model.services.InternetSpecification;
 import ru.internetprovider.model.services.Status;
 
 import javax.persistence.EntityTransaction;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
+/**
+ * The implementation of the Data Access Object pattern for Internet services
+ * using the Hibernate technology.
+ */
 public class HibernateInternetDao implements InternetDao {
 
     @Override
-    public List<TemporalInternet> getHistory(int id) {
-        List<TemporalInternet> history = null;
+    public List<InternetSpecification> getHistory(int id) {
+        List<InternetSpecification> history = null;
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            Query query = session.createQuery("from Internet where id = :id");
+            Query query = session.createQuery("from InternetSpecification where internetId = :id order by beginDate");
             query.setParameter("id", id);
-            Internet internet = (Internet) query.getSingleResult();
-            history = internet.getHistory();
-            history.sort(Comparator.comparing(TemporalInternet::getBeginDate));
+            history = query.getResultList();
+            history.sort(Comparator.comparing(InternetSpecification::getBeginDate));
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -80,7 +81,7 @@ public class HibernateInternetDao implements InternetDao {
     }
 
     @Override
-    public void update(int id, TemporalInternet temporalInternet) {
+    public void update(int id, InternetSpecification internetSpecification) {
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
@@ -88,16 +89,16 @@ public class HibernateInternetDao implements InternetDao {
 
             Internet internet = session.get(Internet.class, id);
             if (internet.getStatus().equals(Status.ACTIVE)) {
-                Query query = session.createQuery("from TemporalInternet where internetId = :id order by beginDate desc");
+                Query query = session.createQuery("from InternetSpecification where internetId = :id order by beginDate desc");
                 query.setParameter("id", id);
-                TemporalInternet lastTemporalInternet = (TemporalInternet) query.list().get(0);
-                lastTemporalInternet.setEndDate(new Date());
+                InternetSpecification lastInternetSpecification = (InternetSpecification) query.list().get(0);
+                lastInternetSpecification.setEndDate(new Date());
             } else if (internet.getStatus().equals(Status.SUSPENDED)) {
                 internet.setStatus(Status.ACTIVE);
             }
 
-            temporalInternet.setInternetId(id);
-            session.persist(temporalInternet);
+            internetSpecification.setInternetId(id);
+            session.persist(internetSpecification);
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -108,18 +109,18 @@ public class HibernateInternetDao implements InternetDao {
     }
 
     @Override
-    public void add(int clientId, TemporalInternet temporalInternet) {
+    public void add(int clientId, InternetSpecification internetSpecification) {
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            Internet clientService = new Internet(temporalInternet.getBeginDate(), Status.ACTIVE);
+            Internet clientService = new Internet(internetSpecification.getBeginDate(), Status.ACTIVE);
             clientService.setClientId(clientId);
             session.save(clientService);
 
-            temporalInternet.setInternetId(clientService.getId());
-            session.save(temporalInternet);
+            internetSpecification.setInternetId(clientService.getId());
+            session.save(internetSpecification);
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -136,10 +137,10 @@ public class HibernateInternetDao implements InternetDao {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            Query query = session.createQuery("from TemporalInternet where internetId = :id order by beginDate desc");
+            Query query = session.createQuery("from InternetSpecification where internetId = :id order by beginDate desc");
             query.setParameter("id", id);
-            TemporalInternet lastTemporalInternet = (TemporalInternet) query.list().get(0);
-            lastTemporalInternet.setEndDate(new Date());
+            InternetSpecification lastInternetSpecification = (InternetSpecification) query.list().get(0);
+            lastInternetSpecification.setEndDate(new Date());
 
             Internet internet = session.get(Internet.class, id);
             internet.setStatus(Status.SUSPENDED);
@@ -162,44 +163,18 @@ public class HibernateInternetDao implements InternetDao {
             Internet internet = session.get(Internet.class, id);
             internet.setStatus(Status.ACTIVE);
 
-            Query query = session.createQuery("from TemporalInternet where internetId = :id order by beginDate desc");
+            Query query = session.createQuery("from InternetSpecification where internetId = :id order by beginDate desc");
             query.setParameter("id", id);
-            TemporalInternet lastTemporalInternet = (TemporalInternet) query.list().get(0);
+            InternetSpecification lastInternetSpecification = (InternetSpecification) query.list().get(0);
 
-            TemporalInternet temporalInternet = new TemporalInternet();
-            temporalInternet.setInternetId(lastTemporalInternet.getInternetId());
-            temporalInternet.setAntivirus(lastTemporalInternet.isAntivirus());
-            temporalInternet.setConnectionType(lastTemporalInternet.getConnectionType());
-            temporalInternet.setSpeed(lastTemporalInternet.getSpeed());
-            temporalInternet.setBeginDate(new Date());
+            InternetSpecification internetSpecification = new InternetSpecification();
+            internetSpecification.setInternetId(lastInternetSpecification.getInternetId());
+            internetSpecification.setAntivirus(lastInternetSpecification.isAntivirus());
+            internetSpecification.setConnectionType(lastInternetSpecification.getConnectionType());
+            internetSpecification.setSpeed(lastInternetSpecification.getSpeed());
+            internetSpecification.setBeginDate(new Date());
 
-            session.save(temporalInternet);
-
-            entityTransaction.commit();
-        } catch (Exception e) {
-            if (entityTransaction != null)
-                entityTransaction.rollback();
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void disconnect(int id) {
-        EntityTransaction entityTransaction = null;
-        try (Session session = HibernateUtil.openSession()) {
-            entityTransaction = session.getTransaction();
-            entityTransaction.begin();
-
-            Internet internet = session.get(Internet.class, id);
-
-            if (internet.getStatus().equals(Status.ACTIVE)) {
-                Query query = session.createQuery("from TemporalInternet where internetId = :id order by beginDate desc");
-                query.setParameter("id", id);
-                TemporalInternet lastTemporalInternet = (TemporalInternet) query.list().get(0);
-                lastTemporalInternet.setEndDate(new Date());
-            }
-
-            internet.setStatus(Status.DISCONNECTED);
+            session.save(internetSpecification);
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -211,6 +186,27 @@ public class HibernateInternetDao implements InternetDao {
 
     @Override
     public void delete(int id) {
-        //todo?
+        EntityTransaction entityTransaction = null;
+        try (Session session = HibernateUtil.openSession()) {
+            entityTransaction = session.getTransaction();
+            entityTransaction.begin();
+
+            Internet internet = session.get(Internet.class, id);
+
+            if (internet.getStatus().equals(Status.ACTIVE)) {
+                Query query = session.createQuery("from InternetSpecification where internetId = :id order by beginDate desc");
+                query.setParameter("id", id);
+                InternetSpecification lastInternetSpecification = (InternetSpecification) query.list().get(0);
+                lastInternetSpecification.setEndDate(new Date());
+            }
+
+            internet.setStatus(Status.DELETED);
+
+            entityTransaction.commit();
+        } catch (Exception e) {
+            if (entityTransaction != null)
+                entityTransaction.rollback();
+            e.printStackTrace();
+        }
     }
 }

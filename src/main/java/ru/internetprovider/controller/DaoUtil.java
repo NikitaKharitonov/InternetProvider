@@ -5,7 +5,7 @@ import ru.internetprovider.model.dao.implementation.hibernate.HibernateDaoFactor
 import ru.internetprovider.model.dao.implementation.jdbc.JdbcDaoFactory;
 
 public class DaoUtil {
-    private static final DaoFactory JDBC_DAO_FACTORY = new JdbcDaoFactory();
+    private static final DaoFactory JDBC_DAO_FACTORY = new HibernateDaoFactory();
 
     private static final ClientDao CLIENT_DAO = JDBC_DAO_FACTORY.createClientDao();
     private static final InternetDao INTERNET_DAO = JDBC_DAO_FACTORY.createInternetDao();

@@ -8,6 +8,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The implementation of the Data Access Object pattern for clients
+ * using the Hibernate technology.
+ */
 public class JdbcClientDao implements ClientDao {
 
 

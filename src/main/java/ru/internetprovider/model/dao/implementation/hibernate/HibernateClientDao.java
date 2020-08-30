@@ -9,6 +9,10 @@ import ru.internetprovider.model.dao.Dao;
 import javax.persistence.EntityTransaction;
 import java.util.List;
 
+/**
+ * The implementation of the Data Access Object pattern for clients
+ * using the Hibernate technology.
+ */
 public class HibernateClientDao implements ClientDao {
 
     @Override

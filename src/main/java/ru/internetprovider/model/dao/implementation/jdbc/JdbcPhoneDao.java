@@ -2,7 +2,7 @@ package ru.internetprovider.model.dao.implementation.jdbc;
 
 import ru.internetprovider.model.dao.PhoneDao;
 import ru.internetprovider.model.services.Phone;
-import ru.internetprovider.model.services.TemporalPhone;
+import ru.internetprovider.model.services.PhoneSpecification;
 import ru.internetprovider.model.services.Status;
 
 import java.sql.*;
@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * The implementation of the Data Access Object pattern for Phone services
+ * using the JDBC technology.
+ */
 public class JdbcPhoneDao implements PhoneDao {
 
     @Override
@@ -26,7 +30,7 @@ public class JdbcPhoneDao implements PhoneDao {
                 int id = resultSet.getInt("id");
                 Date activationDate = resultSet.getTimestamp("activation_date");
                 Status status = Status.valueOf(resultSet.getString("status"));
-                List<TemporalPhone> temporalPhoneList = getHistory(id);
+                List<PhoneSpecification> temporalPhoneList = getHistory(id);
                 Phone phone = new Phone(id, activationDate, status);
                 phone.setHistory(temporalPhoneList);
                 phoneList.add(phone);
@@ -38,11 +42,11 @@ public class JdbcPhoneDao implements PhoneDao {
     }
 
     @Override
-    public List<TemporalPhone> getHistory(int id) {
-        List<TemporalPhone> history = null;
+    public List<PhoneSpecification> getHistory(int id) {
+        List<PhoneSpecification> history = null;
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "SELECT * FROM temporal_phone WHERE phone_id = ? ORDER BY begin_date;"
+                    "SELECT * FROM phone_specification WHERE phone_id = ? ORDER BY begin_date;"
             );
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -52,7 +56,7 @@ public class JdbcPhoneDao implements PhoneDao {
                 Date endDate = resultSet.getTimestamp("end_date");
                 int minsCount = resultSet.getInt("mins_count");
                 int smsCount = resultSet.getInt("sms_count");
-                history.add(new TemporalPhone(beginDate, endDate, minsCount, smsCount));
+                history.add(new PhoneSpecification(beginDate, endDate, minsCount, smsCount));
             }
             return history;
         } catch (SQLException exception) {
@@ -62,7 +66,7 @@ public class JdbcPhoneDao implements PhoneDao {
     }
 
     @Override
-    public void update(int id, TemporalPhone temporalPhone) {
+    public void update(int id, PhoneSpecification temporalPhone) {
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT status from phone where id = ?"
@@ -73,8 +77,8 @@ public class JdbcPhoneDao implements PhoneDao {
                 Status status = Status.valueOf(resultSet.getString("status"));
                 if (status.equals(Status.ACTIVE)) {
                     preparedStatement = connection.prepareStatement(
-                            "UPDATE temporal_phone SET end_date = NOW() WHERE begin_date " +
-                                    "= (SELECT MAX(begin_date) FROM temporal_phone WHERE phone_id = ?)"
+                            "UPDATE phone_specification SET end_date = NOW() WHERE begin_date " +
+                                    "= (SELECT MAX(begin_date) FROM phone_specification WHERE phone_id = ?)"
                     );
                     preparedStatement.setInt(1, id);
                     preparedStatement.executeUpdate();
@@ -89,7 +93,7 @@ public class JdbcPhoneDao implements PhoneDao {
                     preparedStatement.executeUpdate();
                 }
                 preparedStatement = connection.prepareStatement(
-                        "INSERT INTO temporal_phone " +
+                        "INSERT INTO phone_specification " +
                                 "(phone_id, begin_date, mins_count, sms_count) " +
                                 "VALUES (?, NOW(), ?, ?);"
                 );
@@ -104,7 +108,7 @@ public class JdbcPhoneDao implements PhoneDao {
     }
 
     @Override
-    public void add(int clientId, TemporalPhone temporalPhone) {
+    public void add(int clientId, PhoneSpecification temporalPhone) {
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "INSERT INTO phone (client_id, activation_date, status) VALUES (?, NOW(), ?::status) RETURNING id;"
@@ -115,7 +119,7 @@ public class JdbcPhoneDao implements PhoneDao {
             rs.next();
             long phoneId = rs.getLong("id");
             preparedStatement = connection.prepareStatement(
-                    "INSERT INTO temporal_phone " +
+                    "INSERT INTO phone_specification " +
                             "(phone_id, begin_date, mins_count, sms_count) " +
                             "VALUES (?, NOW(), ?, ?);"
             );
@@ -154,8 +158,8 @@ public class JdbcPhoneDao implements PhoneDao {
     public void suspend(int id) {
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "UPDATE temporal_phone SET end_date = NOW() where begin_date = " +
-                            "(SELECT MAX(begin_date) FROM temporal_phone WHERE phone_id = ? )"
+                    "UPDATE phone_specification SET end_date = NOW() where begin_date = " +
+                            "(SELECT MAX(begin_date) FROM phone_specification WHERE phone_id = ? )"
             );
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
@@ -180,9 +184,9 @@ public class JdbcPhoneDao implements PhoneDao {
             preparedStatement.setString(1, String.valueOf(Status.ACTIVE));
             preparedStatement.executeUpdate();
             preparedStatement = connection.prepareStatement(
-                    "INSERT into temporal_phone (phone_id, begin_date, mins_count, sms_count) " +
+                    "INSERT into phone_specification (phone_id, begin_date, mins_count, sms_count) " +
                             "select phone_id, now(), mins_count, sms_count " +
-                            "from temporal_phone where begin_date = (SELECT MAX(begin_date) FROM temporal_phone " +
+                            "from phone_specification where begin_date = (SELECT MAX(begin_date) FROM phone_specification " +
                             "WHERE phone_id = ?);"
             );
             preparedStatement.setInt(1, id);
@@ -193,7 +197,7 @@ public class JdbcPhoneDao implements PhoneDao {
     }
 
     @Override
-    public void disconnect(int id) {
+    public void delete(int id) {
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT status from phone where id = ?"
@@ -204,8 +208,8 @@ public class JdbcPhoneDao implements PhoneDao {
                 Status status = Status.valueOf(resultSet.getString("status"));
                 if (status.equals(Status.ACTIVE)) {
                     preparedStatement = connection.prepareStatement(
-                            "UPDATE temporal_phone SET end_date = NOW() WHERE begin_date = " +
-                                    "(SELECT MAX(begin_date) FROM temporal_phone WHERE phone_id = ?)"
+                            "UPDATE phone_specification SET end_date = NOW() WHERE begin_date = " +
+                                    "(SELECT MAX(begin_date) FROM phone_specification WHERE phone_id = ?)"
                     );
                     preparedStatement.setInt(1, id);
                     preparedStatement.executeUpdate();
@@ -215,15 +219,10 @@ public class JdbcPhoneDao implements PhoneDao {
                     "UPDATE phone SET status = ?::status WHERE id = ?"
             );
             preparedStatement.setLong(2, id);
-            preparedStatement.setString(1, String.valueOf(Status.DISCONNECTED));
+            preparedStatement.setString(1, String.valueOf(Status.DELETED));
             preparedStatement.executeUpdate();
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
-    }
-
-    @Override
-    public void delete(int id) {
-        // todo?
     }
 }

@@ -5,6 +5,9 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+/**
+ * Provides a DataSource for JDBC DAO objects.
+ */
 public class JdbcUtil {
 
     private static DataSource dataSource;

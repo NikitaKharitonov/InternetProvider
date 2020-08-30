@@ -3,9 +3,14 @@ package ru.internetprovider.model.services;
 import javax.persistence.*;
 import java.util.Date;
 
+/**
+ * A temporal specification of a Television service,
+ * it has the mutable properties of a Television service.
+ */
+
 @Entity
-@Table(name = "temporal_television")
-public class TemporalTelevision implements TemporalService {
+@Table(name = "television_specification")
+public class TelevisionSpecification implements ServiceSpecification {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,13 +24,13 @@ public class TemporalTelevision implements TemporalService {
     @Column(name = "channels_count")
     private int channelsCount;
 
-    public TemporalTelevision(Date beginDate, Date endDate, int channelsCount) {
+    public TelevisionSpecification(Date beginDate, Date endDate, int channelsCount) {
         this.beginDate = beginDate;
         this.endDate = endDate;
         this.channelsCount = channelsCount;
     }
 
-    public TemporalTelevision() {
+    public TelevisionSpecification() {
     }
 
     public int getId() {

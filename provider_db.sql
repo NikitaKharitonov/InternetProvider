@@ -1,66 +1,69 @@
-SET timezone = '+04';
+set timezone = '+04';
 
+create type status as enum ('ACTIVE', 'SUSPENDED', 'DELETED');
+create type connection_type as enum ('ADSL', 'Dial_up', 'ISDN', 'Cable', 'Fiber');
 
-CREATE TYPE status AS ENUM ('PLANNED', 'ACTIVE', 'SUSPENDED', 'DISCONNECTED');
-CREATE TYPE connection_type AS ENUM ('ADSL', 'Dial_up', 'ISDN', 'Cable', 'Fiber');
-
-CREATE TABLE client (
-                        id SERIAL PRIMARY KEY,
-                        name VARCHAR(50) NOT NULL,
-                        phone_number VARCHAR(12) NOT NULL,
-                        email_address VARCHAR(129) NOT NULL
+create table if not exists client
+(
+    id serial not null primary key,
+    name varchar(50) not null,
+    phone_number varchar(12) not null,
+    email_address varchar(129) not null
 );
 
-CREATE TABLE temporalInternet (
-                          id SERIAL PRIMARY KEY,
-                          client_id INT NOT NULL REFERENCES client(id) ON DELETE CASCADE ON UPDATE CASCADE,
-                          activation_date TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
-                          status status NOT NULL
+create table if not exists internet
+(
+    id serial not null primary key,
+    client_id integer not null references client(id),
+    activation_date timestamp(0) not null,
+    status status
 );
 
-CREATE TABLE temporalPhone (
-                       id SERIAL PRIMARY KEY,
-                       client_id INT NOT NULL REFERENCES client(id) ON DELETE CASCADE ON UPDATE CASCADE,
-                       activation_date TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
-                       status status NOT NULL
+create table if not exists phone
+(
+    id serial not null primary key,
+    client_id integer not null references client(id),
+    activation_date timestamp(0) not null,
+    status status
 );
 
-CREATE TABLE temporalTelevision (
-                            id SERIAL PRIMARY KEY,
-                            client_id INT NOT NULL REFERENCES client(id) ON DELETE CASCADE ON UPDATE CASCADE,
-                            activation_date TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
-                            status status NOT NULL
+create table if not exists television
+(
+    id serial not null primary key,
+    client_id integer not null references client,
+    activation_date timestamp(0) not null,
+    status status
 );
 
-CREATE TABLE internet_history (
-                                  id SERIAL PRIMARY KEY,
-                                  internet_id INT NOT NULL REFERENCES temporalInternet(id) ON DELETE CASCADE ON UPDATE CASCADE,
-                                  begin_date TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
-                                  end_date TIMESTAMP(0) WITHOUT TIME ZONE,
-                                  speed INT NOT NULL,
-                                  antivirus BOOLEAN,
-                                  connection_type connection_type NOT NULL
+create table if not exists internet_specification
+(
+    id serial not null primary key,
+    internet_id integer not null references internet on update cascade on delete cascade,
+    begin_date timestamp(0) not null,
+    end_date timestamp(0),
+    speed integer not null,
+    antivirus boolean,
+    connection_type connection_type not null
 );
 
-CREATE TABLE phone_history (
-                               id SERIAL PRIMARY KEY,
-                               phone_id INT NOT NULL REFERENCES temporalPhone(id) ON DELETE CASCADE ON UPDATE CASCADE,
-                               begin_date TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
-                               end_date TIMESTAMP(0) WITHOUT TIME ZONE,
-                               mins_count INT NOT NULL,
-                               sms_count INT NOT NULL
+create table if not exists phone_specification
+(
+    id serial not null primary key,
+    phone_id integer not null references phone on update cascade on delete cascade,
+    begin_date timestamp(0) not null,
+    end_date timestamp(0),
+    mins_count integer not null,
+    sms_count integer not null
 );
 
-CREATE TABLE television_history (
-                                    id SERIAL PRIMARY KEY,
-                                    television_id INT NOT NULL REFERENCES temporalTelevision(id) ON DELETE CASCADE ON UPDATE CASCADE,
-                                    begin_date TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL,
-                                    end_date TIMESTAMP(0) WITHOUT TIME ZONE,
-                                    channels_count INT NOT NULL
+create table if not exists television_specification
+(
+    id serial not null primary key,
+    television_id integer not null references television on update cascade on delete cascade,
+    begin_date timestamp(0) not null,
+    end_date timestamp(0),
+    channels_count integer not null
 );
-
-
-
 
 
 

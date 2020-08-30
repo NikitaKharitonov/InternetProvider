@@ -1,31 +1,40 @@
-import org.hibernate.Session;
-import org.hibernate.query.Query;
-import ru.internetprovider.model.dao.implementation.hibernate.HibernateUtil;
-import ru.internetprovider.model.services.Service;
+import ru.internetprovider.model.services.InternetSpecification;
 
-import javax.persistence.EntityTransaction;
-import java.util.List;
+import java.util.*;
 
 public class Test {
 
     public static void main(String[] args) {
-        List<Service> serviceList = null;
-        EntityTransaction entityTransaction = null;
-        try (Session session = HibernateUtil.openSession()) {
-            entityTransaction = session.getTransaction();
-            entityTransaction.begin();
 
-            Query query = session.createQuery("from Internet where clientId = :clientId");
-            query.setParameter("clientId", 2);
-            serviceList = query.list();
+        PriorityQueue<InternetSpecification> priorityQueue =
+                new PriorityQueue<>(Comparator.comparing(InternetSpecification::getBeginDate));
+        long nanoTime = System.currentTimeMillis();
+        for (int i = 0; i < 10; ++i)
+            priorityQueue.add(new InternetSpecification(new Date(nanoTime + 1_000_000 * i), null, 0, false, null));
 
-            entityTransaction.commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-            if (entityTransaction != null)
-                entityTransaction.rollback();
-        }
-        System.out.println(serviceList);
+        priorityQueue.forEach(o -> {
+            Date date = o.getBeginDate();
+            System.out.println(date);
+        });
+
+        System.out.println("Head " + priorityQueue.peek());
+        System.out.println("___________________________");
+        priorityQueue.clear();
+
+        for (int i = 9; i > -1; --i)
+            priorityQueue.add(new InternetSpecification(new Date(nanoTime + 1_000_000 * i), null, 0, false, null));
+
+        priorityQueue.forEach(o -> {
+            Date date = o.getBeginDate();
+            System.out.println(date);
+        });
+        System.out.println("Head " + priorityQueue.peek());
+
+
+
+
+
+
 
     }
 }

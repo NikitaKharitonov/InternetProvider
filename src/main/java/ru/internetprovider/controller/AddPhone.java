@@ -1,6 +1,6 @@
 package ru.internetprovider.controller;
 
-import ru.internetprovider.model.services.TemporalPhone;
+import ru.internetprovider.model.services.PhoneSpecification;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,8 +16,8 @@ public class AddPhone extends HttpServlet {
         int clientId = Integer.parseInt(request.getSession().getAttribute("clientId").toString());
         int minsCount = Integer.parseInt(request.getParameter("minsCount"));
         int smsCount = Integer.parseInt(request.getParameter("smsCount"));
-        TemporalPhone temporalPhone = new TemporalPhone(new Date(), null, minsCount, smsCount);
-        DaoUtil.getPhoneDao().add(clientId, temporalPhone);
+        PhoneSpecification phoneSpecification = new PhoneSpecification(new Date(), null, minsCount, smsCount);
+        DaoUtil.getPhoneDao().add(clientId, phoneSpecification);
         response.sendRedirect(request.getContextPath() + "/showPhone");
     }
 

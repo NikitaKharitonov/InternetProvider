@@ -3,9 +3,14 @@ package ru.internetprovider.model.services;
 import javax.persistence.*;
 import java.util.Date;
 
+/**
+ * A temporal specification of a Phone service,
+ * it has the mutable properties of a Phone service.
+ */
+
 @Entity
-@Table(name = "temporal_phone")
-public class TemporalPhone implements TemporalService {
+@Table(name = "phone_specification")
+public class PhoneSpecification implements ServiceSpecification {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,14 +26,14 @@ public class TemporalPhone implements TemporalService {
     @Column(name = "sms_count")
     private int smsCount;
 
-    public TemporalPhone(Date beginDate, Date endDate, int minsCount, int smsCount) {
+    public PhoneSpecification(Date beginDate, Date endDate, int minsCount, int smsCount) {
         this.beginDate = beginDate;
         this.endDate = endDate;
         this.minsCount = minsCount;
         this.smsCount = smsCount;
     }
 
-    public TemporalPhone() {
+    public PhoneSpecification() {
     }
 
     public int getId() {

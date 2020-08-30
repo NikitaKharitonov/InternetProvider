@@ -1,4 +1,4 @@
-<%@ page import="ru.internetprovider.model.services.TemporalInternet" %>
+<%@ page import="ru.internetprovider.model.services.InternetSpecification" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -11,7 +11,7 @@
 </head>
 <body>
     <%
-        List<TemporalInternet> history = (List<TemporalInternet>) request.getAttribute("history");
+        List<InternetSpecification> history = (List<InternetSpecification>) request.getAttribute("history");
         int internetId = (int) request.getAttribute("internetId");
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     %>
@@ -30,13 +30,13 @@
             </tr>
             </thead>
             <tbody>
-            <% for (TemporalInternet temporalInternet : history) { %>
+            <% for (InternetSpecification internetSpecification : history) { %>
             <tr>
-                <td><%=temporalInternet.getBeginDate() != null ? formatter.format(temporalInternet.getBeginDate()) : ""%></td>
-                <td><%=temporalInternet.getEndDate() != null ? formatter.format(temporalInternet.getEndDate()) : ""%></td>
-                <td><%=temporalInternet.getSpeed()%></td>
-                <td><%=temporalInternet.isAntivirus()%></td>
-                <td><%=temporalInternet.getConnectionType()%></td>
+                <td><%=internetSpecification.getBeginDate() != null ? formatter.format(internetSpecification.getBeginDate()) : ""%></td>
+                <td><%=internetSpecification.getEndDate() != null ? formatter.format(internetSpecification.getEndDate()) : ""%></td>
+                <td><%=internetSpecification.getSpeed()%></td>
+                <td><%=internetSpecification.isAntivirus()%></td>
+                <td><%=internetSpecification.getConnectionType()%></td>
             </tr>
             <% } %>
             </tbody>

@@ -1,4 +1,4 @@
-<%@ page import="ru.internetprovider.model.services.TemporalTelevision" %>
+<%@ page import="ru.internetprovider.model.services.TelevisionSpecification" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -9,7 +9,7 @@
 </head>
 <body>
     <%
-        TemporalTelevision temporalTelevision = (TemporalTelevision) request.getAttribute("television");
+        TelevisionSpecification temporalTelevision = (TelevisionSpecification) request.getAttribute("television");
     %>
     <div class="form-container">
         <form method="post" action="${pageContext.request.contextPath}/updateTelevision">

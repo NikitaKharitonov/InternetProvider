@@ -4,11 +4,12 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Deque;
 import java.util.List;
 
 @Entity
 @Table(name = "phone")
-public class Phone implements Service<TemporalPhone> {
+public class Phone implements Service<PhoneSpecification> {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +24,7 @@ public class Phone implements Service<TemporalPhone> {
     private Status status;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "phone_id")
-    private List<TemporalPhone> history;
+    private List<PhoneSpecification> history;
 
     public Phone(Date activationDate, Status status) {
         this.activationDate = activationDate;
@@ -71,11 +72,11 @@ public class Phone implements Service<TemporalPhone> {
         this.status = status;
     }
 
-    public List<TemporalPhone> getHistory() {
+    public List<PhoneSpecification> getHistory() {
         return history;
     }
 
-    public void setHistory(List<TemporalPhone> history) {
+    public void setHistory(List<PhoneSpecification> history) {
         this.history = history;
     }
 

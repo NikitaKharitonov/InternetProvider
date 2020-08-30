@@ -1,4 +1,4 @@
-<%@ page import="ru.internetprovider.model.services.TemporalPhone" %>
+<%@ page import="ru.internetprovider.model.services.PhoneSpecification" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -9,7 +9,7 @@
 </head>
 <body>
     <%
-        TemporalPhone temporalPhone = (TemporalPhone) request.getAttribute("phone");
+        PhoneSpecification temporalPhone = (PhoneSpecification) request.getAttribute("phone");
     %>
     <div class="form-container">
         <form method="post" action="${pageContext.request.contextPath}/updatePhone">

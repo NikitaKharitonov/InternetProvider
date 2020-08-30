@@ -4,7 +4,7 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import ru.internetprovider.model.dao.PhoneDao;
 import ru.internetprovider.model.services.Phone;
-import ru.internetprovider.model.services.TemporalPhone;
+import ru.internetprovider.model.services.PhoneSpecification;
 import ru.internetprovider.model.services.Status;
 
 import javax.persistence.EntityTransaction;
@@ -13,6 +13,10 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * The implementation of the Data Access Object pattern for Phone services
+ * using the Hibernate technology.
+ */
 public class HibernatePhoneDao implements PhoneDao {
 
     @Override
@@ -37,18 +41,17 @@ public class HibernatePhoneDao implements PhoneDao {
     }
 
     @Override
-    public List<TemporalPhone> getHistory(int id) {
-        List<TemporalPhone> history = null;
+    public List<PhoneSpecification> getHistory(int id) {
+        List<PhoneSpecification> history = null;
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
             entityTransaction.begin();
 
-            Query query = session.createQuery("from Phone where id = :id");
+            Query query = session.createQuery("from PhoneSpecification where phoneId = :id order by beginDate");
             query.setParameter("id", id);
-            Phone phone = (Phone) query.getSingleResult();
-            history = phone.getHistory();
-            history.sort(Comparator.comparing(TemporalPhone::getBeginDate));
+            history = query.getResultList();
+            history.sort(Comparator.comparing(PhoneSpecification::getBeginDate));
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -60,7 +63,7 @@ public class HibernatePhoneDao implements PhoneDao {
     }
 
     @Override
-    public void update(int id, TemporalPhone temporalPhone) {
+    public void update(int id, PhoneSpecification temporalPhone) {
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
@@ -68,9 +71,9 @@ public class HibernatePhoneDao implements PhoneDao {
 
             Phone phone = session.get(Phone.class, id);
             if (phone.getStatus().equals(Status.ACTIVE)) {
-                Query query = session.createQuery("from TemporalPhone where phoneId = :id order by beginDate desc");
+                Query query = session.createQuery("from PhoneSpecification where phoneId = :id order by beginDate desc");
                 query.setParameter("id", id);
-                TemporalPhone lastTemporalPhone = (TemporalPhone) query.list().get(0);
+                PhoneSpecification lastTemporalPhone = (PhoneSpecification) query.list().get(0);
                 lastTemporalPhone.setEndDate(new Date());
             } else if (phone.getStatus().equals(Status.SUSPENDED)) {
                 phone.setStatus(Status.ACTIVE);
@@ -88,7 +91,7 @@ public class HibernatePhoneDao implements PhoneDao {
     }
 
     @Override
-    public void add(int clientId, TemporalPhone temporalPhone) {
+    public void add(int clientId, PhoneSpecification temporalPhone) {
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
@@ -138,9 +141,9 @@ public class HibernatePhoneDao implements PhoneDao {
             entityTransaction.begin();
 
             // fixme get by id
-            Query query = session.createQuery("from TemporalPhone where phoneId = :id order by beginDate desc");
+            Query query = session.createQuery("from PhoneSpecification where phoneId = :id order by beginDate desc");
             query.setParameter("id", id);
-            TemporalPhone lastTemporalPhone = (TemporalPhone) query.list().get(0);
+            PhoneSpecification lastTemporalPhone = (PhoneSpecification) query.list().get(0);
             lastTemporalPhone.setEndDate(new Date());
 
             Phone phone = session.get(Phone.class, id);
@@ -164,11 +167,11 @@ public class HibernatePhoneDao implements PhoneDao {
             Phone phone = session.get(Phone.class, id);
             phone.setStatus(Status.ACTIVE);
 
-            Query query = session.createQuery("from TemporalPhone where phoneId = :id order by beginDate desc");
+            Query query = session.createQuery("from PhoneSpecification where phoneId = :id order by beginDate desc");
             query.setParameter("id", id);
-            TemporalPhone lastTemporalPhone = (TemporalPhone) query.list().get(0);
+            PhoneSpecification lastTemporalPhone = (PhoneSpecification) query.list().get(0);
 
-            TemporalPhone temporalPhone = new TemporalPhone();
+            PhoneSpecification temporalPhone = new PhoneSpecification();
             temporalPhone.setPhoneId(lastTemporalPhone.getPhoneId());
             temporalPhone.setSmsCount(lastTemporalPhone.getSmsCount());
             temporalPhone.setMinsCount(lastTemporalPhone.getMinsCount());
@@ -185,7 +188,7 @@ public class HibernatePhoneDao implements PhoneDao {
     }
 
     @Override
-    public void disconnect(int id) {
+    public void delete(int id) {
         EntityTransaction entityTransaction = null;
         try (Session session = HibernateUtil.openSession()) {
             entityTransaction = session.getTransaction();
@@ -194,13 +197,13 @@ public class HibernatePhoneDao implements PhoneDao {
             Phone phone = session.get(Phone.class, id);
 
             if (phone.getStatus().equals(Status.ACTIVE)) {
-                Query query = session.createQuery("from TemporalPhone where phoneId = :id order by beginDate desc");
+                Query query = session.createQuery("from PhoneSpecification where phoneId = :id order by beginDate desc");
                 query.setParameter("id", id);
-                TemporalPhone lastTemporalPhone = (TemporalPhone) query.list().get(0);
+                PhoneSpecification lastTemporalPhone = (PhoneSpecification) query.list().get(0);
                 lastTemporalPhone.setEndDate(new Date());
             }
 
-            phone.setStatus(Status.DISCONNECTED);
+            phone.setStatus(Status.DELETED);
 
             entityTransaction.commit();
         } catch (Exception e) {
@@ -208,10 +211,5 @@ public class HibernatePhoneDao implements PhoneDao {
                 entityTransaction.rollback();
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void delete(int id) {
-        // todo?
     }
 }

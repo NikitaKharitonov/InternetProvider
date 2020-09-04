@@ -35,7 +35,7 @@ create table if not exists television
     status status
 );
 
-create table if not exists internet_specification
+create table if not exists internet_state
 (
     id serial not null primary key,
     internet_id integer not null references internet on update cascade on delete cascade,
@@ -46,7 +46,7 @@ create table if not exists internet_specification
     connection_type connection_type not null
 );
 
-create table if not exists phone_specification
+create table if not exists phone_state
 (
     id serial not null primary key,
     phone_id integer not null references phone on update cascade on delete cascade,
@@ -56,7 +56,7 @@ create table if not exists phone_specification
     sms_count integer not null
 );
 
-create table if not exists television_specification
+create table if not exists television_state
 (
     id serial not null primary key,
     television_id integer not null references television on update cascade on delete cascade,

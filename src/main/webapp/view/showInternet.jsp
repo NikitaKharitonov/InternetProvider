@@ -41,7 +41,7 @@
                             <td><%=internet.getId()%></td>
                             <td><%=formatter.format(internet.getActivationDate())%></td>
                             <td><%=internet.getStatus()%></td>
-                            <% InternetSpecification current =
+                            <% InternetState current =
                                     internet.getHistory().get(internet.getHistory().size() - 1); %>
                             <td><%=current.getSpeed()%></td>
                             <td><%=current.isAntivirus()%></td>

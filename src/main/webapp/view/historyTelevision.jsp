@@ -1,4 +1,4 @@
-<%@ page import="ru.internetprovider.model.services.TelevisionSpecification" %>
+<%@ page import="ru.internetprovider.model.services.TelevisionState" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -11,7 +11,7 @@
 </head>
 <body>
     <%
-        List<TelevisionSpecification> history = (List<TelevisionSpecification>) request.getAttribute("history");
+        List<TelevisionState> history = (List<TelevisionState>) request.getAttribute("history");
         int televisionId = (int) request.getAttribute("televisionId");
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     %>
@@ -28,11 +28,11 @@
             </tr>
             </thead>
             <tbody>
-            <% for (TelevisionSpecification temporalTelevision : history) { %>
+            <% for (TelevisionState televisionState : history) { %>
             <tr>
-                <td><%=temporalTelevision.getBeginDate() != null ? formatter.format(temporalTelevision.getBeginDate()) : ""%></td>
-                <td><%=temporalTelevision.getEndDate() != null ? formatter.format(temporalTelevision.getEndDate()) : ""%></td>
-                <td><%=temporalTelevision.getChannelsCount()%></td>
+                <td><%=televisionState.getBeginDate() != null ? formatter.format(televisionState.getBeginDate()) : ""%></td>
+                <td><%=televisionState.getEndDate() != null ? formatter.format(televisionState.getEndDate()) : ""%></td>
+                <td><%=televisionState.getChannelsCount()%></td>
             </tr>
             <% } %>
             </tbody>

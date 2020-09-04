@@ -15,12 +15,12 @@ import java.util.List;
 public class JdbcInternetDao implements InternetDao {
 
     @Override
-    public List<InternetSpecification> getHistory(int id) {
-        List<InternetSpecification> history = null;
+    public List<InternetState> getHistory(int id) {
+        List<InternetState> history = null;
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement pstmt = connection.prepareStatement(
                     "SELECT * " +
-                            "FROM internet_specification WHERE internet_id = ? ORDER BY begin_date;"
+                            "FROM internet_state WHERE internet_id = ? ORDER BY begin_date;"
             );
             pstmt.setLong(1, id);
             ResultSet resultSet = pstmt.executeQuery();
@@ -31,7 +31,7 @@ public class JdbcInternetDao implements InternetDao {
                 int speed = resultSet.getInt("speed");
                 boolean antivirus = resultSet.getBoolean("antivirus");
                 ConnectionType connectionType = ConnectionType.valueOf(resultSet.getString("connection_type"));
-                history.add(new InternetSpecification(beginDate, endDate, speed, antivirus, connectionType));
+                history.add(new InternetState(beginDate, endDate, speed, antivirus, connectionType));
             }
         } catch (SQLException exception) {
             exception.printStackTrace();
@@ -73,9 +73,9 @@ public class JdbcInternetDao implements InternetDao {
                 int id = resultSet.getInt("id");
                 Date activationDate = resultSet.getTimestamp("activation_date");
                 Status status = Status.valueOf(resultSet.getString("status"));
-                List<InternetSpecification> internetSpecificationList = getHistory(id);
+                List<InternetState> history = getHistory(id);
                 Internet internet = new Internet(id, activationDate, status);
-                internet.setHistory(internetSpecificationList);
+                internet.setHistory(history);
                 internetList.add(internet);
             }
         } catch (SQLException exception) {
@@ -85,7 +85,7 @@ public class JdbcInternetDao implements InternetDao {
     }
 
     @Override
-    public void update(int id, InternetSpecification internetSpecification) {
+    public void update(int id, InternetState internetState) {
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT status from internet where id = ?"
@@ -96,8 +96,8 @@ public class JdbcInternetDao implements InternetDao {
                 Status status = Status.valueOf(resultSet.getString("status"));
                 if (status.equals(Status.ACTIVE)) {
                     preparedStatement = connection.prepareStatement(
-                            "UPDATE internet_specification SET end_date = NOW() WHERE begin_date " +
-                                    "= (SELECT MAX(begin_date) FROM internet_specification WHERE internet_id = ?)"
+                            "UPDATE internet_state SET end_date = NOW() WHERE begin_date " +
+                                    "= (SELECT MAX(begin_date) FROM internet_state WHERE internet_id = ?)"
                     );
                     preparedStatement.setInt(1, id);
                     preparedStatement.executeUpdate();
@@ -112,14 +112,14 @@ public class JdbcInternetDao implements InternetDao {
                     preparedStatement.executeUpdate();
                 }
                 preparedStatement = connection.prepareStatement(
-                        "INSERT INTO internet_specification " +
+                        "INSERT INTO internet_state " +
                                 "(internet_id, begin_date, speed, antivirus, connection_type) " +
                                 "VALUES (?, NOW(), ?, ?, ?::connection_type);"
                 );
                 preparedStatement.setLong(1, id);
-                preparedStatement.setInt(2, internetSpecification.getSpeed());
-                preparedStatement.setBoolean(3, internetSpecification.isAntivirus());
-                preparedStatement.setString(4, String.valueOf(internetSpecification.getConnectionType()));
+                preparedStatement.setInt(2, internetState.getSpeed());
+                preparedStatement.setBoolean(3, internetState.isAntivirus());
+                preparedStatement.setString(4, String.valueOf(internetState.getConnectionType()));
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException exception) {
@@ -128,7 +128,7 @@ public class JdbcInternetDao implements InternetDao {
     }
 
     @Override
-    public void add(int clientId, InternetSpecification internetSpecification) {
+    public void add(int clientId, InternetState internetState) {
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "INSERT INTO internet (client_id, activation_date, status) VALUES (?, NOW(), ?::status) RETURNING id;"
@@ -139,14 +139,14 @@ public class JdbcInternetDao implements InternetDao {
             resultSet.next();
             long internetId = resultSet.getLong("id");
             preparedStatement = connection.prepareStatement(
-                    "INSERT INTO internet_specification " +
+                    "INSERT INTO internet_state " +
                             "(internet_id, begin_date, speed, antivirus, connection_type) " +
                             "VALUES (?, NOW(), ?, ?, ?::connection_type);"
             );
             preparedStatement.setLong(1, internetId);
-            preparedStatement.setInt(2, internetSpecification.getSpeed());
-            preparedStatement.setBoolean(3, internetSpecification.isAntivirus());
-            preparedStatement.setString(4, String.valueOf(internetSpecification.getConnectionType()));
+            preparedStatement.setInt(2, internetState.getSpeed());
+            preparedStatement.setBoolean(3, internetState.isAntivirus());
+            preparedStatement.setString(4, String.valueOf(internetState.getConnectionType()));
             if (preparedStatement.executeUpdate() == 0) {
                 throw new SQLException("Failed to insert to database");
             }
@@ -159,8 +159,8 @@ public class JdbcInternetDao implements InternetDao {
     public void suspend(int id) {
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "UPDATE internet_specification SET end_date = NOW() WHERE begin_date = " +
-                            "(SELECT MAX(begin_date) FROM internet_specification WHERE internet_id = ?)"
+                    "UPDATE internet_state SET end_date = NOW() WHERE begin_date = " +
+                            "(SELECT MAX(begin_date) FROM internet_state WHERE internet_id = ?)"
             );
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
@@ -185,9 +185,9 @@ public class JdbcInternetDao implements InternetDao {
             preparedStatement.setString(1, String.valueOf(Status.ACTIVE));
             preparedStatement.executeUpdate();
             preparedStatement = connection.prepareStatement(
-                    "INSERT into internet_specification (internet_id, begin_date, speed, antivirus, connection_type) " +
+                    "INSERT into internet_state (internet_id, begin_date, speed, antivirus, connection_type) " +
                             "select internet_id, now(), speed, antivirus, connection_type " +
-                            "from internet_specification where begin_date = (SELECT MAX(begin_date) FROM internet_specification " +
+                            "from internet_state where begin_date = (SELECT MAX(begin_date) FROM internet_state " +
                             "WHERE internet_id = ?);"
             );
             preparedStatement.setInt(1, id);
@@ -209,8 +209,8 @@ public class JdbcInternetDao implements InternetDao {
                 Status status = Status.valueOf(resultSet.getString("status"));
                 if (status.equals(Status.ACTIVE)) {
                     preparedStatement = connection.prepareStatement(
-                            "UPDATE internet_specification SET end_date = NOW() WHERE begin_date = " +
-                                    "(SELECT MAX(begin_date) FROM internet_specification WHERE internet_id = ?)"
+                            "UPDATE internet_state SET end_date = NOW() WHERE begin_date = " +
+                                    "(SELECT MAX(begin_date) FROM internet_state WHERE internet_id = ?)"
                     );
                     preparedStatement.setInt(1, id);
                     preparedStatement.executeUpdate();

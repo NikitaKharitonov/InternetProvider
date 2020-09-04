@@ -41,8 +41,8 @@
                             <td><%=phone.getId()%></td>
                             <td><%=formatter.format(phone.getActivationDate())%></td>
                             <td><%=phone.getStatus()%></td>
-                            <% List<PhoneSpecification> history = phone.getHistory(); %>
-                            <% PhoneSpecification current = history.get(history.size() - 1); %>
+                            <% List<PhoneState> history = phone.getHistory(); %>
+                            <% PhoneState current = history.get(history.size() - 1); %>
                             <td><%=current.getMinsCount()%></td>
                             <td><%=current.getSmsCount()%></td>
                             <td>

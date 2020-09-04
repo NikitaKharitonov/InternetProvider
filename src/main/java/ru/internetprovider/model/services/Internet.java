@@ -8,14 +8,12 @@ import java.util.List;
 
 /**
  * An Internet service which belongs to one and only one
- * client. The service's specification is stored in an InternetSpecification list,
- * the so-called "history". This list contains the service's current specification
- * as well as all its former specifications which the service once had.
+ * client. The service's current state and all its former states
+ * are stored in the so-called "history".
  */
-
 @Entity
 @Table(name = "internet")
-public class Internet implements Service<InternetSpecification> {
+public class Internet implements Service<InternetState> {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,9 +32,9 @@ public class Internet implements Service<InternetSpecification> {
     private Date activationDate;
 
     /**
-     * The current status of this Internet service which a user can set and reset at any
-     * time to indicate the availability of the service at the moment: ACTIVE - the service is
-     * fully available, SUSPENDED - the service is temporally unavailable,
+     * The current status of this Internet service which indicates
+     * its availability for the client: ACTIVE - the service is
+     * available, SUSPENDED - the service is temporally unavailable,
      * DELETED - the service is forever unavailable.
      */
     @Enumerated(EnumType.STRING)
@@ -45,14 +43,14 @@ public class Internet implements Service<InternetSpecification> {
     private Status status;
 
     /**
-     * The list's last element is this service's current specification.
-     * The other elements are the service's
-     * former specifications which the service once had. The elements
+     * The last element of this list is the current state of the service.
+     * The other elements are the
+     * former states which the service once had. The elements
      * are ordered chronologically.
      */
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "internet_id")
-    private List<InternetSpecification> history;
+    private List<InternetState> history;
 
     public Internet(Date activationDate, Status status) {
         this.activationDate = activationDate;
@@ -100,11 +98,11 @@ public class Internet implements Service<InternetSpecification> {
         this.status = status;
     }
 
-    public List<InternetSpecification> getHistory() {
+    public List<InternetState> getHistory() {
         return history;
     }
 
-    public void setHistory(List<InternetSpecification> history) {
+    public void setHistory(List<InternetState> history) {
         this.history = history;
     }
 

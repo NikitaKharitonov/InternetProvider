@@ -40,7 +40,7 @@ public class ShowInternet extends HttpServlet {
         internetList = DaoUtil.getInternetDao().getAll(clientId);
         internetList.sort(Comparator.comparing(Service::getId));
         for (Internet internet : internetList) {
-            internet.getHistory().sort(Comparator.comparing(InternetSpecification::getBeginDate));
+            internet.getHistory().sort(Comparator.comparing(InternetState::getBeginDate));
         }
         request.setAttribute("internetList", internetList);
         request.getRequestDispatcher("view/showInternet.jsp").forward(request, response);

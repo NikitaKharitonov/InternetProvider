@@ -40,8 +40,8 @@
                             <td><%=television.getId()%></td>
                             <td><%=formatter.format(television.getActivationDate())%></td>
                             <td><%=television.getStatus()%></td>
-                            <% List<TelevisionSpecification> history = television.getHistory(); %>
-                            <% TelevisionSpecification current = history.get(history.size() - 1); %>
+                            <% List<TelevisionState> history = television.getHistory(); %>
+                            <% TelevisionState current = history.get(history.size() - 1); %>
                             <td><%=current.getChannelsCount()%></td>
                             <td>
                                 <form action="${pageContext.request.contextPath}/historyTelevision">

@@ -1,6 +1,6 @@
 package ru.internetprovider.controller;
 
-import ru.internetprovider.model.services.PhoneSpecification;
+import ru.internetprovider.model.services.PhoneState;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,8 +16,8 @@ public class AddPhone extends HttpServlet {
         int clientId = Integer.parseInt(request.getSession().getAttribute("clientId").toString());
         int minsCount = Integer.parseInt(request.getParameter("minsCount"));
         int smsCount = Integer.parseInt(request.getParameter("smsCount"));
-        PhoneSpecification phoneSpecification = new PhoneSpecification(new Date(), null, minsCount, smsCount);
-        DaoUtil.getPhoneDao().add(clientId, phoneSpecification);
+        PhoneState phoneState = new PhoneState(new Date(), null, minsCount, smsCount);
+        DaoUtil.getPhoneDao().add(clientId, phoneState);
         response.sendRedirect(request.getContextPath() + "/showPhone");
     }
 

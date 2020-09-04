@@ -3,12 +3,10 @@ package ru.internetprovider.model.services;
 import java.util.Date;
 
 /**
- * A specification of an abstract service.
- * The implementations of this interface contain the parameters
- * that may be changed by a user.
+ * A temporal state of an abstract service.
  */
 
-public interface ServiceSpecification {
+public interface ServiceState {
     int getId();
     void setId(int id);
     Date getBeginDate();

@@ -1,4 +1,4 @@
-<%@ page import="ru.internetprovider.model.services.InternetSpecification" %>
+<%@ page import="ru.internetprovider.model.services.InternetState" %>
 <%@ page import="java.util.List" %>
 <%@ page import="ru.internetprovider.model.services.ConnectionType" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>

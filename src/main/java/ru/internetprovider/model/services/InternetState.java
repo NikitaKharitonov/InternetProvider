@@ -6,34 +6,32 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * A specification of an Internet service.
- * Contains the Internet parameters that may be changed by a user.
+ * A temporal state of an Internet service.
  */
-
 @Entity
-@Table(name = "internet_specification")
-public class InternetSpecification implements ServiceSpecification {
+@Table(name = "internet_state")
+public class InternetState implements ServiceState {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     /**
-     * The ID of the Internet service that has this specification.
+     * The ID of the Internet service that has this state.
      */
     @Column(name = "internet_id")
     private int internetId;
 
     /**
-     * The date when this specification was assigned to its Internet service.
+     * The date when this state was assigned to its Internet service.
      */
     @Column(name = "begin_date")
     private Date beginDate;
 
     /**
-     * The date when this specification became no longer active (e. g. when
+     * The date when this state became no longer active (e. g. when
      * the Internet service's status was switched from ACTIVE to SUSPENDED or
-     * DELETED or when a new specification was assigned to the service (i. e.
+     * DELETED or when a new state was assigned to the service (i. e.
      * the service was updated)).
      */
     @Column(name = "end_date")
@@ -50,7 +48,7 @@ public class InternetSpecification implements ServiceSpecification {
     @Type(type = "ru.internetprovider.model.services.PostgreSQLEnumType")
     private ConnectionType connectionType;
 
-    public InternetSpecification(Date beginDate, Date endDate, int speed, boolean antivirus, ConnectionType connectionType) {
+    public InternetState(Date beginDate, Date endDate, int speed, boolean antivirus, ConnectionType connectionType) {
         this.beginDate = beginDate;
         this.endDate = endDate;
         this.speed = speed;
@@ -58,7 +56,7 @@ public class InternetSpecification implements ServiceSpecification {
         this.connectionType = connectionType;
     }
 
-    public InternetSpecification() {
+    public InternetState() {
     }
 
     public int getId() {

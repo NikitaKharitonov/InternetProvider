@@ -4,36 +4,51 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * A temporal specification of a Phone service,
- * it has the mutable properties of a Phone service.
+ * A temporal state of a Phone service.
  */
-
 @Entity
-@Table(name = "phone_specification")
-public class PhoneSpecification implements ServiceSpecification {
+@Table(name = "phone_state")
+public class PhoneState implements ServiceState {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    /**
+     * The ID of the Phone service that has this state.
+     */
     @Column(name = "phone_id")
     private int phoneId;
+
+    /**
+     * The date when this state was assigned to its Phone service.
+     */
     @Column(name = "begin_date")
     private Date beginDate;
+
+    /**
+     * The date when this state became no longer active (e. g. when
+     * the Phone service's status was switched from ACTIVE to SUSPENDED or
+     * DELETED or when a new state was assigned to the service (i. e.
+     * the service was updated)).
+     */
     @Column(name = "end_date")
     private Date endDate;
+
     @Column(name = "mins_count")
     private int minsCount;
+
     @Column(name = "sms_count")
     private int smsCount;
 
-    public PhoneSpecification(Date beginDate, Date endDate, int minsCount, int smsCount) {
+    public PhoneState(Date beginDate, Date endDate, int minsCount, int smsCount) {
         this.beginDate = beginDate;
         this.endDate = endDate;
         this.minsCount = minsCount;
         this.smsCount = smsCount;
     }
 
-    public PhoneSpecification() {
+    public PhoneState() {
     }
 
     public int getId() {

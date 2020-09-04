@@ -3,7 +3,7 @@ package ru.internetprovider.model.dao.implementation.jdbc;
 import ru.internetprovider.model.dao.TelevisionDao;
 import ru.internetprovider.model.services.Television;
 import ru.internetprovider.model.services.Status;
-import ru.internetprovider.model.services.TelevisionSpecification;
+import ru.internetprovider.model.services.TelevisionState;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -30,9 +30,9 @@ public class JdbcTelevisionDao implements TelevisionDao {
                 int id = resultSet.getInt("id");
                 Date activationDate = resultSet.getTimestamp("activation_date");
                 Status status = Status.valueOf(resultSet.getString("status"));
-                List<TelevisionSpecification> temporalTelevisionList = getHistory(id);
+                List<TelevisionState> history = getHistory(id);
                 Television television = new Television(id, activationDate, status);
-                television.setHistory(temporalTelevisionList);
+                television.setHistory(history);
                 televisionList.add(television);
             }
             return televisionList;
@@ -43,11 +43,11 @@ public class JdbcTelevisionDao implements TelevisionDao {
     }
 
     @Override
-    public List<TelevisionSpecification> getHistory(int id) {
-        List<TelevisionSpecification> history = null;
+    public List<TelevisionState> getHistory(int id) {
+        List<TelevisionState> history = null;
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "SELECT * FROM television_specification WHERE television_id = ? ORDER BY begin_date;"
+                    "SELECT * FROM television_state WHERE television_id = ? ORDER BY begin_date;"
             );
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -56,7 +56,7 @@ public class JdbcTelevisionDao implements TelevisionDao {
                 Date beginDate = resultSet.getTimestamp("begin_date");
                 Date endDate = resultSet.getTimestamp("end_date");
                 int channelsCount = resultSet.getInt("channels_count");
-                history.add(new TelevisionSpecification(beginDate, endDate, channelsCount));
+                history.add(new TelevisionState(beginDate, endDate, channelsCount));
             }
         } catch (SQLException exception) {
             exception.printStackTrace();
@@ -65,7 +65,7 @@ public class JdbcTelevisionDao implements TelevisionDao {
     }
 
     @Override
-    public void update(int id, TelevisionSpecification temporalTelevision) {
+    public void update(int id, TelevisionState televisionState) {
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT status from television where id = ?"
@@ -76,8 +76,8 @@ public class JdbcTelevisionDao implements TelevisionDao {
                 Status status = Status.valueOf(resultSet.getString("status"));
                 if (status.equals(Status.ACTIVE)) {
                     preparedStatement = connection.prepareStatement(
-                            "UPDATE television_specification SET end_date = NOW() WHERE begin_date = " +
-                                    "(SELECT MAX(begin_date) FROM television_specification WHERE television_id = ?)"
+                            "UPDATE television_state SET end_date = NOW() WHERE begin_date = " +
+                                    "(SELECT MAX(begin_date) FROM television_state WHERE television_id = ?)"
                     );
                     preparedStatement.setInt(1, id);
                     preparedStatement.executeUpdate();
@@ -92,12 +92,12 @@ public class JdbcTelevisionDao implements TelevisionDao {
                     preparedStatement.executeUpdate();
                 }
                 preparedStatement = connection.prepareStatement(
-                        "INSERT INTO television_specification " +
+                        "INSERT INTO television_state " +
                                 "(television_id, begin_date, channels_count) " +
                                 "VALUES (?, NOW(), ?);"
                 );
                 preparedStatement.setLong(1, id);
-                preparedStatement.setInt(2, temporalTelevision.getChannelsCount());
+                preparedStatement.setInt(2, televisionState.getChannelsCount());
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException exception) {
@@ -106,7 +106,7 @@ public class JdbcTelevisionDao implements TelevisionDao {
     }
 
     @Override
-    public void add(int clientId, TelevisionSpecification temporalTelevision) {
+    public void add(int clientId, TelevisionState televisionState) {
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "INSERT INTO television (client_id, activation_date, status) VALUES (?, NOW(), ?::status) RETURNING id;"
@@ -117,12 +117,12 @@ public class JdbcTelevisionDao implements TelevisionDao {
             rs.next();
             long televisionId = rs.getLong("id");
             preparedStatement = connection.prepareStatement(
-                    "INSERT INTO television_specification " +
+                    "INSERT INTO television_state " +
                             "(television_id, begin_date, channels_count) " +
                             "VALUES (?, NOW(), ?);"
             );
             preparedStatement.setLong(1, televisionId);
-            preparedStatement.setInt(2, temporalTelevision.getChannelsCount());
+            preparedStatement.setInt(2, televisionState.getChannelsCount());
             if (preparedStatement.executeUpdate() == 0) {
                 throw new SQLException("Failed to insert to database");
             }
@@ -155,8 +155,8 @@ public class JdbcTelevisionDao implements TelevisionDao {
     public void suspend(int id) {
         try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "UPDATE television_specification SET end_date = NOW() WHERE begin_date = " +
-                            "(SELECT MAX(begin_date) FROM television_specification WHERE television_id = ?)"
+                    "UPDATE television_state SET end_date = NOW() WHERE begin_date = " +
+                            "(SELECT MAX(begin_date) FROM television_state WHERE television_id = ?)"
             );
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
@@ -181,9 +181,9 @@ public class JdbcTelevisionDao implements TelevisionDao {
             preparedStatement.setString(1, String.valueOf(Status.ACTIVE));
             preparedStatement.executeUpdate();
             preparedStatement = connection.prepareStatement(
-                    "INSERT into television_specification (television_id, begin_date, channels_count) " +
+                    "INSERT into television_state (television_id, begin_date, channels_count) " +
                             "select television_id, now(), channels_count " +
-                            "from television_specification where begin_date = (SELECT MAX(begin_date) FROM television_specification " +
+                            "from television_state where begin_date = (SELECT MAX(begin_date) FROM television_state " +
                             "WHERE television_id = ?);"
             );
             preparedStatement.setInt(1, id);
@@ -205,8 +205,8 @@ public class JdbcTelevisionDao implements TelevisionDao {
                 Status status = Status.valueOf(resultSet.getString("status"));
                 if (status.equals(Status.ACTIVE)) {
                     preparedStatement = connection.prepareStatement(
-                            "UPDATE television_specification SET end_date = NOW() WHERE begin_date = " +
-                                    "(SELECT MAX(begin_date) FROM television_specification WHERE television_id = ?)"
+                            "UPDATE television_state SET end_date = NOW() WHERE begin_date = " +
+                                    "(SELECT MAX(begin_date) FROM television_state WHERE television_id = ?)"
                     );
                     preparedStatement.setInt(1, id);
                     preparedStatement.executeUpdate();

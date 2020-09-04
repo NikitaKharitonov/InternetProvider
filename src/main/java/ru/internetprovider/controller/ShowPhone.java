@@ -17,7 +17,7 @@ public class ShowPhone extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getParameter("delete") != null) {
             int id = Integer.parseInt(request.getParameter("delete"));
-            DaoUtil.getInternetDao().delete(id);
+            DaoUtil.getPhoneDao().delete(id);
         } else if (request.getParameter("phoneId") != null) {
             int id = Integer.parseInt(request.getParameter("phoneId"));
             Status status = DaoUtil.getPhoneDao().get(id).getStatus();
@@ -40,7 +40,7 @@ public class ShowPhone extends HttpServlet {
         phoneList = DaoUtil.getPhoneDao().getAll(clientId);
         phoneList.sort(Comparator.comparing(Service::getId));
         for (Phone phone : phoneList) {
-            phone.getHistory().sort(Comparator.comparing(PhoneSpecification::getBeginDate));
+            phone.getHistory().sort(Comparator.comparing(PhoneState::getBeginDate));
         }
         request.setAttribute("phoneList", phoneList);
         request.getRequestDispatcher("view/showPhone.jsp").forward(request, response);

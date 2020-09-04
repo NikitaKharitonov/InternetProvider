@@ -17,7 +17,7 @@ public class ShowTelevision extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getParameter("delete") != null) {
             int id = Integer.parseInt(request.getParameter("delete"));
-            DaoUtil.getInternetDao().delete(id);
+            DaoUtil.getTelevisionDao().delete(id);
         } else if (request.getParameter("televisionId") != null) {
             int id = Integer.parseInt(request.getParameter("televisionId"));
             Television television = DaoUtil.getTelevisionDao().get(id);
@@ -41,7 +41,7 @@ public class ShowTelevision extends HttpServlet {
         televisionList = DaoUtil.getTelevisionDao().getAll(clientId);
         televisionList.sort(Comparator.comparing(Service::getId));
         for (Television television : televisionList) {
-            television.getHistory().sort(Comparator.comparing(TelevisionSpecification::getBeginDate));
+            television.getHistory().sort(Comparator.comparing(TelevisionState::getBeginDate));
         }
         request.setAttribute("televisionList", televisionList);
         request.getRequestDispatcher("view/showTelevision.jsp").forward(request, response);

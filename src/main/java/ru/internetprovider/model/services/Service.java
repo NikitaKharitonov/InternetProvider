@@ -1,7 +1,6 @@
 package ru.internetprovider.model.services;
 
 import java.util.Date;
-import java.util.Deque;
 import java.util.List;
 
 /**
@@ -13,7 +12,7 @@ import java.util.List;
  *           implementation.
  */
 
-public interface Service<T extends ServiceSpecification> {
+public interface Service<T extends ServiceState> {
 
     int getId();
 

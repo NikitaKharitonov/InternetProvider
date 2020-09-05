@@ -17,14 +17,14 @@ public class ShowPhone extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getParameter("delete") != null) {
             int id = Integer.parseInt(request.getParameter("delete"));
-            DaoUtil.getPhoneDao().delete(id);
+            DataAccess.getPhoneDao().delete(id);
         } else if (request.getParameter("phoneId") != null) {
             int id = Integer.parseInt(request.getParameter("phoneId"));
-            Status status = DaoUtil.getPhoneDao().get(id).getStatus();
+            Status status = DataAccess.getPhoneDao().get(id).getStatus();
             if (status.equals(Status.ACTIVE))
-                DaoUtil.getPhoneDao().suspend(id);
+                DataAccess.getPhoneDao().suspend(id);
             else if (status.equals(Status.SUSPENDED)) {
-                DaoUtil.getPhoneDao().activate(id);
+                DataAccess.getPhoneDao().activate(id);
             }
         }
         response.sendRedirect(request.getContextPath() + "/showPhone");
@@ -37,7 +37,7 @@ public class ShowPhone extends HttpServlet {
         else clientId = (int) request.getSession().getAttribute("clientId");
         request.getSession().setAttribute("clientId", clientId);
         List<Phone> phoneList;
-        phoneList = DaoUtil.getPhoneDao().getAll(clientId);
+        phoneList = DataAccess.getPhoneDao().getAll(clientId);
         phoneList.sort(Comparator.comparing(Service::getId));
         for (Phone phone : phoneList) {
             phone.getHistory().sort(Comparator.comparing(PhoneState::getBeginDate));

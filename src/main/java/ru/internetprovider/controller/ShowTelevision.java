@@ -17,15 +17,15 @@ public class ShowTelevision extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getParameter("delete") != null) {
             int id = Integer.parseInt(request.getParameter("delete"));
-            DaoUtil.getTelevisionDao().delete(id);
+            DataAccess.getTelevisionDao().delete(id);
         } else if (request.getParameter("televisionId") != null) {
             int id = Integer.parseInt(request.getParameter("televisionId"));
-            Television television = DaoUtil.getTelevisionDao().get(id);
+            Television television = DataAccess.getTelevisionDao().get(id);
             Status status = television.getStatus();
             if (status.equals(Status.ACTIVE))
-                DaoUtil.getTelevisionDao().suspend(id);
+                DataAccess.getTelevisionDao().suspend(id);
             else if (status.equals(Status.SUSPENDED)) {
-                DaoUtil.getTelevisionDao().activate(id);
+                DataAccess.getTelevisionDao().activate(id);
             }
         }
         response.sendRedirect(request.getContextPath() + "/showTelevision");
@@ -38,7 +38,7 @@ public class ShowTelevision extends HttpServlet {
         else clientId = (int) request.getSession().getAttribute("clientId");
         request.getSession().setAttribute("clientId", clientId);
         List<Television> televisionList;
-        televisionList = DaoUtil.getTelevisionDao().getAll(clientId);
+        televisionList = DataAccess.getTelevisionDao().getAll(clientId);
         televisionList.sort(Comparator.comparing(Service::getId));
         for (Television television : televisionList) {
             television.getHistory().sort(Comparator.comparing(TelevisionState::getBeginDate));

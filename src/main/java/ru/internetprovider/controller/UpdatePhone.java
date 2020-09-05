@@ -19,13 +19,13 @@ public class UpdatePhone extends HttpServlet {
         int phoneId = Integer.parseInt((String) request.getSession().getAttribute("phoneId"));
         int minsCount = Integer.parseInt(request.getParameter("minsCount"));
         int smsCount = Integer.parseInt(request.getParameter("smsCount"));
-        DaoUtil.getPhoneDao().update(phoneId, new PhoneState(new Date(), null, minsCount, smsCount));
+        DataAccess.getPhoneDao().update(phoneId, new PhoneState(new Date(), null, minsCount, smsCount));
         response.sendRedirect(request.getContextPath() + "/showPhone");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String phoneId = request.getParameter("phoneId");
-        List<PhoneState> history = DaoUtil.getPhoneDao().getHistory(Integer.parseInt(phoneId));
+        List<PhoneState> history = DataAccess.getPhoneDao().getHistory(Integer.parseInt(phoneId));
         request.setAttribute("phone", history.get(history.size() - 1));
         request.getSession().setAttribute("phoneId", phoneId);
         request.getRequestDispatcher("view/updatePhone.jsp").forward(request, response);

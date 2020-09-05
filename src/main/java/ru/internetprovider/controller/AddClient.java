@@ -16,7 +16,7 @@ public class AddClient extends HttpServlet {
         String name = request.getParameter("name");
         String phone = request.getParameter("phone");
         String email = request.getParameter("email");
-        DaoUtil.getClientDao().add(new Client(name, phone, email));
+        DataAccess.getClientDao().add(new Client(name, phone, email));
         response.sendRedirect(request.getContextPath() + "/");
     }
 

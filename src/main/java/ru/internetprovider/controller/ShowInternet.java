@@ -17,14 +17,14 @@ public class ShowInternet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getParameter("delete") != null) {
             int id = Integer.parseInt(request.getParameter("delete"));
-            DaoUtil.getInternetDao().delete(id);
+            DataAccess.getInternetDao().delete(id);
         } else if (request.getParameter("internetId") != null) {
             int id = Integer.parseInt(request.getParameter("internetId"));
-            Status status = DaoUtil.getInternetDao().get(id).getStatus();
+            Status status = DataAccess.getInternetDao().get(id).getStatus();
             if (status.equals(Status.ACTIVE))
-                DaoUtil.getInternetDao().suspend(id);
+                DataAccess.getInternetDao().suspend(id);
             else if (status.equals(Status.SUSPENDED)) {
-                DaoUtil.getInternetDao().activate(id);
+                DataAccess.getInternetDao().activate(id);
             }
         }
         response.sendRedirect(request.getContextPath() + "/showInternet");
@@ -37,7 +37,7 @@ public class ShowInternet extends HttpServlet {
         else clientId = (int) request.getSession().getAttribute("clientId");
         request.getSession().setAttribute("clientId", clientId);
         List<Internet> internetList;
-        internetList = DaoUtil.getInternetDao().getAll(clientId);
+        internetList = DataAccess.getInternetDao().getAll(clientId);
         internetList.sort(Comparator.comparing(Service::getId));
         for (Internet internet : internetList) {
             internet.getHistory().sort(Comparator.comparing(InternetState::getBeginDate));

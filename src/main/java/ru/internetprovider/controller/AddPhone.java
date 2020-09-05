@@ -17,7 +17,7 @@ public class AddPhone extends HttpServlet {
         int minsCount = Integer.parseInt(request.getParameter("minsCount"));
         int smsCount = Integer.parseInt(request.getParameter("smsCount"));
         PhoneState phoneState = new PhoneState(new Date(), null, minsCount, smsCount);
-        DaoUtil.getPhoneDao().add(clientId, phoneState);
+        DataAccess.getPhoneDao().add(clientId, phoneState);
         response.sendRedirect(request.getContextPath() + "/showPhone");
     }
 

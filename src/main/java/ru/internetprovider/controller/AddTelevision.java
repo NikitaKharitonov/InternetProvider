@@ -16,7 +16,7 @@ public class AddTelevision extends HttpServlet {
         int clientId = Integer.parseInt(request.getSession().getAttribute("clientId").toString());
         int channelsCount = Integer.parseInt(request.getParameter("channelsCount"));
         TelevisionState televisionState = new TelevisionState(new Date(), null, channelsCount);
-        DaoUtil.getTelevisionDao().add(clientId, televisionState);
+        DataAccess.getTelevisionDao().add(clientId, televisionState);
         response.sendRedirect(request.getContextPath() + "/showTelevision");
     }
 

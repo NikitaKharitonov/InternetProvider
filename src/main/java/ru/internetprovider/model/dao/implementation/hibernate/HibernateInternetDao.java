@@ -7,7 +7,6 @@ import ru.internetprovider.model.services.Internet;
 import ru.internetprovider.model.services.InternetState;
 import ru.internetprovider.model.services.Status;
 
-import javax.persistence.EntityTransaction;
 import java.util.*;
 
 /**
@@ -16,197 +15,230 @@ import java.util.*;
  */
 public class HibernateInternetDao implements InternetDao {
 
+    SessionProvider sessionProvider = new SessionProvider();
+
     @Override
     public List<InternetState> getHistory(int id) {
-        List<InternetState> history = null;
-        EntityTransaction entityTransaction = null;
-        try (Session session = HibernateUtil.openSession()) {
-            entityTransaction = session.getTransaction();
-            entityTransaction.begin();
+//        List<InternetState> history = null;
+//        EntityTransaction entityTransaction = null;
+//        try (Session session = HibernateUtil.openSession()) {
+//            entityTransaction = session.getTransaction();
+//            entityTransaction.begin();
 
-            Query query = session.createQuery("from InternetState where internetId = :id order by beginDate");
-            query.setParameter("id", id);
-            history = query.getResultList();
-            history.sort(Comparator.comparing(InternetState::getBeginDate));
+        Session session = sessionProvider.openSessionWithTransaction();
 
-            entityTransaction.commit();
-        } catch (Exception e) {
-            if (entityTransaction != null)
-                entityTransaction.rollback();
-            e.printStackTrace();
-        }
+        Query query = session.createQuery("from InternetState where internetId = :id order by beginDate");
+        query.setParameter("id", id);
+        List<InternetState> history = query.getResultList();
+        history.sort(Comparator.comparing(InternetState::getBeginDate));
+
+        sessionProvider.closeSessionWithTransaction();
+
+//            entityTransaction.commit();
+//        } catch (Exception e) {
+//            if (entityTransaction != null)
+//                entityTransaction.rollback();
+//            e.printStackTrace();
+//        }
         return history;
     }
 
     @Override
     public Internet get(int id) {
-        Internet internet = null;
-        EntityTransaction entityTransaction = null;
-        try (Session session = HibernateUtil.openSession()) {
-            entityTransaction = session.getTransaction();
-            entityTransaction.begin();
+//        Internet internet = null;
+//        EntityTransaction entityTransaction = null;
+//        try (Session session = HibernateUtil.openSession()) {
+//            entityTransaction = session.getTransaction();
+//            entityTransaction.begin();
 
-            Query query = session.createQuery("from Internet where id = :id");
-            query.setParameter("id", id);
-            internet = (Internet) query.getSingleResult();
+        Session session = sessionProvider.openSessionWithTransaction();
 
-            entityTransaction.commit();
-        } catch (Exception e) {
-            if (entityTransaction != null)
-                entityTransaction.rollback();
-            e.printStackTrace();
-        }
+//        Query query = session.createQuery("from Internet where id = :id");
+//        query.setParameter("id", id);
+//        Internet internet = (Internet) query.getSingleResult();
+        Internet internet = session.get(Internet.class, id);
+
+        sessionProvider.closeSessionWithTransaction();
+
+//            entityTransaction.commit();
+//        } catch (Exception e) {
+//            if (entityTransaction != null)
+//                entityTransaction.rollback();
+//            e.printStackTrace();
+//        }
         return internet;
     }
 
     @Override
     public List<Internet> getAll(int clientId) {
-        List<Internet> internetList = null;
-        EntityTransaction entityTransaction = null;
-        try (Session session = HibernateUtil.openSession()) {
-            entityTransaction = session.getTransaction();
-            entityTransaction.begin();
+//        List<Internet> internetList = null;
+//        EntityTransaction entityTransaction = null;
+//        try (Session session = HibernateUtil.openSession()) {
+//            entityTransaction = session.getTransaction();
+//            entityTransaction.begin();
 
-            Query query = session.createQuery("from Internet where clientId = :clientId");
-            query.setParameter("clientId", clientId);
-            internetList = query.list();
+        Session session = sessionProvider.openSessionWithTransaction();
 
-            entityTransaction.commit();
-        } catch (Exception e) {
-            if (entityTransaction != null)
-                entityTransaction.rollback();
-            e.printStackTrace();
-        }
+//        Query query = session.createQuery("from Internet where clientId = :clientId");
+//        query.setParameter("clientId", clientId);
+//        internetList = query.list();
+
+        List<Internet> internetList = (List<Internet>) session.createQuery("from Internet").list();
+
+        sessionProvider.closeSessionWithTransaction();
+
+//            entityTransaction.commit();
+//        } catch (Exception e) {
+//            if (entityTransaction != null)
+//                entityTransaction.rollback();
+//            e.printStackTrace();
+//        }
         return internetList;
     }
 
     @Override
     public void update(int id, InternetState internetState) {
-        EntityTransaction entityTransaction = null;
-        try (Session session = HibernateUtil.openSession()) {
-            entityTransaction = session.getTransaction();
-            entityTransaction.begin();
+//        EntityTransaction entityTransaction = null;
+//        try (Session session = HibernateUtil.openSession()) {
+//            entityTransaction = session.getTransaction();
+//            entityTransaction.begin();
 
-            Internet internet = session.get(Internet.class, id);
-            if (internet.getStatus().equals(Status.ACTIVE)) {
-                Query query = session.createQuery("from InternetState where internetId = :id order by beginDate desc");
-                query.setParameter("id", id);
-                InternetState lastInternetState = (InternetState) query.list().get(0);
-                lastInternetState.setEndDate(new Date());
-            } else if (internet.getStatus().equals(Status.SUSPENDED)) {
-                internet.setStatus(Status.ACTIVE);
-            }
+        Session session = sessionProvider.openSessionWithTransaction();
 
-            internetState.setInternetId(id);
-            session.persist(internetState);
-
-            entityTransaction.commit();
-        } catch (Exception e) {
-            if (entityTransaction != null)
-                entityTransaction.rollback();
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void add(int clientId, InternetState internetState) {
-        EntityTransaction entityTransaction = null;
-        try (Session session = HibernateUtil.openSession()) {
-            entityTransaction = session.getTransaction();
-            entityTransaction.begin();
-
-            Internet clientService = new Internet(internetState.getBeginDate(), Status.ACTIVE);
-            clientService.setClientId(clientId);
-            session.save(clientService);
-
-            internetState.setInternetId(clientService.getId());
-            session.save(internetState);
-
-            entityTransaction.commit();
-        } catch (Exception e) {
-            if (entityTransaction != null)
-                entityTransaction.rollback();
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void suspend(int id) {
-        EntityTransaction entityTransaction = null;
-        try (Session session = HibernateUtil.openSession()) {
-            entityTransaction = session.getTransaction();
-            entityTransaction.begin();
-
+        Internet internet = session.get(Internet.class, id);
+        if (internet.getStatus().equals(Status.ACTIVE)) {
             Query query = session.createQuery("from InternetState where internetId = :id order by beginDate desc");
             query.setParameter("id", id);
             InternetState lastInternetState = (InternetState) query.list().get(0);
             lastInternetState.setEndDate(new Date());
-
-            Internet internet = session.get(Internet.class, id);
-            internet.setStatus(Status.SUSPENDED);
-
-            entityTransaction.commit();
-        } catch (Exception e) {
-            if (entityTransaction != null)
-                entityTransaction.rollback();
-            e.printStackTrace();
+        } else if (internet.getStatus().equals(Status.SUSPENDED)) {
+            internet.setStatus(Status.ACTIVE);
         }
+
+        internetState.setInternetId(id);
+        session.persist(internetState);
+
+        sessionProvider.closeSessionWithTransaction();
+
+//            entityTransaction.commit();
+//        } catch (Exception e) {
+//            if (entityTransaction != null)
+//                entityTransaction.rollback();
+//            e.printStackTrace();
+//        }
+    }
+
+    @Override
+    public void add(int clientId, InternetState internetState) {
+//        EntityTransaction entityTransaction = null;
+//        try (Session session = HibernateUtil.openSession()) {
+//            entityTransaction = session.getTransaction();
+//            entityTransaction.begin();
+
+        Session session = sessionProvider.openSessionWithTransaction();
+
+        Internet internet = new Internet(internetState.getBeginDate(), Status.ACTIVE);
+        internet.setClientId(clientId);
+        session.save(internet);
+        internetState.setInternetId(internet.getId());
+        session.save(internetState);
+
+        sessionProvider.closeSessionWithTransaction();
+//            entityTransaction.commit();
+//        } catch (Exception e) {
+//            if (entityTransaction != null)
+//                entityTransaction.rollback();
+//            e.printStackTrace();
+//        }
+    }
+
+    @Override
+    public void suspend(int id) {
+//        EntityTransaction entityTransaction = null;
+//        try (Session session = HibernateUtil.openSession()) {
+//            entityTransaction = session.getTransaction();
+//            entityTransaction.begin();
+
+        Session session = sessionProvider.openSessionWithTransaction();
+
+        Query query = session.createQuery("from InternetState where internetId = :id order by beginDate desc");
+        query.setParameter("id", id);
+        InternetState lastInternetState = (InternetState) query.list().get(0);
+        lastInternetState.setEndDate(new Date());
+
+        Internet internet = session.get(Internet.class, id);
+        internet.setStatus(Status.SUSPENDED);
+
+        sessionProvider.closeSessionWithTransaction();
+
+//            entityTransaction.commit();
+//        } catch (Exception e) {
+//            if (entityTransaction != null)
+//                entityTransaction.rollback();
+//            e.printStackTrace();
+//        }
     }
 
     @Override
     public void activate(int id) {
-        EntityTransaction entityTransaction = null;
-        try (Session session = HibernateUtil.openSession()) {
-            entityTransaction = session.getTransaction();
-            entityTransaction.begin();
+//        EntityTransaction entityTransaction = null;
+//        try (Session session = HibernateUtil.openSession()) {
+//            entityTransaction = session.getTransaction();
+//            entityTransaction.begin();
 
-            Internet internet = session.get(Internet.class, id);
-            internet.setStatus(Status.ACTIVE);
+        Session session = sessionProvider.openSessionWithTransaction();
 
-            Query query = session.createQuery("from InternetState where internetId = :id order by beginDate desc");
-            query.setParameter("id", id);
-            InternetState lastInternetState = (InternetState) query.list().get(0);
+        Internet internet = session.get(Internet.class, id);
+        internet.setStatus(Status.ACTIVE);
 
-            InternetState internetState = new InternetState();
-            internetState.setInternetId(lastInternetState.getInternetId());
-            internetState.setAntivirus(lastInternetState.isAntivirus());
-            internetState.setConnectionType(lastInternetState.getConnectionType());
-            internetState.setSpeed(lastInternetState.getSpeed());
-            internetState.setBeginDate(new Date());
+        Query query = session.createQuery("from InternetState where internetId = :id order by beginDate desc");
+        query.setParameter("id", id);
+        InternetState lastInternetState = (InternetState) query.list().get(0);
 
-            session.save(internetState);
+        InternetState internetState = new InternetState();
+        internetState.setInternetId(lastInternetState.getInternetId());
+        internetState.setAntivirus(lastInternetState.isAntivirus());
+        internetState.setConnectionType(lastInternetState.getConnectionType());
+        internetState.setSpeed(lastInternetState.getSpeed());
+        internetState.setBeginDate(new Date());
 
-            entityTransaction.commit();
-        } catch (Exception e) {
-            if (entityTransaction != null)
-                entityTransaction.rollback();
-            e.printStackTrace();
-        }
+        session.save(internetState);
+
+        sessionProvider.closeSessionWithTransaction();
+
+//            entityTransaction.commit();
+//        } catch (Exception e) {
+//            if (entityTransaction != null)
+//                entityTransaction.rollback();
+//            e.printStackTrace();
+//        }
     }
 
     @Override
     public void delete(int id) {
-        EntityTransaction entityTransaction = null;
-        try (Session session = HibernateUtil.openSession()) {
-            entityTransaction = session.getTransaction();
-            entityTransaction.begin();
+//        EntityTransaction entityTransaction = null;
+//        try (Session session = HibernateUtil.openSession()) {
+//            entityTransaction = session.getTransaction();
+//            entityTransaction.begin();
 
-            Internet internet = session.get(Internet.class, id);
+        Session session = sessionProvider.openSessionWithTransaction();
 
-            if (internet.getStatus().equals(Status.ACTIVE)) {
-                Query query = session.createQuery("from InternetState where internetId = :id order by beginDate desc");
-                query.setParameter("id", id);
-                InternetState lastInternetState = (InternetState) query.list().get(0);
-                lastInternetState.setEndDate(new Date());
-            }
-
-            internet.setStatus(Status.DELETED);
-
-            entityTransaction.commit();
-        } catch (Exception e) {
-            if (entityTransaction != null)
-                entityTransaction.rollback();
-            e.printStackTrace();
+        Internet internet = session.get(Internet.class, id);
+        if (internet.getStatus().equals(Status.ACTIVE)) {
+            Query query = session.createQuery("from InternetState where internetId = :id order by beginDate desc");
+            query.setParameter("id", id);
+            InternetState lastInternetState = (InternetState) query.list().get(0);
+            lastInternetState.setEndDate(new Date());
         }
+        internet.setStatus(Status.DELETED);
+
+        sessionProvider.closeSessionWithTransaction();
+
+//            entityTransaction.commit();
+//        } catch (Exception e) {
+//            if (entityTransaction != null)
+//                entityTransaction.rollback();
+//            e.printStackTrace();
+//        }
     }
 }

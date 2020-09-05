@@ -18,14 +18,14 @@ public class UpdateClient extends HttpServlet {
         String name = request.getParameter("name");
         String phone = request.getParameter("phone");
         String email = request.getParameter("email");
-        DaoUtil.getClientDao().update(clientId, new Client(name, phone, email));
+        DataAccess.getClientDao().update(clientId, new Client(name, phone, email));
         response.sendRedirect(request.getContextPath() + "/");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String clientId = request.getParameter("clientId");
         request.getSession().setAttribute("clientId", clientId);
-        Client client = DaoUtil.getClientDao().get(Integer.parseInt(clientId));
+        Client client = DataAccess.getClientDao().get(Integer.parseInt(clientId));
         request.setAttribute("client", client);
         request.getRequestDispatcher("view/updateClient.jsp").forward(request, response);
     }

@@ -15,7 +15,7 @@ public class HistoryInternet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int internetId = Integer.parseInt(request.getParameter("internetId"));
-        List<InternetState> history = DaoUtil.getInternetDao().getHistory(internetId);
+        List<InternetState> history = DataAccess.getInternetDao().getHistory(internetId);
         request.setAttribute("internetId", internetId);
         request.setAttribute("history", history);
         request.getRequestDispatcher("view/historyInternet.jsp").forward(request, response);

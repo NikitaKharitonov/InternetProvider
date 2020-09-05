@@ -3,8 +3,6 @@ package ru.internetprovider.controller;
 import ru.internetprovider.model.Client;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +12,7 @@ public class ShowClient extends javax.servlet.http.HttpServlet {
     protected void doPost(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws ServletException, IOException {
         if (request.getParameter("clientId") != null) {
             int clientId = Integer.parseInt(request.getParameter("clientId"));
-            DaoUtil.getClientDao().delete(clientId);
+            DataAccess.getClientDao().delete(clientId);
         }
         response.sendRedirect(request.getContextPath() + "/");
     }
@@ -39,7 +37,7 @@ public class ShowClient extends javax.servlet.http.HttpServlet {
             request.setAttribute("clientList", filteredClientList);
         } else {
             List<Client> clientList;
-            clientList = DaoUtil.getClientDao().getAll();
+            clientList = DataAccess.getClientDao().getAll();
             request.getSession().setAttribute("clientList", clientList);
             request.setAttribute("clientList", clientList);
         }

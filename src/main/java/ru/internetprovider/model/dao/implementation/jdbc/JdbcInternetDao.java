@@ -17,7 +17,7 @@ public class JdbcInternetDao implements InternetDao {
     @Override
     public List<InternetState> getHistory(int id) {
         List<InternetState> history = null;
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement pstmt = connection.prepareStatement(
                     "SELECT * " +
                             "FROM internet_state WHERE internet_id = ? ORDER BY begin_date;"
@@ -42,7 +42,7 @@ public class JdbcInternetDao implements InternetDao {
     @Override
     public Internet get(int id) {
         Internet internet = null;
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM internet WHERE id = ?"
             );
@@ -62,7 +62,7 @@ public class JdbcInternetDao implements InternetDao {
     @Override
     public List<Internet> getAll(int clientId) {
         List<Internet> internetList = null;
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM internet WHERE client_id = ?"
             );
@@ -86,7 +86,7 @@ public class JdbcInternetDao implements InternetDao {
 
     @Override
     public void update(int id, InternetState internetState) {
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT status from internet where id = ?"
             );
@@ -129,7 +129,7 @@ public class JdbcInternetDao implements InternetDao {
 
     @Override
     public void add(int clientId, InternetState internetState) {
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "INSERT INTO internet (client_id, activation_date, status) VALUES (?, NOW(), ?::status) RETURNING id;"
             );
@@ -157,7 +157,7 @@ public class JdbcInternetDao implements InternetDao {
 
     @Override
     public void suspend(int id) {
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "UPDATE internet_state SET end_date = NOW() WHERE begin_date = " +
                             "(SELECT MAX(begin_date) FROM internet_state WHERE internet_id = ?)"
@@ -177,7 +177,7 @@ public class JdbcInternetDao implements InternetDao {
 
     @Override
     public void activate(int id) {
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "UPDATE internet SET status = ?::status WHERE id = ?"
             );
@@ -199,7 +199,7 @@ public class JdbcInternetDao implements InternetDao {
 
     @Override
     public void delete(int id) {
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT status from internet where id = ?"
             );

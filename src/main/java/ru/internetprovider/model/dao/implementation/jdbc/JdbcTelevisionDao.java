@@ -19,7 +19,7 @@ public class JdbcTelevisionDao implements TelevisionDao {
     @Override
     public List<Television> getAll(int clientId) {
         List<Television> televisionList = null;
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM television WHERE client_id = ?"
             );
@@ -45,7 +45,7 @@ public class JdbcTelevisionDao implements TelevisionDao {
     @Override
     public List<TelevisionState> getHistory(int id) {
         List<TelevisionState> history = null;
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM television_state WHERE television_id = ? ORDER BY begin_date;"
             );
@@ -66,7 +66,7 @@ public class JdbcTelevisionDao implements TelevisionDao {
 
     @Override
     public void update(int id, TelevisionState televisionState) {
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT status from television where id = ?"
             );
@@ -107,7 +107,7 @@ public class JdbcTelevisionDao implements TelevisionDao {
 
     @Override
     public void add(int clientId, TelevisionState televisionState) {
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "INSERT INTO television (client_id, activation_date, status) VALUES (?, NOW(), ?::status) RETURNING id;"
             );
@@ -134,7 +134,7 @@ public class JdbcTelevisionDao implements TelevisionDao {
     @Override
     public Television get(int id) {
         Television television = null;
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM television WHERE id = ?"
             );
@@ -153,7 +153,7 @@ public class JdbcTelevisionDao implements TelevisionDao {
 
     @Override
     public void suspend(int id) {
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "UPDATE television_state SET end_date = NOW() WHERE begin_date = " +
                             "(SELECT MAX(begin_date) FROM television_state WHERE television_id = ?)"
@@ -173,7 +173,7 @@ public class JdbcTelevisionDao implements TelevisionDao {
 
     @Override
     public void activate(int id) {
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "UPDATE television SET status = ?::status WHERE id = ?"
             );
@@ -195,7 +195,7 @@ public class JdbcTelevisionDao implements TelevisionDao {
 
     @Override
     public void delete(int id) {
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT status from television where id = ?"
             );

@@ -19,7 +19,7 @@ public class JdbcPhoneDao implements PhoneDao {
     @Override
     public List<Phone> getAll(int clientId) {
         List<Phone> phoneList = new ArrayList<>();
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM phone WHERE client_id = ?"
             );
@@ -44,7 +44,7 @@ public class JdbcPhoneDao implements PhoneDao {
     @Override
     public List<PhoneState> getHistory(int id) {
         List<PhoneState> history = null;
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM phone_state WHERE phone_id = ? ORDER BY begin_date;"
             );
@@ -67,7 +67,7 @@ public class JdbcPhoneDao implements PhoneDao {
 
     @Override
     public void update(int id, PhoneState phoneState) {
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT status from phone where id = ?"
             );
@@ -109,7 +109,7 @@ public class JdbcPhoneDao implements PhoneDao {
 
     @Override
     public void add(int clientId, PhoneState phoneState) {
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "INSERT INTO phone (client_id, activation_date, status) VALUES (?, NOW(), ?::status) RETURNING id;"
             );
@@ -137,7 +137,7 @@ public class JdbcPhoneDao implements PhoneDao {
     @Override
     public Phone get(int id) {
         Phone phone = null;
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM phone WHERE id = ?"
             );
@@ -156,7 +156,7 @@ public class JdbcPhoneDao implements PhoneDao {
 
     @Override
     public void suspend(int id) {
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "UPDATE phone_state SET end_date = NOW() where begin_date = " +
                             "(SELECT MAX(begin_date) FROM phone_state WHERE phone_id = ? )"
@@ -176,7 +176,7 @@ public class JdbcPhoneDao implements PhoneDao {
 
     @Override
     public void activate(int id) {
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "UPDATE phone SET status = ?::status WHERE id = ?"
             );
@@ -198,7 +198,7 @@ public class JdbcPhoneDao implements PhoneDao {
 
     @Override
     public void delete(int id) {
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT status from phone where id = ?"
             );

@@ -17,7 +17,7 @@ public class JdbcClientDao implements ClientDao {
     @Override
     public Client get(int id) {
         Client client = null;
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM client WHERE id = ?"
             );
@@ -38,7 +38,7 @@ public class JdbcClientDao implements ClientDao {
     @Override
     public List<Client> getAll() {
         List<Client> clientList = null;
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM client");
             clientList = new ArrayList<>();
@@ -57,7 +57,7 @@ public class JdbcClientDao implements ClientDao {
 
     @Override
     public void update(int id, Client client) {
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "UPDATE client SET name = ?, phone_number = ?, email_address = ? WHERE id = ?"
             );
@@ -72,7 +72,7 @@ public class JdbcClientDao implements ClientDao {
 
     @Override
     public void add(Client client) {
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "INSERT INTO client (name, phone_number, email_address) VALUES (?, ?, ?)"
             );
@@ -86,7 +86,7 @@ public class JdbcClientDao implements ClientDao {
 
     @Override
     public void delete(int id) {
-        try (Connection connection = JdbcUtil.getDataSource().getConnection()) {
+        try (Connection connection = ConnectionProvider.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "DELETE FROM client WHERE id = ?"
             );
